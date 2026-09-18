@@ -65,7 +65,7 @@ export default function Home() {
   useEffect(() => {
     if (initRef.current) return;
     initRef.current = true;
-    setSession(getSession());
+    setSession(null);
     setMounted(true);
   }, []);
 
