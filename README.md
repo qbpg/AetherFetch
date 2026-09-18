@@ -105,6 +105,10 @@ npx vercel --prod
 
 **Production** : [https://panel-mail-box.vercel.app](https://panel-mail-box.vercel.app)
 
+## License
+
+This project is licensed under the [MIT License](LICENSE).
+
 ## Credits
 
 Created by **QBPG** — contact: `qbpg.sg@outlook.com`
