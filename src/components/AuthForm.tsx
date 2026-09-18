@@ -3,13 +3,13 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import {
   Mail, Lock, Eye, EyeOff, ArrowRight, Loader2, ChevronDown,
-  AlertCircle, Shuffle, Copy, Check, User, Tag,
+  AlertCircle, Shuffle, Copy, Check, User, Tag, Trash2,
 } from "lucide-react";
 import Footer from "@/components/Footer";
 import {
   getDomains, createAccount, getToken, getMe,
   saveSession, saveAccountToHistory, generateValidPassword,
-  getSavedAccounts,
+  getSavedAccounts, removeSavedAccount,
 } from "@/lib/mailbox";
 import type { Domain, SavedAccount } from "@/lib/types";
 
@@ -35,7 +35,6 @@ export default function AuthForm({ onAuthenticated }: AuthFormProps) {
   const [domains, setDomains] = useState<Domain[]>([]);
   const [selectedDomain, setSelectedDomain] = useState(DEFAULT_DOMAIN);
   const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -84,6 +83,12 @@ export default function AuthForm({ onAuthenticated }: AuthFormProps) {
     setSavedAccounts(getSavedAccounts());
   }, []);
 
+  const handleRemoveAccount = (e: React.MouseEvent, address: string) => {
+    e.stopPropagation();
+    removeSavedAccount(address);
+    setSavedAccounts(getSavedAccounts());
+  };
+
   const generateRandomCredentials = () => {
     const randomUser = "user_" + Math.random().toString(36).substring(2, 10);
     setUsername(randomUser);
@@ -131,16 +136,18 @@ export default function AuthForm({ onAuthenticated }: AuthFormProps) {
         setLoading(false);
       }
     } else {
-      const trimmedEmail = email.trim();
-      if (!trimmedEmail) { setError("Email is required."); return; }
-      if (!password) { setError("Password is required."); return; }
+      const trimmed = username.trim();
+      if (!trimmed) { setError("Identifiant requis."); return; }
+      if (!selectedDomain) { setError("Please wait for domains to load."); return; }
+      if (!password) { setError("Mot de passe requis."); return; }
 
+      const fullAddress = `${trimmed}@${selectedDomain}`;
       setLoading(true);
       try {
-        const tokenRes = await getToken(trimmedEmail, password);
+        const tokenRes = await getToken(fullAddress, password);
         const meData = await getMe(tokenRes.token);
-        saveSession({ token: tokenRes.token, email: trimmedEmail, password, accountId: meData.id });
-        saveAccountToHistory(trimmedEmail, password, accountLabel.trim() || undefined);
+        saveSession({ token: tokenRes.token, email: fullAddress, password, accountId: meData.id });
+        saveAccountToHistory(fullAddress, password, accountLabel.trim() || undefined);
         onAuthenticated();
       } catch (err) {
         setError(err instanceof Error ? err.message : "Login failed.");
@@ -220,7 +227,11 @@ export default function AuthForm({ onAuthenticated }: AuthFormProps) {
                     <p className="text-xs font-medium text-zinc-300 truncate">{acc.address}</p>
                     <p className="text-[10px] text-zinc-600 font-mono truncate">{acc.password}</p>
                   </div>
-                  <ArrowRight className="w-3.5 h-3.5 text-zinc-700 group-hover:text-indigo-400 transition-colors flex-shrink-0" />
+                  <span onClick={(e) => handleRemoveAccount(e, acc.address)}
+                    className="flex-shrink-0 p-1 rounded text-zinc-600 hover:text-red-400 hover:bg-red-500/10 transition-colors opacity-0 group-hover:opacity-100"
+                    aria-label="Remove account">
+                    <Trash2 className="w-3 h-3" />
+                  </span>
                 </button>
               ))}
               <div className="border-t border-zinc-800/60 my-3" />
@@ -264,13 +275,16 @@ export default function AuthForm({ onAuthenticated }: AuthFormProps) {
             )}
 
             {mode === "login" && (
-              <div className="relative">
+              <div className="relative flex items-center">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 sm:w-4 sm:h-4 text-zinc-500 pointer-events-none" />
                 <input
-                  type="email" value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="you@domain.com" autoComplete="email"
-                  className="w-full h-10 sm:h-11 pl-9 sm:pl-10 pr-3 bg-[#09090b] border border-zinc-800 rounded-lg text-xs sm:text-sm text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/20 transition-all duration-200" />
+                  type="text" value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  placeholder="Identifiant / Pseudo" autoComplete="username"
+                  className="w-full h-10 sm:h-11 pl-9 sm:pl-10 pr-24 sm:pr-28 bg-[#09090b] border border-zinc-800 rounded-l-lg text-xs sm:text-sm text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/20 transition-all duration-200" />
+                <span className="absolute right-0 top-0 h-10 sm:h-11 px-2.5 sm:px-3 flex items-center text-[11px] sm:text-xs text-zinc-500 bg-zinc-800/50 border border-l-0 border-zinc-800 rounded-r-lg select-none pointer-events-none whitespace-nowrap">
+                  @{selectedDomain}
+                </span>
               </div>
             )}
 

@@ -1,36 +1,107 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+<p align="center">
+  <img src="public/logo.svg" alt="Mailbox" width="64" />
+</p>
+
+<h1 align="center">Mailbox</h1>
+
+<p align="center">
+  Temporary email panel — instant access, zero friction.
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Next.js-16-black?logo=next.js" alt="Next.js" />
+  <img src="https://img.shields.io/badge/React-19-61DAFB?logo=react" alt="React" />
+  <img src="https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript" alt="TypeScript" />
+  <img src="https://img.shields.io/badge/Tailwind-4-06B6D4?logo=tailwindcss" alt="Tailwind" />
+  <img src="https://img.shields.io/badge/API-Mail.tm-blue" alt="Mail.tm" />
+</p>
+
+---
+
+## Stack
+
+| Layer | Technology |
+|---|---|
+| Frontend | Next.js 16 (App Router) + React 19 |
+| Language | TypeScript 5 (strict) |
+| Styling | Tailwind CSS 4 |
+| Icons | lucide-react |
+| Fonts | Geist Sans + Geist Mono |
+| API | [mail.tm](https://mail.tm) (temporary email) |
+| Realtime | Mercure SSE (`mercure.mail.tm`) |
+| Proxy | Cloudflare Worker (CORS) |
+| Deploy | Vercel |
+
+## Features
+
+- **Onboarding intelligent** — Register or login with one click, random credential generator
+- **Quick connect** — Saved accounts with favorites, archiving, and custom labels
+- **Synchronized deletion** — Removing an account from the profile or quick-connect list stays in sync
+- **Dynamic label** — Custom label displayed after "CONNECTED AS" in the profile dropdown
+- **Real-time inbox** — Mercure SSE for live updates with 30s polling fallback
+- **Secure mail reader** — Sandboxed iframe (`allow-same-origin` only) for rendering HTML emails
+- **Search & filter** — Full-text search across messages
+- **Toast notifications** — Success, error, and info feedback
+- **Keyboard shortcuts** — `C` to copy email, `R` to refresh
+- **Mobile responsive** — Adaptive layout with inbox/detail view toggle
+- **Legal compliance** — Footer with mentions legales and privacy policy modals
 
 ## Getting Started
 
-First, run the development server:
-
 ```bash
+# Install dependencies
+npm install
+
+# Start development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+
+# Build for production
+npm run build
+
+# Start production server
+npm start
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Project Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+src/
+  app/
+    page.tsx              # Main mailbox UI
+    layout.tsx            # Root layout (Geist fonts, dark theme)
+    globals.css           # Tailwind + custom animations
+    api/mailbox/[...]     # Catch-all API proxy -> Cloudflare Worker
+  components/
+    AuthForm.tsx           # Login / Register form + quick connect
+    Footer.tsx             # Footer with legal modals
+    SecureMailIframe.tsx   # Sandboxed HTML email renderer
+  lib/
+    mailbox.ts             # API client + localStorage persistence
+    types.ts               # TypeScript interfaces
+cf-proxy/
+  index.js                 # Cloudflare Worker (CORS proxy to mail.tm)
+  wrangler.toml            # Worker configuration
+```
 
-## Learn More
+## Architecture
 
-To learn more about Next.js, take a look at the following resources:
+```
+Browser (Next.js 16 + React 19)
+  └─> /api/mailbox/* (Next.js catch-all route)
+       └─> Cloudflare Worker (CORS proxy)
+            └─> api.mail.tm (temporary email API)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Realtime updates via Mercure SSE (mercure.mail.tm)
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Deploy
 
-## Deploy on Vercel
+```bash
+npx vercel --prod
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Credits
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Created by **QBPG** — contact: `qbpg.sg@outlook.com`

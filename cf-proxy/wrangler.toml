@@ -1,0 +1,6 @@
+name = "mailbox-proxy"
+main = "index.js"
+compatibility_date = "2024-12-01"
+
+[vars]
+MAIL_TM_BASE = "https://api.mail.tm"

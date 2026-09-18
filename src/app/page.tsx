@@ -328,6 +328,12 @@ export default function Home() {
   const handleRemoveSaved = (address: string) => {
     removeSavedAccount(address);
     setSavedAccounts(getSavedAccounts());
+    if (address === session?.email) {
+      clearSession();
+      setSession(null);
+      setMessages([]);
+      setSelectedMsg(null);
+    }
     addToast("Account removed from history", "info");
   };
 
@@ -391,6 +397,8 @@ export default function Home() {
     if (!a.favorite && b.favorite) return 1;
     return 0;
   });
+
+  const activeAccountLabel = savedAccounts.find((a) => a.address === session.email)?.label;
 
   return (
     <div className="h-[100dvh] flex flex-col bg-[#09090b] text-zinc-100 overflow-hidden">
@@ -457,7 +465,9 @@ export default function Home() {
                 <div className="p-3.5">
                   <div className="flex items-center gap-2 mb-1">
                     <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse-dot" />
-                    <p className="text-[10px] text-zinc-500 uppercase tracking-wider">Connected as</p>
+                    <p className="text-[10px] text-zinc-500 uppercase tracking-wider">
+                      Connected as{activeAccountLabel ? ` — ${activeAccountLabel}` : ""}
+                    </p>
                   </div>
                   <p className="text-sm font-medium text-zinc-200 truncate">{session.email}</p>
                   <div className="flex items-center gap-2 mt-2">
