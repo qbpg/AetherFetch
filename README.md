@@ -14,6 +14,7 @@
   <img src="https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript" alt="TypeScript" />
   <img src="https://img.shields.io/badge/Tailwind-4-06B6D4?logo=tailwindcss" alt="Tailwind" />
   <img src="https://img.shields.io/badge/API-Mail.tm-blue" alt="Mail.tm" />
+  <img src="https://img.shields.io/badge/License-MIT-green" alt="MIT License" />
 </p>
 
 ---
