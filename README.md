@@ -9,12 +9,12 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Next.js-16-black?logo=next.js" alt="Next.js" />
-  <img src="https://img.shields.io/badge/React-19-61DAFB?logo=react" alt="React" />
-  <img src="https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript" alt="TypeScript" />
-  <img src="https://img.shields.io/badge/Tailwind-4-06B6D4?logo=tailwindcss" alt="Tailwind" />
-  <img src="https://img.shields.io/badge/API-Mail.tm-blue" alt="Mail.tm" />
-  <img src="https://img.shields.io/badge/License-MIT-green" alt="MIT License" />
+  <img src="https://img.shields.io/badge/Next.js-16-18181b?style=flat&logo=next.js&logoColor=white&color=27272a" alt="Next.js" />
+  <img src="https://img.shields.io/badge/React-19-18181b?style=flat&logo=react&logoColor=61DAFB&color=27272a" alt="React" />
+  <img src="https://img.shields.io/badge/TypeScript-5-18181b?style=flat&logo=typescript&logoColor=3178C6&color=27272a" alt="TypeScript" />
+  <img src="https://img.shields.io/badge/Tailwind-4-18181b?style=flat&logo=tailwindcss&logoColor=06B6D4&color=27272a" alt="Tailwind" />
+  <img src="https://img.shields.io/badge/Proxy-Managed-18181b?style=flat&color=27272a" alt="Proxy" />
+  <img src="https://img.shields.io/badge/License-MIT-18181b?style=flat&color=27272a" alt="License" />
 </p>
 
 ---
