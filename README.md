@@ -111,4 +111,4 @@ This project is licensed under the [MIT License](LICENSE).
 
 ## Credits
 
-Created by **qbpg** — contact: `qbpg.sg@outlook.com`
+Created by **qbpg** — contact: `qbpg@mailfence.com`
