@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import {
   Mail, MailOpen, Trash2,
-  Download, Loader2, Inbox, Search, ChevronLeft, X,
+  Download, Inbox, Search, ChevronLeft, X,
 } from "lucide-react";
 import { useSession } from "@/contexts/SessionContext";
 import SecureMailIframe from "@/components/SecureMailIframe";
@@ -145,7 +145,7 @@ export default function DashboardPage() {
 
         <div className="flex-1 overflow-y-auto">
           {messages.length === 0 ? (
-            <div className="flex items-center justify-center h-32"><Loader2 className="w-4 h-4 text-zinc-600 animate-spin" /></div>
+            <div className="flex items-center justify-center h-32"><div className="w-4 h-4 rounded-full bg-zinc-900/50" /></div>
           ) : sortedMessages.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-32 text-zinc-600">
               <Mail className="w-7 h-7 mb-2 opacity-30" />
@@ -178,7 +178,7 @@ export default function DashboardPage() {
 
       <main className={`flex-1 flex flex-col min-w-0 ${mobileView === "inbox" ? "hidden md:flex" : "flex"} md:flex`}>
         {loadingDetail ? (
-          <div className="flex-1 flex items-center justify-center"><Loader2 className="w-5 h-5 text-zinc-600 animate-spin" /></div>
+          <div className="flex-1 flex items-center justify-center"><div className="w-5 h-5 rounded-full bg-zinc-900/50" /></div>
         ) : selectedMsg ? (
           <div className="flex-1 flex flex-col min-h-0 animate-fade-in-up">
             <div className="border-b border-zinc-800 px-4 sm:px-6 py-3 flex-shrink-0">
@@ -205,8 +205,8 @@ export default function DashboardPage() {
                 </div>
                 <button onClick={() => handleDeleteMessage(selectedMsg.id)} disabled={deletingMsg === selectedMsg.id}
                   aria-label="Delete message"
-                  className="w-7 h-7 flex items-center justify-center rounded-md text-zinc-600 hover:text-red-400 hover:bg-red-500/10 transition-colors flex-shrink-0">
-                  {deletingMsg === selectedMsg.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Trash2 className="w-3.5 h-3.5" />}
+                  className="w-7 h-7 flex items-center justify-center rounded-md text-zinc-600 hover:text-red-400 hover:bg-red-500/10 transition-colors flex-shrink-0 disabled:opacity-40">
+                  <Trash2 className="w-3.5 h-3.5" />
                 </button>
               </div>
             </div>
