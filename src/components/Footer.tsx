@@ -53,7 +53,7 @@ export default function Footer() {
             <div className="px-4 py-4 text-xs text-zinc-400 leading-relaxed space-y-3">
               {modal === "mentions" ? (
                 <>
-                  <p><span className="text-zinc-300 font-medium">Éditeur :</span> QBPG</p>
+                  <p><span className="text-zinc-300 font-medium">Éditeur :</span> qbpg</p>
                   <p><span className="text-zinc-300 font-medium">Contact support :</span>{" "}
                     <a href="mailto:qbpg.sg@outlook.com" className="text-indigo-400 hover:text-indigo-300 transition-colors">
                       qbpg.sg@outlook.com
