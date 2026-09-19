@@ -5,7 +5,7 @@ import { useSession } from "@/contexts/SessionContext";
 import { getSession } from "@/lib/mailbox";
 import AuthForm from "@/components/AuthForm";
 
-export default function LoginPage() {
+export default function RegisterPage() {
   const { session, setSession } = useSession();
   const router = useRouter();
 
@@ -14,5 +14,5 @@ export default function LoginPage() {
     return <div className="min-h-screen bg-[#09090b]" />;
   }
 
-  return <AuthForm initialMode="login" onAuthenticated={() => setSession(getSession())} />;
+  return <AuthForm initialMode="register" onAuthenticated={() => setSession(getSession())} />;
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import {
   Mail, Lock, Eye, EyeOff, ArrowRight, Loader2, ChevronDown,
   AlertCircle, Shuffle, Copy, Check, User, Tag, Trash2,
@@ -15,6 +16,7 @@ import type { Domain, SavedAccount } from "@/lib/types";
 
 interface AuthFormProps {
   onAuthenticated: () => void;
+  initialMode?: "login" | "register";
 }
 
 const DEFAULT_DOMAIN = "uberip.com";
@@ -30,8 +32,9 @@ function getInitialMode(): "login" | "register" {
   }
 }
 
-export default function AuthForm({ onAuthenticated }: AuthFormProps) {
-  const [mode, setMode] = useState<"login" | "register">(getInitialMode);
+export default function AuthForm({ onAuthenticated, initialMode }: AuthFormProps) {
+  const router = useRouter();
+  const [mode, setMode] = useState<"login" | "register">(initialMode ?? getInitialMode());
   const [domains, setDomains] = useState<Domain[]>([]);
   const [selectedDomain, setSelectedDomain] = useState(DEFAULT_DOMAIN);
   const [username, setUsername] = useState("");
@@ -342,7 +345,7 @@ export default function AuthForm({ onAuthenticated }: AuthFormProps) {
           <div className="mt-3 sm:mt-4 text-center">
             <p className="text-[11px] sm:text-xs text-zinc-600">
               {mode === "register" ? "Already have an account?" : "No account yet?"}{" "}
-              <button type="button" onClick={() => { setMode(mode === "register" ? "login" : "register"); setError(""); refreshAccounts(); }}
+              <button type="button" onClick={() => router.push(mode === "register" ? "/login" : "/register")}
                 className="text-indigo-400 hover:text-indigo-300 transition-colors duration-150 underline-offset-2 hover:underline">
                 {mode === "register" ? "Sign in" : "Register"}
               </button>
