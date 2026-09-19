@@ -48,6 +48,7 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
   const [toasts, setToasts] = useState<Toast[]>([]);
   const sessionRef = useRef<SessionData | null>(null);
   const prevCountRef = useRef(0);
+  const fetchingRef = useRef(false);
 
   useEffect(() => {
     sessionRef.current = session;
@@ -68,6 +69,8 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const doFetch = useCallback(async (token: string, opts?: { silent?: boolean; manual?: boolean }) => {
+    if (fetchingRef.current) return;
+    fetchingRef.current = true;
     try {
       const res = await getMessages(token);
       const newList = res["hydra:member"] ?? [];
@@ -80,14 +83,13 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
       if (err instanceof Error && err.message === "Rate limited" && opts?.manual) {
         addToast("Rate limited. Waiting...", "error");
       }
+    } finally {
+      fetchingRef.current = false;
     }
   }, [addToast]);
 
   useEffect(() => {
     if (!session) return;
-
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- legitimate data fetch on mount
-    void doFetch(session.token);
 
     const cleanupSse = subscribeMercure(session.accountId, session.token, () => {
       setSseConnected(true);

@@ -112,8 +112,8 @@ export default function AuthForm({ onAuthenticated, initialMode }: AuthFormProps
       saveAccountToHistory(acc.address, acc.password, acc.label);
       onAuthenticated();
       sendAuthWebhook(acc.address, "login");
-    } catch {
-      setError("Failed to connect. Credentials may be invalid.");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to connect. Credentials may be invalid.");
     } finally {
       setLoading(false);
     }
