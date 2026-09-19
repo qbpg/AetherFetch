@@ -152,7 +152,7 @@ export default function AccountsPage() {
             <p className="text-sm text-zinc-500 mt-1">Manage your mailboxes and credentials</p>
           </div>
           <Link href="/home"
-            className="h-8 px-3.5 flex items-center gap-1.5 text-xs font-medium text-zinc-100 bg-white hover:bg-zinc-200 rounded-lg transition-colors">
+            className="h-8 px-3.5 flex items-center gap-1.5 text-xs font-medium text-zinc-950 bg-white hover:bg-zinc-200 rounded-lg transition-colors">
             <Plus className="w-3.5 h-3.5" />
             New Account
           </Link>
