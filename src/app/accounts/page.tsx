@@ -170,6 +170,45 @@ export default function AccountsPage() {
                   <span className="text-[11px] text-zinc-500 uppercase tracking-wider font-medium">Active session</span>
                 </div>
                 <p className="text-sm font-medium text-zinc-200 truncate">{session.email}</p>
+                {editingLabel === session.email ? (
+                  <div className="flex items-center gap-1.5 mt-1.5">
+                    <input type="text" value={labelValue} onChange={(e) => setLabelValue(e.target.value)}
+                      onKeyDown={(e) => { if (e.key === "Enter") handleSaveLabel(session.email); if (e.key === "Escape") { setEditingLabel(null); setLabelValue(""); } }}
+                      autoFocus placeholder="Label..."
+                      className="flex-1 min-w-0 h-7 px-2 bg-zinc-950 border border-zinc-700 rounded text-xs text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-zinc-500 transition-colors" />
+                    <button onClick={() => handleSaveLabel(session.email)}
+                      className="w-7 h-7 flex items-center justify-center text-emerald-400 hover:text-emerald-300 transition-colors rounded">
+                      <Check className="w-3.5 h-3.5" />
+                    </button>
+                    <button onClick={() => { setEditingLabel(null); setLabelValue(""); }}
+                      className="w-7 h-7 flex items-center justify-center text-zinc-600 hover:text-zinc-400 transition-colors rounded">
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                ) : (
+                  <button onClick={() => {
+                    const acc = savedAccounts.find((a) => a.address === session.email);
+                    startEditLabel(acc || { address: session.email, password: session.password, createdAt: "" });
+                  }}
+                    className="mt-1.5 group/label inline-flex items-center gap-1.5">
+                    {(() => {
+                      const acc = savedAccounts.find((a) => a.address === session.email);
+                      const lbl = acc?.label;
+                      return lbl ? (
+                        <>
+                          <span className="bg-zinc-800 text-zinc-300 text-[10px] px-1.5 py-0.5 rounded border border-zinc-700/50">
+                            {lbl}
+                          </span>
+                          <Pencil className="w-3 h-3 text-zinc-600 opacity-0 group-hover/label:opacity-100 transition-opacity" />
+                        </>
+                      ) : (
+                        <span className="text-[10px] text-zinc-600 hover:text-zinc-400 transition-colors">
+                          + Add label
+                        </span>
+                      );
+                    })()}
+                  </button>
+                )}
               </div>
             </div>
             <Link href="/dashboard"
@@ -267,10 +306,15 @@ export default function AccountsPage() {
                     <>
                       <p className="text-sm font-medium text-zinc-200 truncate flex items-center gap-2">
                         {acc.label || acc.address}
-                        {acc.label && (
+                        {acc.label ? (
                           <button onClick={() => startEditLabel(acc)}
                             className="text-zinc-700 hover:text-zinc-400 opacity-0 group-hover:opacity-100 transition-opacity">
                             <Pencil className="w-3.5 h-3.5" />
+                          </button>
+                        ) : (
+                          <button onClick={() => startEditLabel(acc)}
+                            className="text-[10px] text-zinc-600 hover:text-zinc-400 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                            + Add label
                           </button>
                         )}
                       </p>
