@@ -21,7 +21,10 @@ export async function POST(request: Request) {
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
     });
 
-    const result = await res.json();
+    const result = await res.json().catch(() => null);
+    if (!result) {
+      return Response.json({ success: false, error: "Failed to reach Cloudflare verification service" }, { status: 502 });
+    }
     return Response.json(result);
   } catch (err: unknown) {
     return Response.json(

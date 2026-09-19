@@ -64,7 +64,15 @@ async function apiFetch<T>(endpoint: string, options: RequestInit = {}): Promise
     throw new Error("Rate limited");
   }
 
-  const data = await response.json();
+  let data: Record<string, unknown>;
+  try {
+    data = await response.json();
+  } catch {
+    if (!response.ok) {
+      throw new Error(`Server error (${response.status})`);
+    }
+    throw new Error("Unexpected response from server. Please try again later.");
+  }
 
   if (!response.ok) {
     const detail =
