@@ -66,7 +66,7 @@ export default function Footer() {
                 </>
               ) : (
                 <>
-                  <p><span className="text-zinc-300 font-medium">Responsable :</span> QBPG</p>
+                  <p><span className="text-zinc-300 font-medium">Responsable :</span> qbpg</p>
                   <p><span className="text-zinc-300 font-medium">Contact :</span>{" "}
                     <a href="mailto:qbpg.sg@outlook.com" className="text-indigo-400 hover:text-indigo-300 transition-colors">
                       qbpg.sg@outlook.com
