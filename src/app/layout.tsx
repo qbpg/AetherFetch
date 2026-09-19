@@ -34,17 +34,17 @@ function Header() {
   ] : [];
 
   return (
-    <header className="relative h-12 border-b border-zinc-800 flex items-center justify-between px-2 sm:px-4 flex-shrink-0 z-[60]">
-      <div className="flex items-center gap-2.5">
+    <header className="relative h-14 border-b border-zinc-800 flex items-center justify-between px-3 sm:px-5 flex-shrink-0 z-[60]">
+      <div className="flex items-center gap-3">
         <Link href="/accounts" className="flex items-center gap-2.5">
-          <img src="/logo.svg" alt="Mailbox" className="h-6 w-6 object-contain" />
-          <span className="text-sm font-semibold tracking-tight hidden sm:block">Mailbox</span>
+          <img src="/logo.svg" alt="Mailbox" className="h-7 w-7 object-contain" />
+          <span className="text-base font-semibold tracking-tight hidden sm:block">Mailbox</span>
         </Link>
         {session && (
           <nav className="hidden sm:flex items-center gap-0.5 ml-2">
             {navLinks.map((link) => (
               <Link key={link.href} href={link.href}
-                className={`px-2.5 py-1 text-[11px] font-medium rounded-md transition-colors ${
+                className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
                   pathname === link.href
                     ? "text-zinc-100 bg-zinc-800"
                     : "text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800/50"
@@ -57,33 +57,33 @@ function Header() {
       </div>
 
       {session && (
-        <div className="flex items-center gap-1">
-          <div className="hidden sm:flex items-center gap-1.5 h-7 px-2.5 bg-zinc-900 border border-zinc-800 rounded-md">
-            <User className="w-3 h-3 text-zinc-500" />
-            <span className="text-[11px] font-mono text-zinc-400 max-w-[160px] truncate">{session.email}</span>
+        <div className="flex items-center gap-1.5">
+          <div className="hidden sm:flex items-center gap-1.5 h-8 px-3 bg-zinc-900 border border-zinc-800 rounded-md">
+            <User className="w-3.5 h-3.5 text-zinc-500" />
+            <span className="text-xs font-mono text-zinc-400 max-w-[180px] truncate">{session.email}</span>
             <button onClick={copyEmail} aria-label="Copy email"
               className="text-zinc-500 hover:text-zinc-300 transition-colors">
-              {copiedEmail ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+              {copiedEmail ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
             </button>
           </div>
 
           <button onClick={copyEmail} aria-label="Copy email"
-            className="sm:hidden w-8 h-8 flex items-center justify-center rounded-md text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800 transition-colors">
-            {copiedEmail ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
+            className="sm:hidden w-9 h-9 flex items-center justify-center rounded-md text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800 transition-colors">
+            {copiedEmail ? <Check className="w-4.5 h-4.5 text-emerald-400" /> : <Copy className="w-4.5 h-4.5" />}
           </button>
 
-          <div className="hidden sm:flex items-center gap-1 h-7 px-2 bg-zinc-900 border border-zinc-800 rounded-md"
+          <div className="hidden sm:flex items-center gap-1.5 h-8 px-2.5 bg-zinc-900 border border-zinc-800 rounded-md"
             title={sseConnected ? "Live via Mercure" : "Polling every 30s"}>
             {sseConnected ? (
-              <><Wifi className="w-3 h-3 text-emerald-400" /><span className="text-[9px] text-emerald-400 hidden lg:block">Live</span></>
+              <><Wifi className="w-3.5 h-3.5 text-emerald-400" /><span className="text-[10px] text-emerald-400 hidden lg:block">Live</span></>
             ) : (
-              <><WifiOff className="w-3 h-3 text-zinc-600" /><span className="text-[9px] text-zinc-600 hidden lg:block">Poll</span></>
+              <><WifiOff className="w-3.5 h-3.5 text-zinc-600" /><span className="text-[10px] text-zinc-600 hidden lg:block">Poll</span></>
             )}
           </div>
 
           <button onClick={() => { doFetch(session.token, { manual: true }); addToast("Refreshing...", "info"); }}
             aria-label="Refresh messages"
-            className="w-8 h-8 flex items-center justify-center rounded-md text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800 transition-colors">
+            className="w-9 h-9 flex items-center justify-center rounded-md text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800 transition-colors">
             <RefreshCw className="w-4 h-4" />
           </button>
         </div>
@@ -95,7 +95,7 @@ function Header() {
 function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="h-[100dvh] flex flex-col bg-[#09090b] text-zinc-100 overflow-hidden">
-      <div className="absolute top-14 left-0 right-0 z-[90] pointer-events-none">
+      <div className="absolute top-16 left-0 right-0 z-[90] pointer-events-none">
         <div className="absolute top-0 left-0 right-0 flex flex-col gap-2 pointer-events-auto px-4 pt-2">
           <ToastContainer />
         </div>

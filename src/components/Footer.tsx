@@ -21,7 +21,7 @@ export default function Footer() {
 
   return (
     <>
-      <footer className="flex-shrink-0 border-t border-zinc-800/50 py-2 px-4 flex items-center justify-center gap-3 text-[10px] text-zinc-500/70">
+      <footer className="flex-shrink-0 border-t border-zinc-800/50 py-2.5 px-4 flex items-center justify-center gap-3 text-xs text-zinc-500/70">
         <span>Créé par QBPG</span>
         <span className="text-zinc-700">·</span>
         <a href="mailto:qbpg.sg@outlook.com" className="hover:text-zinc-300 transition-colors">
@@ -41,16 +41,16 @@ export default function Footer() {
         <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/60 backdrop-blur-sm px-4"
           onClick={(e) => { if (e.target === e.currentTarget) close(); }}>
           <div className="w-full max-w-md bg-zinc-900 border border-zinc-800 rounded-xl shadow-2xl shadow-black/60 animate-fade-in-up">
-            <div className="flex items-center justify-between px-4 py-3 border-b border-zinc-800">
-              <h3 className="text-sm font-semibold text-zinc-100">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-zinc-800">
+              <h3 className="text-base font-semibold text-zinc-100">
                 {modal === "mentions" ? "Mentions légales" : "Politique de confidentialité"}
               </h3>
               <button onClick={close}
-                className="w-6 h-6 flex items-center justify-center rounded-md text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800 transition-colors">
-                <X className="w-3.5 h-3.5" />
+                className="w-7 h-7 flex items-center justify-center rounded-md text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800 transition-colors">
+                <X className="w-4 h-4" />
               </button>
             </div>
-            <div className="px-4 py-4 text-xs text-zinc-400 leading-relaxed space-y-3">
+            <div className="px-5 py-5 text-sm text-zinc-400 leading-relaxed space-y-3">
               {modal === "mentions" ? (
                 <>
                   <p><span className="text-zinc-300 font-medium">Éditeur :</span> qbpg</p>
@@ -83,9 +83,9 @@ export default function Footer() {
                 </>
               )}
             </div>
-            <div className="px-4 py-3 border-t border-zinc-800 flex justify-end">
+            <div className="px-5 py-4 border-t border-zinc-800 flex justify-end">
               <button onClick={close}
-                className="h-7 px-3 text-[11px] font-medium text-zinc-300 bg-zinc-800 hover:bg-zinc-700 rounded-md transition-colors">
+                className="h-8 px-4 text-sm font-medium text-zinc-300 bg-zinc-800 hover:bg-zinc-700 rounded-md transition-colors">
                 Fermer
               </button>
             </div>

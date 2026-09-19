@@ -69,19 +69,19 @@ input:focus, button:focus-visible { outline: none; }
 }
 
 .animate-in {
-  animation: fade-in 0.2s ease-out, zoom-in-95 0.2s ease-out;
+  animation: fade-in 0.2s cubic-bezier(0.16, 1, 0.3, 1), zoom-in-95 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .animate-toast-in {
-  animation: toast-in 0.25s ease-out;
+  animation: toast-in 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .animate-slide-in {
-  animation: slide-in-right 0.15s ease-out;
+  animation: slide-in-right 0.15s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .animate-fade-in-up {
-  animation: fade-in-up 0.2s ease-out;
+  animation: fade-in-up 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .animate-flash {
@@ -117,5 +117,5 @@ input:focus, button:focus-visible { outline: none; }
 }
 
 .animate-mobile-slide-up {
-  animation: mobile-slide-up 0.25s ease-out;
+  animation: mobile-slide-up 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
