@@ -1,6 +1,7 @@
 "use client";
 
 import "./globals.css";
+import Script from "next/script";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useCallback } from "react";
@@ -130,6 +131,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <title>Mailbox - Temporary Email</title>
         <link rel="icon" href="/favicon.svg" />
+        <Script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" strategy="lazyOnload" />
       </head>
       <body className="h-full antialiased" style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
         <SessionProvider>
