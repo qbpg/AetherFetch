@@ -36,7 +36,7 @@ function Header() {
   return (
     <header className="relative h-12 border-b border-zinc-800 flex items-center justify-between px-2 sm:px-4 flex-shrink-0 z-[60]">
       <div className="flex items-center gap-2.5">
-        <Link href={session ? "/dashboard" : "/home"} className="flex items-center gap-2.5">
+        <Link href="/accounts" className="flex items-center gap-2.5">
           <img src="/logo.svg" alt="Mailbox" className="h-6 w-6 object-contain" />
           <span className="text-sm font-semibold tracking-tight hidden sm:block">Mailbox</span>
         </Link>
