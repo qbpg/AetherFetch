@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { useRouter } from "next/navigation";
 import {
   Mail, MailOpen, Trash2,
@@ -20,6 +20,8 @@ export default function DashboardPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [mobileView, setMobileView] = useState<"inbox" | "detail">("inbox");
   const [initialLoading, setInitialLoading] = useState(true);
+  const [activeKey, setActiveKey] = useState<"c" | "r" | null>(null);
+  const activeKeyTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     if (!session) { router.replace("/home"); return; }
@@ -46,11 +48,27 @@ export default function DashboardPage() {
     function handleKeyDown(e: KeyboardEvent) {
       const target = e.target as HTMLElement;
       if (target.tagName === "INPUT" || target.tagName === "TEXTAREA" || target.isContentEditable) return;
-      if (e.key === "c" || e.key === "C") { e.preventDefault(); copyEmail(); }
-      if ((e.key === "r" || e.key === "R") && session) { e.preventDefault(); doFetch(session.token, { manual: true }); addToast("Refreshing...", "info"); }
+      if (e.key === "c" || e.key === "C") {
+        e.preventDefault();
+        copyEmail();
+        if (activeKeyTimer.current) clearTimeout(activeKeyTimer.current);
+        setActiveKey("c");
+        activeKeyTimer.current = setTimeout(() => setActiveKey(null), 160);
+      }
+      if ((e.key === "r" || e.key === "R") && session) {
+        e.preventDefault();
+        doFetch(session.token, { manual: true });
+        addToast("Refreshing...", "info");
+        if (activeKeyTimer.current) clearTimeout(activeKeyTimer.current);
+        setActiveKey("r");
+        activeKeyTimer.current = setTimeout(() => setActiveKey(null), 160);
+      }
     }
     document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+      if (activeKeyTimer.current) clearTimeout(activeKeyTimer.current);
+    };
   }, [session, doFetch, addToast, copyEmail]);
 
   const filteredMessages = useMemo(() => {
@@ -269,16 +287,16 @@ export default function DashboardPage() {
         )}
       </main>
 
-      <div className="fixed bottom-5 left-1/2 -translate-x-1/2 z-30 pointer-events-none">
-        <div className="flex items-center gap-3 px-3 py-1.5 bg-zinc-900/90 border border-zinc-800 rounded-lg shadow-sm backdrop-blur-sm">
+      <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-40 pointer-events-none">
+        <div className="border border-zinc-800 bg-zinc-900/95 text-zinc-400 text-[11px] font-mono px-3 py-1.5 rounded-md shadow-lg flex items-center gap-3 backdrop-blur-sm">
           <div className="flex items-center gap-1.5">
-            <span className="border border-zinc-800 bg-zinc-900 px-1.5 py-0.5 rounded text-zinc-300 font-mono text-[10px]">C</span>
-            <span className="text-[10px] text-zinc-500">Copier l&apos;e-mail</span>
+            <span className={`border px-1.5 py-0.5 rounded transition-all duration-150 ${activeKey === "c" ? "bg-zinc-700 border-zinc-500 text-zinc-100 scale-95" : "border-zinc-800 bg-zinc-900 text-zinc-300"}`}>C</span>
+            <span className="text-[11px] text-zinc-500">Copier l&apos;e-mail</span>
           </div>
           <div className="w-px h-3 bg-zinc-800" />
           <div className="flex items-center gap-1.5">
-            <span className="border border-zinc-800 bg-zinc-900 px-1.5 py-0.5 rounded text-zinc-300 font-mono text-[10px]">R</span>
-            <span className="text-[10px] text-zinc-500">Rafraîchir</span>
+            <span className={`border px-1.5 py-0.5 rounded transition-all duration-150 ${activeKey === "r" ? "bg-zinc-700 border-zinc-500 text-zinc-100 scale-95" : "border-zinc-800 bg-zinc-900 text-zinc-300"}`}>R</span>
+            <span className="text-[11px] text-zinc-500">Rafra&icirc;chir</span>
           </div>
         </div>
       </div>
