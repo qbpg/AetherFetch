@@ -187,8 +187,8 @@ export default function AuthForm({ onAuthenticated, initialMode }: AuthFormProps
   };
 
   return (
-    <div className="min-h-[100dvh] flex flex-col items-center justify-center bg-[#09090b] px-4 py-8">
-      <div className="w-full max-w-sm flex-1 flex flex-col justify-center">
+    <div className="min-h-[100dvh] flex flex-col items-center justify-start bg-[#09090b] px-4 py-8 sm:justify-center overflow-y-auto">
+      <div className="w-full max-w-sm flex flex-col sm:justify-center mt-auto sm:mt-0 mb-auto sm:mb-0">
         <div className="text-center mb-6 sm:mb-8">
           <div className="inline-flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 mb-3 sm:mb-4 transition-transform duration-300 hover:scale-105">
             <img src="/logo.svg" alt="Mailbox" className="w-12 h-12 sm:w-14 sm:h-14 object-contain" />
