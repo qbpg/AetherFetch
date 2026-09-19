@@ -95,9 +95,12 @@ export async function getDomains(): Promise<Domain[]> {
   return FALLBACK_DOMAINS;
 }
 
-export async function createAccount(address: string, password: string): Promise<Account> {
+export async function createAccount(address: string, password: string, turnstileToken?: string): Promise<Account> {
+  const headers: Record<string, string> = { "Content-Type": "application/json" };
+  if (turnstileToken) headers["cf-turnstile-response"] = turnstileToken;
   return apiFetch<Account>("/accounts", {
     method: "POST",
+    headers,
     body: JSON.stringify({ address, password }),
   });
 }

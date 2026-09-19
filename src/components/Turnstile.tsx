@@ -19,9 +19,10 @@ interface TurnstileProps {
   onExpire?: () => void;
   theme?: "light" | "dark" | "auto";
   className?: string;
+  resetKey?: number;
 }
 
-export default function Turnstile({ siteKey, onVerify, onExpire, theme = "dark", className }: TurnstileProps) {
+export default function Turnstile({ siteKey, onVerify, onExpire, theme = "dark", className, resetKey }: TurnstileProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const widgetIdRef = useRef<string | null>(null);
 
@@ -59,6 +60,13 @@ export default function Turnstile({ siteKey, onVerify, onExpire, theme = "dark",
 
     return () => clearInterval(interval);
   }, [siteKey, theme, handleVerify, handleExpire]);
+
+  useEffect(() => {
+    if (resetKey === undefined || resetKey === 0) return;
+    if (widgetIdRef.current && window.turnstile) {
+      try { window.turnstile.reset(widgetIdRef.current); } catch { /* noop */ }
+    }
+  }, [resetKey]);
 
   useEffect(() => {
     return () => {

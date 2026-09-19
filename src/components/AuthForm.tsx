@@ -55,7 +55,13 @@ export default function AuthForm({ onAuthenticated, initialMode }: AuthFormProps
   });
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [turnstileToken, setTurnstileToken] = useState("");
+  const [turnstileResetKey, setTurnstileResetKey] = useState(0);
   const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "";
+
+  const resetTurnstile = useCallback(() => {
+    setTurnstileToken("");
+    setTurnstileResetKey((k) => k + 1);
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -117,6 +123,23 @@ export default function AuthForm({ onAuthenticated, initialMode }: AuthFormProps
     }
   };
 
+  const verifyTurnstile = async (): Promise<boolean> => {
+    if (!turnstileSiteKey) return true;
+    if (!turnstileToken) { setError("Please complete the CAPTCHA verification."); return false; }
+    try {
+      const res = await fetch("/api/verify-turnstile", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token: turnstileToken }),
+      });
+      const data = await res.json();
+      if (!data.success) { setError("CAPTCHA verification failed. Please try again."); resetTurnstile(); return false; }
+      return true;
+    } catch {
+      setError("CAPTCHA verification failed. Please try again."); resetTurnstile(); return false;
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
@@ -127,10 +150,13 @@ export default function AuthForm({ onAuthenticated, initialMode }: AuthFormProps
       if (!selectedDomain) { setError("Please wait for domains to load."); return; }
       if (!password) { setError("Password is required."); return; }
 
+      const ok = await verifyTurnstile();
+      if (!ok) return;
+
       const fullAddress = `${trimmed}@${selectedDomain}`;
       setLoading(true);
       try {
-        const account = await createAccount(fullAddress, password);
+        const account = await createAccount(fullAddress, password, turnstileToken || undefined);
         const tokenRes = await getToken(fullAddress, password);
         saveSession({ token: tokenRes.token, email: fullAddress, password, accountId: account.id });
         saveAccountToHistory(fullAddress, password, accountLabel.trim() || undefined);
@@ -169,11 +195,14 @@ export default function AuthForm({ onAuthenticated, initialMode }: AuthFormProps
     if (!selectedDomain) { setError("Please wait for domains to load."); return; }
     if (!password) { setError("Password is required."); return; }
 
+    const ok = await verifyTurnstile();
+    if (!ok) return;
+
     const fullAddress = `${trimmed}@${selectedDomain}`;
     setLoading(true);
     setError("");
     try {
-      const account = await createAccount(fullAddress, password);
+      const account = await createAccount(fullAddress, password, turnstileToken || undefined);
       const tokenRes = await getToken(fullAddress, password);
       saveSession({ token: tokenRes.token, email: fullAddress, password, accountId: account.id });
       saveAccountToHistory(fullAddress, password, accountLabel.trim() || undefined);
@@ -202,7 +231,7 @@ export default function AuthForm({ onAuthenticated, initialMode }: AuthFormProps
 
         <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 sm:p-6 shadow-2xl shadow-black/40">
           <div className="flex bg-[#09090b] rounded-lg p-0.5 mb-5 sm:mb-6">
-            <button type="button" onClick={() => { setMode("register"); setError(""); }}
+            <button type="button" onClick={() => { setMode("register"); setError(""); resetTurnstile(); }}
               className={`flex-1 py-2 text-xs sm:text-sm font-medium rounded-md transition-all duration-200 ${
                 mode === "register"
                   ? "bg-zinc-800 text-zinc-100 shadow-sm"
@@ -224,7 +253,7 @@ export default function AuthForm({ onAuthenticated, initialMode }: AuthFormProps
             <div className="mb-4 space-y-1.5">
               <p className="text-[9px] font-medium text-zinc-600 uppercase tracking-wider px-1">Quick connect</p>
               {savedAccounts.map((acc) => (
-                <button key={acc.address} type="button" onClick={() => handleQuickLogin(acc)} disabled={loading || (turnstileSiteKey !== "" && !turnstileToken)}
+                <button key={acc.address} type="button" onClick={() => handleQuickLogin(acc)} disabled={loading}
                   className="w-full flex items-center gap-2.5 px-3 py-2.5 bg-[#09090b] border border-zinc-800 rounded-lg hover:border-zinc-700 hover:bg-zinc-800/50 transition-all duration-150 group text-left disabled:opacity-50">
                   <div className="w-7 h-7 rounded-md bg-zinc-800 border border-zinc-700/50 flex items-center justify-center flex-shrink-0 group-hover:border-indigo-500/30 transition-colors">
                     <User className="w-3.5 h-3.5 text-zinc-500 group-hover:text-indigo-400 transition-colors" />
@@ -305,12 +334,14 @@ export default function AuthForm({ onAuthenticated, initialMode }: AuthFormProps
               </button>
             </div>
 
-            <div className="relative">
-              <Tag className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 sm:w-4 sm:h-4 text-zinc-500 pointer-events-none" />
-              <input type="text" value={accountLabel} onChange={(e) => setAccountLabel(e.target.value)}
-                placeholder='Label (ex: Netflix, Test Dev)'
-                className="w-full h-10 sm:h-11 pl-9 sm:pl-10 pr-3 bg-[#09090b] border border-zinc-800 rounded-lg text-xs sm:text-sm text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/20 transition-all duration-200" />
-            </div>
+            {mode === "register" && (
+              <div className="relative">
+                <Tag className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 sm:w-4 sm:h-4 text-zinc-500 pointer-events-none" />
+                <input type="text" value={accountLabel} onChange={(e) => setAccountLabel(e.target.value)}
+                  placeholder='Label (ex: Netflix, Test Dev)'
+                  className="w-full h-10 sm:h-11 pl-9 sm:pl-10 pr-3 bg-[#09090b] border border-zinc-800 rounded-lg text-xs sm:text-sm text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/20 transition-all duration-200" />
+              </div>
+            )}
 
             {mode === "register" && (
               <button type="button" onClick={generateRandomCredentials}
@@ -320,6 +351,12 @@ export default function AuthForm({ onAuthenticated, initialMode }: AuthFormProps
               </button>
             )}
 
+            {mode === "register" && turnstileSiteKey && (
+              <div className="flex justify-center py-1">
+                <Turnstile siteKey={turnstileSiteKey} onVerify={setTurnstileToken} onExpire={resetTurnstile} resetKey={turnstileResetKey} />
+              </div>
+            )}
+
             {error && (
               <div className="flex items-start gap-2 text-xs sm:text-sm text-red-400 bg-red-400/5 border border-red-400/10 rounded-lg px-3 py-2 animate-in">
                 <AlertCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 mt-0.5 flex-shrink-0" />
@@ -327,13 +364,7 @@ export default function AuthForm({ onAuthenticated, initialMode }: AuthFormProps
               </div>
             )}
 
-            {turnstileSiteKey && (
-              <div className="flex justify-center">
-                <Turnstile siteKey={turnstileSiteKey} onVerify={setTurnstileToken} />
-              </div>
-            )}
-
-            <button type="submit" disabled={loading || (turnstileSiteKey !== "" && !turnstileToken)}
+            <button type="submit" disabled={loading || (mode === "register" && turnstileSiteKey !== "" && !turnstileToken)}
               className="w-full h-10 sm:h-11 bg-indigo-500 hover:bg-indigo-400 active:bg-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed text-white text-xs sm:text-sm font-medium rounded-lg transition-all duration-200 flex items-center justify-center gap-2 hover:shadow-lg hover:shadow-indigo-500/10 active:scale-[0.98]">
               {loading ? <Loader2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 animate-spin" /> : (
                 <>{mode === "register" ? "Create mailbox" : "Sign in"}<ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 transition-transform group-hover:translate-x-0.5" /></>
