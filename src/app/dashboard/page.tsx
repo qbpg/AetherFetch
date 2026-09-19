@@ -19,10 +19,12 @@ export default function DashboardPage() {
   const [deletingMsg, setDeletingMsg] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [mobileView, setMobileView] = useState<"inbox" | "detail">("inbox");
+  const [initialLoading, setInitialLoading] = useState(true);
 
   useEffect(() => {
     if (!session) { router.replace("/home"); return; }
-    doFetch(session.token);
+    setInitialLoading(true);
+    doFetch(session.token).finally(() => setInitialLoading(false));
   }, [session, router, doFetch]);
 
   const copyEmail = useCallback(async () => {
@@ -144,8 +146,32 @@ export default function DashboardPage() {
         )}
 
         <div className="flex-1 overflow-y-auto">
-          {messages.length === 0 ? (
-            <div className="flex items-center justify-center h-32"><div className="w-4 h-4 rounded-full bg-zinc-900/50" /></div>
+          {initialLoading && messages.length === 0 ? (
+            <div className="p-3 space-y-2">
+              {[1, 2, 3, 4].map((i) => (
+                <div key={i} className="px-3.5 py-3 border-b border-zinc-800/50 animate-pulse">
+                  <div className="flex items-start gap-2.5">
+                    <div className="mt-0.5 w-3.5 h-3.5 rounded bg-zinc-800" />
+                    <div className="flex-1 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <div className="h-2.5 bg-zinc-800 rounded w-24" />
+                        <div className="h-2 bg-zinc-800 rounded w-6" />
+                      </div>
+                      <div className="h-2.5 bg-zinc-800 rounded w-36" />
+                      <div className="h-2 bg-zinc-800 rounded w-48" />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : messages.length === 0 ? (
+            <div className="flex flex-col items-center justify-center h-32 text-zinc-600">
+              <div className="w-10 h-10 rounded-xl bg-zinc-900 border border-zinc-800 flex items-center justify-center mb-3">
+                <Inbox className="w-5 h-5 text-zinc-700" />
+              </div>
+              <p className="text-xs font-medium text-zinc-500">No messages yet</p>
+              <p className="text-[10px] text-zinc-700 mt-0.5">Waiting for incoming mail...</p>
+            </div>
           ) : sortedMessages.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-32 text-zinc-600">
               <Mail className="w-7 h-7 mb-2 opacity-30" />
