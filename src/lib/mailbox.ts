@@ -39,10 +39,13 @@ export function isRateLimited(): boolean {
   return Date.now() < rateLimitUntil;
 }
 
+const AUTH_ENDPOINTS = ["/token", "/me", "/accounts", "/domains"];
+
 async function apiFetch<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
   const { headers: customHeaders, ...restOptions } = options;
 
-  if (Date.now() < rateLimitUntil) {
+  const isAuthEndpoint = AUTH_ENDPOINTS.some((ep) => endpoint.startsWith(ep));
+  if (!isAuthEndpoint && Date.now() < rateLimitUntil) {
     throw new Error("Rate limited");
   }
 
