@@ -268,6 +268,20 @@ export default function DashboardPage() {
           </div>
         )}
       </main>
+
+      <div className="fixed bottom-5 left-1/2 -translate-x-1/2 z-30 pointer-events-none">
+        <div className="flex items-center gap-3 px-3 py-1.5 bg-zinc-900/90 border border-zinc-800 rounded-lg shadow-sm backdrop-blur-sm">
+          <div className="flex items-center gap-1.5">
+            <span className="border border-zinc-800 bg-zinc-900 px-1.5 py-0.5 rounded text-zinc-300 font-mono text-[10px]">C</span>
+            <span className="text-[10px] text-zinc-500">Copier l&apos;e-mail</span>
+          </div>
+          <div className="w-px h-3 bg-zinc-800" />
+          <div className="flex items-center gap-1.5">
+            <span className="border border-zinc-800 bg-zinc-900 px-1.5 py-0.5 rounded text-zinc-300 font-mono text-[10px]">R</span>
+            <span className="text-[10px] text-zinc-500">Rafraîchir</span>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
