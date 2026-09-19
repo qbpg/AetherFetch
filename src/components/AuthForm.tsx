@@ -7,7 +7,6 @@ import {
   AlertCircle, Shuffle, Copy, Check, User, Tag, Trash2,
 } from "lucide-react";
 import Footer from "@/components/Footer";
-import Turnstile from "@/components/Turnstile";
 import {
   getDomains, createAccount, getToken, getMe,
   saveSession, saveAccountToHistory, generateValidPassword,
@@ -21,6 +20,7 @@ interface AuthFormProps {
 }
 
 const DEFAULT_DOMAIN = "uberip.com";
+const MIN_SUBMIT_MS = 1500;
 
 function getInitialMode(): "login" | "register" {
   if (typeof window === "undefined") return "register";
@@ -54,14 +54,8 @@ export default function AuthForm({ onAuthenticated, initialMode }: AuthFormProps
     } catch { return []; }
   });
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const [turnstileToken, setTurnstileToken] = useState("");
-  const [turnstileResetKey, setTurnstileResetKey] = useState(0);
-  const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "";
-
-  const resetTurnstile = useCallback(() => {
-    setTurnstileToken("");
-    setTurnstileResetKey((k) => k + 1);
-  }, []);
+  const honeypotRef = useRef<HTMLInputElement>(null);
+  const formLoadTime = useRef<number>(Date.now());
 
   useEffect(() => {
     let cancelled = false;
@@ -123,26 +117,20 @@ export default function AuthForm({ onAuthenticated, initialMode }: AuthFormProps
     }
   };
 
-  const verifyTurnstile = async (): Promise<boolean> => {
-    if (!turnstileSiteKey) return true;
-    if (!turnstileToken) { setError("Please complete the CAPTCHA verification."); return false; }
-    try {
-      const res = await fetch("/api/verify-turnstile", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token: turnstileToken }),
-      });
-      const data = await res.json();
-      if (!data.success) { setError("CAPTCHA verification failed. Please try again."); resetTurnstile(); return false; }
-      return true;
-    } catch {
-      setError("CAPTCHA verification failed. Please try again."); resetTurnstile(); return false;
-    }
+  const checkAntiBot = (): boolean => {
+    if (honeypotRef.current?.value) return false;
+    if (Date.now() - formLoadTime.current < MIN_SUBMIT_MS) return false;
+    return true;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+
+    if (!checkAntiBot()) {
+      setError("Verification failed. Please try again.");
+      return;
+    }
 
     if (mode === "register") {
       const trimmed = username.trim();
@@ -150,13 +138,10 @@ export default function AuthForm({ onAuthenticated, initialMode }: AuthFormProps
       if (!selectedDomain) { setError("Please wait for domains to load."); return; }
       if (!password) { setError("Password is required."); return; }
 
-      const ok = await verifyTurnstile();
-      if (!ok) return;
-
       const fullAddress = `${trimmed}@${selectedDomain}`;
       setLoading(true);
       try {
-        const account = await createAccount(fullAddress, password, turnstileToken || undefined);
+        const account = await createAccount(fullAddress, password);
         const tokenRes = await getToken(fullAddress, password);
         saveSession({ token: tokenRes.token, email: fullAddress, password, accountId: account.id });
         saveAccountToHistory(fullAddress, password, accountLabel.trim() || undefined);
@@ -172,9 +157,6 @@ export default function AuthForm({ onAuthenticated, initialMode }: AuthFormProps
       if (!trimmed) { setError("Identifiant requis."); return; }
       if (!selectedDomain) { setError("Please wait for domains to load."); return; }
       if (!password) { setError("Mot de passe requis."); return; }
-
-      const ok = await verifyTurnstile();
-      if (!ok) return;
 
       const fullAddress = `${trimmed}@${selectedDomain}`;
       setLoading(true);
@@ -198,14 +180,16 @@ export default function AuthForm({ onAuthenticated, initialMode }: AuthFormProps
     if (!selectedDomain) { setError("Please wait for domains to load."); return; }
     if (!password) { setError("Password is required."); return; }
 
-    const ok = await verifyTurnstile();
-    if (!ok) return;
+    if (!checkAntiBot()) {
+      setError("Verification failed. Please try again.");
+      return;
+    }
 
     const fullAddress = `${trimmed}@${selectedDomain}`;
     setLoading(true);
     setError("");
     try {
-      const account = await createAccount(fullAddress, password, turnstileToken || undefined);
+      const account = await createAccount(fullAddress, password);
       const tokenRes = await getToken(fullAddress, password);
       saveSession({ token: tokenRes.token, email: fullAddress, password, accountId: account.id });
       saveAccountToHistory(fullAddress, password, accountLabel.trim() || undefined);
@@ -234,7 +218,7 @@ export default function AuthForm({ onAuthenticated, initialMode }: AuthFormProps
 
         <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 sm:p-6 shadow-2xl shadow-black/40">
           <div className="flex bg-[#09090b] rounded-lg p-0.5 mb-5 sm:mb-6">
-            <button type="button" onClick={() => { setMode("register"); setError(""); resetTurnstile(); }}
+            <button type="button" onClick={() => { setMode("register"); setError(""); }}
               className={`flex-1 py-2 text-xs sm:text-sm font-medium rounded-md transition-all duration-200 ${
                 mode === "register"
                   ? "bg-zinc-800 text-zinc-100 shadow-sm"
@@ -242,7 +226,7 @@ export default function AuthForm({ onAuthenticated, initialMode }: AuthFormProps
               }`}>
               Register
             </button>
-            <button type="button" onClick={() => { setMode("login"); setError(""); refreshAccounts(); resetTurnstile(); }}
+            <button type="button" onClick={() => { setMode("login"); setError(""); refreshAccounts(); }}
               className={`flex-1 py-2 text-xs sm:text-sm font-medium rounded-md transition-all duration-200 ${
                 mode === "login"
                   ? "bg-zinc-800 text-zinc-100 shadow-sm"
@@ -277,6 +261,9 @@ export default function AuthForm({ onAuthenticated, initialMode }: AuthFormProps
           )}
 
           <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
+            <input ref={honeypotRef} type="text" name="website" tabIndex={-1} autoComplete="off"
+              className="absolute opacity-0 pointer-events-none h-0 w-0 -z-10" aria-hidden="true" />
+
             {mode === "login" && savedAccounts.length > 0 && (
               <p className="text-[10px] text-zinc-600 text-center -mt-1">Or sign in with another account</p>
             )}
@@ -361,13 +348,7 @@ export default function AuthForm({ onAuthenticated, initialMode }: AuthFormProps
               </div>
             )}
 
-            {turnstileSiteKey && (
-              <div className="flex justify-center py-1">
-                <Turnstile siteKey={turnstileSiteKey} onVerify={setTurnstileToken} onExpire={resetTurnstile} resetKey={turnstileResetKey} />
-              </div>
-            )}
-
-            <button type="submit" disabled={loading || (turnstileSiteKey !== "" && !turnstileToken)}
+            <button type="submit" disabled={loading}
               className="w-full h-10 sm:h-11 bg-indigo-500 hover:bg-indigo-400 active:bg-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed text-white text-xs sm:text-sm font-medium rounded-lg transition-all duration-200 flex items-center justify-center gap-2 hover:shadow-lg hover:shadow-indigo-500/10 active:scale-[0.98]">
               {loading ? <Loader2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 animate-spin" /> : (
                 <>{mode === "register" ? "Create mailbox" : "Sign in"}<ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 transition-transform group-hover:translate-x-0.5" /></>
@@ -375,7 +356,7 @@ export default function AuthForm({ onAuthenticated, initialMode }: AuthFormProps
             </button>
 
             {mode === "register" && username.trim() && selectedDomain && (
-              <button type="button" onClick={handleCreateAndCopy} disabled={loading || (turnstileSiteKey !== "" && !turnstileToken)}
+              <button type="button" onClick={handleCreateAndCopy} disabled={loading}
                 className="w-full h-8 sm:h-9 flex items-center justify-center gap-2 text-[11px] sm:text-xs font-medium text-indigo-400/70 hover:text-indigo-400 bg-indigo-500/5 hover:bg-indigo-500/10 border border-indigo-500/10 rounded-lg transition-all duration-200 active:scale-[0.98] disabled:opacity-50">
                 {loading ? <Loader2 className="w-3 h-3 sm:w-3.5 sm:h-3.5 animate-spin" /> : (
                   copiedAddr ? <Check className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-emerald-400" /> : <Copy className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
