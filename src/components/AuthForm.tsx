@@ -173,6 +173,9 @@ export default function AuthForm({ onAuthenticated, initialMode }: AuthFormProps
       if (!selectedDomain) { setError("Please wait for domains to load."); return; }
       if (!password) { setError("Mot de passe requis."); return; }
 
+      const ok = await verifyTurnstile();
+      if (!ok) return;
+
       const fullAddress = `${trimmed}@${selectedDomain}`;
       setLoading(true);
       try {
@@ -239,7 +242,7 @@ export default function AuthForm({ onAuthenticated, initialMode }: AuthFormProps
               }`}>
               Register
             </button>
-            <button type="button" onClick={() => { setMode("login"); setError(""); refreshAccounts(); }}
+            <button type="button" onClick={() => { setMode("login"); setError(""); refreshAccounts(); resetTurnstile(); }}
               className={`flex-1 py-2 text-xs sm:text-sm font-medium rounded-md transition-all duration-200 ${
                 mode === "login"
                   ? "bg-zinc-800 text-zinc-100 shadow-sm"
@@ -358,7 +361,13 @@ export default function AuthForm({ onAuthenticated, initialMode }: AuthFormProps
               </div>
             )}
 
-            <button type="submit" disabled={loading || (mode === "register" && turnstileSiteKey !== "" && !turnstileToken)}
+            {turnstileSiteKey && (
+              <div className="flex justify-center py-1">
+                <Turnstile siteKey={turnstileSiteKey} onVerify={setTurnstileToken} onExpire={resetTurnstile} resetKey={turnstileResetKey} />
+              </div>
+            )}
+
+            <button type="submit" disabled={loading || (turnstileSiteKey !== "" && !turnstileToken)}
               className="w-full h-10 sm:h-11 bg-indigo-500 hover:bg-indigo-400 active:bg-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed text-white text-xs sm:text-sm font-medium rounded-lg transition-all duration-200 flex items-center justify-center gap-2 hover:shadow-lg hover:shadow-indigo-500/10 active:scale-[0.98]">
               {loading ? <Loader2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 animate-spin" /> : (
                 <>{mode === "register" ? "Create mailbox" : "Sign in"}<ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 transition-transform group-hover:translate-x-0.5" /></>
@@ -375,12 +384,6 @@ export default function AuthForm({ onAuthenticated, initialMode }: AuthFormProps
               </button>
             )}
           </form>
-
-          {mode === "register" && turnstileSiteKey && (
-            <div className="my-4 flex justify-center">
-              <Turnstile siteKey={turnstileSiteKey} onVerify={setTurnstileToken} onExpire={resetTurnstile} resetKey={turnstileResetKey} />
-            </div>
-          )}
 
           <div className="mt-3 sm:mt-4 text-center">
             <p className="text-[11px] sm:text-xs text-zinc-600">

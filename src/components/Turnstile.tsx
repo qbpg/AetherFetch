@@ -76,5 +76,9 @@ export default function Turnstile({ siteKey, onVerify, onExpire, theme = "dark",
     };
   }, []);
 
-  return <div ref={containerRef} className={className} />;
+  return (
+    <div className={`rounded-lg border border-zinc-800 bg-zinc-900/50 p-3 ${className ?? ""}`}>
+      <div ref={containerRef} />
+    </div>
+  );
 }
