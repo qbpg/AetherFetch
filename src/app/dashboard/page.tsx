@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useMemo, useRef } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import {
   Mail, MailOpen, Trash2,
@@ -21,8 +21,7 @@ export default function DashboardPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [mobileView, setMobileView] = useState<"inbox" | "detail">("inbox");
   const [initialLoading, setInitialLoading] = useState(true);
-  const [activeKey, setActiveKey] = useState<"c" | "r" | null>(null);
-  const activeKeyTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
 
   useEffect(() => {
     if (!session) { router.replace("/"); return; }
@@ -52,23 +51,16 @@ export default function DashboardPage() {
       if (e.key === "c" || e.key === "C") {
         e.preventDefault();
         copyEmail();
-        if (activeKeyTimer.current) clearTimeout(activeKeyTimer.current);
-        setActiveKey("c");
-        activeKeyTimer.current = setTimeout(() => setActiveKey(null), 160);
       }
       if ((e.key === "r" || e.key === "R") && session) {
         e.preventDefault();
         doFetch(session.token, { manual: true });
         addToast("Refreshing...", "info");
-        if (activeKeyTimer.current) clearTimeout(activeKeyTimer.current);
-        setActiveKey("r");
-        activeKeyTimer.current = setTimeout(() => setActiveKey(null), 160);
       }
     }
     document.addEventListener("keydown", handleKeyDown);
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
-      if (activeKeyTimer.current) clearTimeout(activeKeyTimer.current);
     };
   }, [session, doFetch, addToast, copyEmail]);
 
@@ -371,20 +363,7 @@ export default function DashboardPage() {
         )}
       </main>
 
-      {/* Keyboard shortcut bar */}
-      <div className="fixed bottom-5 left-1/2 -translate-x-1/2 z-40 pointer-events-none max-w-[calc(100vw-2rem)]">
-        <div translate="no" className="border border-zinc-800/80 bg-zinc-900/95 text-zinc-400 text-xs font-mono px-4 py-2 rounded-lg shadow-lg shadow-black/30 flex items-center gap-4 backdrop-blur-sm">
-          <div className="flex items-center gap-2">
-            <span className={`border px-2 py-1 rounded-md text-xs font-medium transition-all duration-200 ${activeKey === "c" ? "bg-zinc-700 border-zinc-500 text-zinc-100 scale-95" : "border-zinc-800 bg-zinc-900 text-zinc-300"}`}>C</span>
-            <span className="text-xs text-zinc-500">Copy email</span>
-          </div>
-          <div className="w-px h-4 bg-zinc-800" />
-          <div className="flex items-center gap-2">
-            <span className={`border px-2 py-1 rounded-md text-xs font-medium transition-all duration-200 ${activeKey === "r" ? "bg-zinc-700 border-zinc-500 text-zinc-100 scale-95" : "border-zinc-800 bg-zinc-900 text-zinc-300"}`}>R</span>
-            <span className="text-xs text-zinc-500">Refresh</span>
-          </div>
-        </div>
-      </div>
+
     </div>
   );
 }
