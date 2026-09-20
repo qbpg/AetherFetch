@@ -17,7 +17,7 @@ function getStoredConsent(): ConsentValue {
 export default function CookieConsent() {
   const [visible, setVisible] = useState(() => getStoredConsent() === null);
 
-  function decide(value: ConsentValue) {
+  function decide(value: "accepted" | "rejected") {
     localStorage.setItem(STORAGE_KEY, value);
     setVisible(false);
   }
