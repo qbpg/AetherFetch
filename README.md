@@ -157,6 +157,6 @@ The application requires no client-side environment variables. The Cloudflare Wo
 
 ## Author
 
-**QPBG** — [qbpg.sg@outlook.com](mailto:qbpg.sg@outlook.com)
+**qbpg** — [qbpg.sg@outlook.com](mailto:qbpg.sg@outlook.com)
 
 GitHub: [github.com/qbpg](https://github.com/qbpg)
