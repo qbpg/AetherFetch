@@ -3,10 +3,11 @@
 import "./globals.css";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { Copy, Check, Wifi, WifiOff, User, RefreshCw } from "lucide-react";
 import { Analytics } from "@vercel/analytics/next";
 import { SessionProvider, useSession } from "@/contexts/SessionContext";
+import AppleFloatingNavbar from "@/components/AppleFloatingNavbar";
 
 function Header() {
   const { session, sseConnected, doFetch, addToast } = useSession();
@@ -62,7 +63,7 @@ function Header() {
         <div className="flex items-center gap-1.5">
           <div className="hidden sm:flex items-center gap-1.5 h-8 px-3 bg-zinc-900 border border-zinc-800 rounded-md">
             <User className="w-3.5 h-3.5 text-zinc-500" />
-            <span className="text-xs font-mono text-zinc-400 max-w-[180px] truncate">{session.email}</span>
+            <span translate="no" className="text-xs font-mono text-zinc-400 max-w-[180px] truncate">{session.email}</span>
             <button onClick={copyEmail} aria-label="Copy email"
               className="text-zinc-500 hover:text-zinc-300 transition-colors">
               {copiedEmail ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
@@ -94,15 +95,20 @@ function Header() {
   );
 }
 
+const LANDING_ROUTES = ["/"];
+
 function AppShell({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+  const isLanding = LANDING_ROUTES.includes(pathname);
+
   return (
-    <div className="h-[100dvh] flex flex-col bg-[#09090b] text-zinc-100 overflow-hidden">
+    <div className={`${isLanding ? "min-h-[100dvh]" : "h-[100dvh]"} flex flex-col bg-[#09090b] text-zinc-100 ${isLanding ? "" : "overflow-hidden"}`}>
       <div className="absolute top-16 left-0 right-0 z-[90] pointer-events-none">
         <div className="absolute top-0 left-0 right-0 flex flex-col gap-2 pointer-events-auto px-4 pt-2">
           <ToastContainer />
         </div>
       </div>
-      <Header />
+      {isLanding ? <AppleFloatingNavbar /> : <Header />}
       {children}
     </div>
   );

@@ -169,7 +169,7 @@ export default function AccountsPage() {
                   <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse-dot" />
                   <span className="text-[11px] text-zinc-500 uppercase tracking-wider font-medium">Active session</span>
                 </div>
-                <p className="text-sm font-medium text-zinc-200 truncate">{session.email}</p>
+                <p translate="no" className="text-sm font-medium text-zinc-200 truncate">{session.email}</p>
                 {editingLabel === session.email ? (
                   <div className="flex items-center gap-1.5 mt-1.5">
                     <input type="text" value={labelValue} onChange={(e) => setLabelValue(e.target.value)}
@@ -223,7 +223,7 @@ export default function AccountsPage() {
               <span className="text-[11px] text-zinc-600 uppercase tracking-wider font-medium">Password</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-sm font-mono text-zinc-400 flex-1 truncate">
+              <span translate="no" className="text-sm font-mono text-zinc-400 flex-1 truncate">
                 {showPassword ? session.password : "\u2022".repeat(16)}
               </span>
               <button onClick={() => setShowPassword(!showPassword)}
@@ -318,7 +318,7 @@ export default function AccountsPage() {
                           </button>
                         )}
                       </p>
-                      {acc.label && <p className="text-xs text-zinc-500 font-mono truncate mt-0.5">{acc.address}</p>}
+                      {acc.label && <p translate="no" className="text-xs text-zinc-500 font-mono truncate mt-0.5">{acc.address}</p>}
                     </>
                   )}
                 </div>

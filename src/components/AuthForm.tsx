@@ -251,8 +251,8 @@ export default function AuthForm({ onAuthenticated, initialMode }: AuthFormProps
                     <User className="w-3.5 h-3.5 text-zinc-500 group-hover:text-indigo-400 transition-colors" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs font-medium text-zinc-300 truncate">{acc.address}</p>
-                    <p className="text-[10px] text-zinc-600 font-mono truncate">{acc.password}</p>
+                    <p translate="no" className="text-xs font-medium text-zinc-300 truncate">{acc.address}</p>
+                    <p translate="no" className="text-[10px] text-zinc-600 font-mono truncate">{acc.password}</p>
                   </div>
                   <span onClick={(e) => handleRemoveAccount(e, acc.address)}
                     className="flex-shrink-0 p-1 rounded text-zinc-600 hover:text-red-400 hover:bg-red-500/10 transition-colors opacity-0 group-hover:opacity-100"
