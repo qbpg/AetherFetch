@@ -82,10 +82,10 @@ export default function AppleFloatingNavbar() {
     <div className="fixed top-0 left-0 right-0 z-[100] pointer-events-none">
       <div className="flex justify-center pt-2.5 sm:pt-3">
         <nav
-          className={`pointer-events-auto mx-2 flex h-11 items-center gap-1 ${navWidth} ${navRadius} transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+          className={`pointer-events-auto mx-2 flex h-11 items-center justify-between ${navWidth} ${navRadius} transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
             scrolled
-              ? "bg-zinc-900/80 backdrop-blur-xl border border-zinc-800/80 shadow-[0_2px_24px_rgba(0,0,0,0.5)] px-3"
-              : "bg-zinc-900/60 backdrop-blur-md border border-zinc-800/50 px-4"
+              ? "bg-zinc-900/80 backdrop-blur-xl border border-zinc-800/80 shadow-[0_2px_24px_rgba(0,0,0,0.5)] px-4 sm:px-6"
+              : "bg-zinc-900/60 backdrop-blur-md border border-zinc-800/50 px-4 sm:px-5"
           }`}
         >
           <Link href="/" className={`flex shrink-0 items-center gap-2 transition-all duration-500 ${scrolled ? "mr-1" : "mr-2"}`}>
@@ -101,8 +101,8 @@ export default function AppleFloatingNavbar() {
             </span>
           </Link>
 
-          <div className={`flex items-center transition-all duration-500 overflow-hidden ${
-            scrolled ? "gap-0" : "gap-0.5"
+          <div className={`flex items-center justify-center transition-all duration-500 overflow-hidden ${
+            scrolled ? "gap-1" : "gap-1.5"
           }`}>
             {NAV_LINKS.map((link) => (
               <button
@@ -118,8 +118,6 @@ export default function AppleFloatingNavbar() {
               </button>
             ))}
           </div>
-
-          <div className="w-px h-4 bg-zinc-700/50 mx-1 hidden sm:block" />
 
           <div className="flex shrink-0 items-center gap-1">
             {session ? (
