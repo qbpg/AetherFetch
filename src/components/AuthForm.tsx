@@ -215,9 +215,9 @@ export default function AuthForm({ onAuthenticated, initialMode }: AuthFormProps
       <div className="w-full max-w-sm flex flex-col sm:justify-center mt-auto sm:mt-0 mb-auto sm:mb-0">
         <div className="text-center mb-6 sm:mb-8">
           <div className="inline-flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 mb-3 sm:mb-4 transition-transform duration-300 hover:scale-105">
-            <img src="/logo.svg" alt="Mailbox" className="w-12 h-12 sm:w-14 sm:h-14 object-contain" />
+            <img src="/logo.svg" alt="AegisFlow" className="w-12 h-12 sm:w-14 sm:h-14 object-contain" />
           </div>
-          <h1 className="text-xl sm:text-2xl font-semibold text-zinc-100 tracking-tight">Mailbox</h1>
+          <h1 className="text-xl sm:text-2xl font-semibold text-zinc-100 tracking-tight">AegisFlow</h1>
           <p className="text-xs sm:text-sm text-zinc-500 mt-1">Temporary email, instant access.</p>
         </div>
 
@@ -356,7 +356,7 @@ export default function AuthForm({ onAuthenticated, initialMode }: AuthFormProps
             <button type="submit" disabled={loading}
               className="w-full h-10 sm:h-11 bg-indigo-500 hover:bg-indigo-400 active:bg-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed text-white text-xs sm:text-sm font-medium rounded-lg transition-all duration-200 flex items-center justify-center gap-2 hover:shadow-lg hover:shadow-indigo-500/10 active:scale-[0.98]">
               {loading ? <Loader2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 animate-spin" /> : (
-                <>{mode === "register" ? "Create mailbox" : "Sign in"}<ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 transition-transform group-hover:translate-x-0.5" /></>
+                <>{mode === "register" ? "Create account" : "Sign in"}<ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 transition-transform group-hover:translate-x-0.5" /></>
               )}
             </button>
 
@@ -383,7 +383,7 @@ export default function AuthForm({ onAuthenticated, initialMode }: AuthFormProps
         </div>
 
         <p className="text-center text-[10px] sm:text-xs text-zinc-700 mt-4 sm:mt-6">
-          Mailbox &mdash; Temporary email, instant access.
+          AegisFlow &mdash; Temporary email, instant access.
         </p>
       </div>
       <Footer />

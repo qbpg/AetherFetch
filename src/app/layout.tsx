@@ -37,8 +37,9 @@ function Header() {
     <header className="relative h-14 border-b border-zinc-800 flex items-center justify-between px-3 sm:px-5 flex-shrink-0 z-[60]">
       <div className="flex items-center gap-3">
         <Link href="/accounts" className="flex items-center gap-2.5">
-          <img src="/logo.svg" alt="Mailbox" className="h-7 w-7 object-contain" />
-          <span className="text-base font-semibold tracking-tight hidden sm:block">Mailbox</span>
+          <img src="/logo.svg" alt="AegisFlow" className="h-7 w-7 object-contain" />
+          <span className="text-base font-semibold tracking-tight hidden sm:block">AegisFlow</span>
+          <span className="text-[9px] font-bold text-zinc-500 bg-zinc-800 border border-zinc-700/50 px-1.5 py-0.5 rounded leading-none hidden sm:block">AF</span>
         </Link>
         {session && (
           <nav className="hidden sm:flex items-center gap-0.5 ml-2">
@@ -128,7 +129,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className="dark">
       <head>
-        <title>Mailbox - Temporary Email</title>
+        <title>AegisFlow - Temporary Email</title>
         <link rel="icon" href="/favicon.svg" />
       </head>
       <body className="h-full antialiased" style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
