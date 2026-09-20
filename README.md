@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="public/logo.svg" alt="Panel Mail Box" width="56" />
+  <img src="public/logo.svg" alt="AetherFetch" width="56" />
 </p>
 
-<h1 align="center">Panel Mail Box</h1>
+<h1 align="center">AetherFetch <span style="font-size: 0.6em; color: #71717a;">(AF)</span></h1>
 
 <p align="center">
   Temporary email panel — instant access, zero friction.
@@ -22,7 +22,7 @@
 
 ## Overview
 
-**Panel Mail Box** is a high-precision temporary email management panel built with a minimal zinc monochrome design. It provides instant disposable email access via the [mail.tm](https://mail.tm) API, routed through a Cloudflare Worker CORS proxy for zero-friction anti-bot protection.
+**AetherFetch (AF)** is a high-precision temporary email management panel built with a minimal zinc monochrome design. It provides instant disposable email access via the [mail.tm](https://mail.tm) API, routed through a Cloudflare Worker CORS proxy for zero-friction anti-bot protection.
 
 Multi-account management, real-time inbox with Mercure SSE, keyboard shortcuts, and a silent anti-bot layer — all in a clean, dark interface with surgical attention to detail.
 
@@ -58,8 +58,8 @@ Multi-account management, real-time inbox with Mercure SSE, keyboard shortcuts, 
 
 ```bash
 # Clone
-git clone https://github.com/qbpg/panel-mail-box.git
-cd panel-mail-box
+git clone https://github.com/qbpg/AetherFetch.git
+cd AetherFetch
 
 # Install dependencies
 npm install
@@ -145,7 +145,7 @@ npx vercel --prod
 cd cf-proxy && npx wrangler deploy
 ```
 
-**Production:** [https://panel-mail-box.vercel.app](https://panel-mail-box.vercel.app)
+**Production:** [https://aetherfetch.vercel.app](https://aetherfetch.vercel.app)
 
 ## Environment Variables
 
@@ -153,8 +153,10 @@ The application requires no client-side environment variables. The Cloudflare Wo
 
 ## License
 
-[MIT](LICENSE) — Copyright (c) 2026 qbpg
+[MIT](LICENSE) — Copyright (c) 2026 QPBG
 
-## Contact
+## Author
 
-**qbpg** — [qbpg.sg@outlook.com](mailto:qbpg.sg@outlook.com)
+**QPBG** — [qbpg.sg@outlook.com](mailto:qbpg.sg@outlook.com)
+
+GitHub: [github.com/qbpg](https://github.com/qbpg)
