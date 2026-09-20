@@ -132,3 +132,13 @@ html[translate="no"] {
 * {
   overflow-wrap: break-word;
 }
+
+.cursor-glow-hidden {
+  display: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .cursor-glow-hidden {
+    display: block;
+  }
+}

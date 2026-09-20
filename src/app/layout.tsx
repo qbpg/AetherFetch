@@ -9,6 +9,7 @@ import { Analytics } from "@vercel/analytics/next";
 import { SessionProvider, useSession } from "@/contexts/SessionContext";
 import AppleFloatingNavbar from "@/components/AppleFloatingNavbar";
 import CookieConsent from "@/components/CookieConsent";
+import CursorGlow from "@/components/CursorGlow";
 
 function Header() {
   const { session, sseConnected, doFetch, addToast } = useSession();
@@ -139,6 +140,7 @@ function AppShell({ children }: { children: React.ReactNode }) {
       </div>
       {isLanding ? <AppleFloatingNavbar /> : <Header />}
       {children}
+      <CursorGlow />
     </div>
   );
 }
