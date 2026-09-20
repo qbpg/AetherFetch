@@ -37,9 +37,18 @@ export default function SecureMailIframe({ html, className }: SecureMailIframePr
   }
   a { color: #818cf8; text-decoration: underline; text-underline-offset: 2px; }
   a:hover { color: #a5b4fc; }
-  img { max-width: 100%; height: auto; }
+  img, video, source { max-width: 100%; height: auto; display: block; }
+  video { max-width: 100%; }
   pre { white-space: pre-wrap; font-family: inherit; }
-  * { color: inherit; }
+  * { color: inherit; box-sizing: border-box; }
+  table { border-collapse: collapse; max-width: 100%; }
+  td, th { padding: 4px 8px; }
+  figure { margin: 0; max-width: 100%; }
+  picture { display: block; max-width: 100%; }
+  picture img { width: 100%; }
+  [style*="background-image"] { background-size: cover; background-position: center; }
+  .gmail-text { overflow: visible !important; }
+  .ii.gt { max-width: 100% !important; overflow: visible !important; }
 </style>
 </head>
 <body>${html}</body>
@@ -61,12 +70,29 @@ export default function SecureMailIframe({ html, className }: SecureMailIframePr
       }
     };
 
+    const onResourceLoad = () => { resize(); };
+
     doc.addEventListener("click", handleClick);
+    doc.querySelectorAll("img, video, source").forEach((el) => {
+      el.addEventListener("load", onResourceLoad);
+    });
+    const observer = new MutationObserver(() => {
+      resize();
+      doc.querySelectorAll("img, video, source").forEach((el) => {
+        el.removeEventListener("load", onResourceLoad);
+        el.addEventListener("load", onResourceLoad);
+      });
+    });
+    observer.observe(doc.body, { childList: true, subtree: true, attributes: true });
     resize();
-    const timer = setTimeout(resize, 200);
+    const timer = setTimeout(resize, 300);
 
     return () => {
+      observer.disconnect();
       doc.removeEventListener("click", handleClick);
+      doc.querySelectorAll("img, video, source").forEach((el) => {
+        el.removeEventListener("load", onResourceLoad);
+      });
       clearTimeout(timer);
     };
   }, [html]);
@@ -74,7 +100,7 @@ export default function SecureMailIframe({ html, className }: SecureMailIframePr
   return (
     <iframe
       ref={iframeRef}
-      sandbox="allow-same-origin"
+      sandbox="allow-same-origin allow-popups"
       title="Email content"
       translate="no"
       className={`w-full border-0 bg-transparent ${className ?? ""}`}
