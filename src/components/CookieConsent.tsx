@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { X } from "lucide-react";
 
 const STORAGE_KEY = "af_cookie_consent";
@@ -8,14 +8,17 @@ const STORAGE_KEY = "af_cookie_consent";
 type ConsentValue = "accepted" | "rejected" | null;
 
 function getStoredConsent(): ConsentValue {
-  if (typeof window === "undefined") return null;
   const v = localStorage.getItem(STORAGE_KEY);
   if (v === "accepted" || v === "rejected") return v;
   return null;
 }
 
 export default function CookieConsent() {
-  const [visible, setVisible] = useState(() => getStoredConsent() === null);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    if (getStoredConsent() === null) setVisible(true);
+  }, []);
 
   function decide(value: "accepted" | "rejected") {
     localStorage.setItem(STORAGE_KEY, value);
