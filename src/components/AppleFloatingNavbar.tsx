@@ -1,10 +1,22 @@
 "use client";
 
+import { useCallback } from "react";
 import Link from "next/link";
 import { useSession } from "@/contexts/SessionContext";
 
+const NAV_LINKS = [
+  { href: "#features", label: "Features" },
+  { href: "#faq", label: "FAQ" },
+  { href: "#contact", label: "Contact" },
+];
+
 export default function AppleFloatingNavbar() {
   const { session } = useSession();
+
+  const scrollTo = useCallback((href: string) => {
+    const el = document.getElementById(href.replace("#", ""));
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, []);
 
   return (
     <div className="fixed top-0 left-0 right-0 z-[100] pointer-events-none">
@@ -22,6 +34,18 @@ export default function AppleFloatingNavbar() {
               AetherFetch
             </span>
           </Link>
+
+          <div className="hidden md:flex items-center gap-1">
+            {NAV_LINKS.map((link) => (
+              <button
+                key={link.href}
+                onClick={() => scrollTo(link.href)}
+                className="px-3 py-1 text-xs font-medium text-zinc-400 hover:text-zinc-200 hover:bg-white/5 rounded-full transition-all duration-200 whitespace-nowrap"
+              >
+                {link.label}
+              </button>
+            ))}
+          </div>
 
           <div className="flex shrink-0 items-center">
             {session ? (
