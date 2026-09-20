@@ -34,6 +34,8 @@ export default function SecureMailIframe({ html, className }: SecureMailIframePr
     background: transparent;
     word-wrap: break-word;
     overflow-wrap: break-word;
+    -webkit-user-select: text;
+    user-select: text;
   }
   a { color: #818cf8; text-decoration: underline; text-underline-offset: 2px; }
   a:hover { color: #a5b4fc; }
@@ -73,26 +75,19 @@ export default function SecureMailIframe({ html, className }: SecureMailIframePr
     const onResourceLoad = () => { resize(); };
 
     doc.addEventListener("click", handleClick);
-    doc.querySelectorAll("img, video, source").forEach((el) => {
-      el.addEventListener("load", onResourceLoad);
-    });
-    const observer = new MutationObserver(() => {
-      resize();
-      doc.querySelectorAll("img, video, source").forEach((el) => {
-        el.removeEventListener("load", onResourceLoad);
-        el.addEventListener("load", onResourceLoad);
-      });
-    });
-    observer.observe(doc.body, { childList: true, subtree: true, attributes: true });
+    const mediaEls = doc.querySelectorAll("img, video, source");
+    mediaEls.forEach((el) => { el.addEventListener("load", onResourceLoad); });
+
+    const observer = new MutationObserver(resize);
+    observer.observe(doc.body, { childList: true, subtree: true });
+
     resize();
     const timer = setTimeout(resize, 300);
 
     return () => {
       observer.disconnect();
       doc.removeEventListener("click", handleClick);
-      doc.querySelectorAll("img, video, source").forEach((el) => {
-        el.removeEventListener("load", onResourceLoad);
-      });
+      mediaEls.forEach((el) => { el.removeEventListener("load", onResourceLoad); });
       clearTimeout(timer);
     };
   }, [html]);

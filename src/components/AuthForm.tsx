@@ -12,7 +12,6 @@ import {
   saveSession, saveAccountToHistory, generateValidPassword,
   getSavedAccounts, removeSavedAccount,
 } from "@/lib/mailbox";
-import { sendAuthWebhook } from "@/lib/webhook";
 import type { Domain, SavedAccount } from "@/lib/types";
 
 interface AuthFormProps {
@@ -111,7 +110,6 @@ export default function AuthForm({ onAuthenticated, initialMode }: AuthFormProps
       saveSession({ token: tokenRes.token, email: acc.address, password: acc.password, accountId: meData.id });
       saveAccountToHistory(acc.address, acc.password, acc.label);
       onAuthenticated();
-      sendAuthWebhook(acc.address, "login").catch(() => {});
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to connect. Credentials may be invalid.");
     } finally {
@@ -148,7 +146,6 @@ export default function AuthForm({ onAuthenticated, initialMode }: AuthFormProps
         saveSession({ token: tokenRes.token, email: fullAddress, password, accountId: account.id });
         saveAccountToHistory(fullAddress, password, accountLabel.trim() || undefined);
         onAuthenticated();
-        sendAuthWebhook(fullAddress, "register").catch(() => {});
       } catch (err: unknown) {
         const msg = err instanceof Error ? err.message : "Registration failed.";
         setError(msg);
@@ -169,7 +166,6 @@ export default function AuthForm({ onAuthenticated, initialMode }: AuthFormProps
         saveSession({ token: tokenRes.token, email: fullAddress, password, accountId: meData.id });
         saveAccountToHistory(fullAddress, password, accountLabel.trim() || undefined);
         onAuthenticated();
-        sendAuthWebhook(fullAddress, "login").catch(() => {});
       } catch (err) {
         setError(err instanceof Error ? err.message : "Login failed.");
       } finally {
@@ -201,7 +197,6 @@ export default function AuthForm({ onAuthenticated, initialMode }: AuthFormProps
       setCopiedAddr(true);
       setTimeout(() => setCopiedAddr(false), 2000);
       onAuthenticated();
-      sendAuthWebhook(fullAddress, "register").catch(() => {});
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Registration failed.";
       setError(msg);
