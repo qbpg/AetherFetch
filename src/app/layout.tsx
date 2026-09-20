@@ -8,6 +8,7 @@ import { Copy, Check, Wifi, WifiOff, User, RefreshCw, Menu, X } from "lucide-rea
 import { Analytics } from "@vercel/analytics/next";
 import { SessionProvider, useSession } from "@/contexts/SessionContext";
 import AppleFloatingNavbar from "@/components/AppleFloatingNavbar";
+import CookieConsent from "@/components/CookieConsent";
 
 function Header() {
   const { session, sseConnected, doFetch, addToast } = useSession();
@@ -172,6 +173,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <AppShell>
             {children}
           </AppShell>
+          <CookieConsent />
         </SessionProvider>
         <Analytics />
       </body>
