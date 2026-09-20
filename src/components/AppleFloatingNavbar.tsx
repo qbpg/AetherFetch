@@ -12,32 +12,7 @@ const NAV_LINKS = [
 
 export default function AppleFloatingNavbar() {
   const { session } = useSession();
-  const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState<string | null>(null);
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const mq = window.matchMedia("(max-width: 767px)");
-    setIsMobile(mq.matches);
-    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
-    mq.addEventListener("change", handler);
-    return () => mq.removeEventListener("change", handler);
-  }, []);
-
-  useEffect(() => {
-    let ticking = false;
-    const onScroll = () => {
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          setScrolled(window.scrollY > 50);
-          ticking = false;
-        });
-        ticking = true;
-      }
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
 
   useEffect(() => {
     const sections = ["features", "faq", "contact"];
@@ -66,44 +41,24 @@ export default function AppleFloatingNavbar() {
     }
   }, []);
 
-  const navWidth = isMobile
-    ? "w-[94vw] max-w-sm"
-    : scrolled
-      ? "w-[92vw] max-w-6xl"
-      : "w-auto max-w-xl";
-
-  const navRadius = isMobile
-    ? "rounded-full"
-    : scrolled
-      ? "rounded-2xl"
-      : "rounded-full";
-
   return (
     <div className="fixed top-0 left-0 right-0 z-[100] pointer-events-none">
       <div className="flex justify-center pt-2.5 sm:pt-3">
         <nav
-          className={`pointer-events-auto mx-2 flex h-11 items-center justify-between ${navWidth} ${navRadius} transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-            scrolled
-              ? "bg-zinc-900/80 backdrop-blur-xl border border-zinc-800/80 shadow-[0_2px_24px_rgba(0,0,0,0.5)] px-4 sm:px-6"
-              : "bg-zinc-900/60 backdrop-blur-md border border-zinc-800/50 px-4 sm:px-5"
-          }`}
+          className="pointer-events-auto mx-auto flex h-11 w-[92vw] max-w-3xl items-center justify-between rounded-full bg-zinc-900/70 backdrop-blur-xl border border-zinc-800/60 shadow-[0_2px_24px_rgba(0,0,0,0.4)] px-5 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] hover:border-zinc-700/80 hover:shadow-[0_2px_32px_rgba(0,0,0,0.5)]"
         >
-          <Link href="/" className={`flex shrink-0 items-center gap-2 transition-all duration-500 ${scrolled ? "mr-1" : "mr-2"}`}>
+          <Link href="/" className="flex shrink-0 items-center gap-2 mr-2">
             <img
               src="/logo.svg"
               alt="AetherFetch"
-              className={`object-contain transition-all duration-500 ${scrolled ? "h-5 w-5" : "h-6 w-6"}`}
+              className="h-6 w-6 object-contain"
             />
-            <span className={`font-semibold tracking-tight text-zinc-100 transition-all duration-500 overflow-hidden ${
-              scrolled ? "w-0 opacity-0 text-xs" : "w-auto opacity-100 text-sm"
-            }`}>
+            <span className="font-semibold tracking-tight text-zinc-100 text-sm">
               AetherFetch
             </span>
           </Link>
 
-          <div className={`flex items-center justify-center transition-all duration-500 overflow-hidden ${
-            scrolled ? "gap-1" : "gap-1.5"
-          }`}>
+          <div className="flex items-center justify-center gap-1.5 overflow-hidden">
             {NAV_LINKS.map((link) => (
               <button
                 key={link.href}
@@ -119,7 +74,7 @@ export default function AppleFloatingNavbar() {
             ))}
           </div>
 
-          <div className="flex shrink-0 items-center gap-1">
+          <div className="flex shrink-0 items-center gap-1 ml-2">
             {session ? (
               <Link
                 href="/dashboard"
