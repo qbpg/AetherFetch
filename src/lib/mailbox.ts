@@ -80,8 +80,8 @@ async function apiFetch<T>(endpoint: string, options: RequestInit = {}): Promise
   if (!response.ok) {
     const detail =
       data["hydra:description"] || data.detail || data.message || data.error ||
-      `Erreur ${response.status}`;
-    throw new Error(typeof detail === "string" ? detail : `Erreur ${response.status}`);
+      `Error ${response.status}`;
+    throw new Error(typeof detail === "string" ? detail : `Error ${response.status}`);
   }
 
   return data as T;

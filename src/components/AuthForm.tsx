@@ -157,9 +157,9 @@ export default function AuthForm({ onAuthenticated, initialMode }: AuthFormProps
       }
     } else {
       const trimmed = username.trim();
-      if (!trimmed) { setError("Identifiant requis."); return; }
+      if (!trimmed) { setError("Username is required."); return; }
       if (!selectedDomain) { setError("Please wait for domains to load."); return; }
-      if (!password) { setError("Mot de passe requis."); return; }
+      if (!password) { setError("Password is required."); return; }
 
       const fullAddress = `${trimmed}@${selectedDomain}`;
       setLoading(true);
@@ -317,7 +317,7 @@ export default function AuthForm({ onAuthenticated, initialMode }: AuthFormProps
                 <input
                   type="text" value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  placeholder="Identifiant / Pseudo" autoComplete="username"
+                  placeholder="username" autoComplete="username"
                   className="w-full min-w-0 h-10 sm:h-11 pl-9 sm:pl-10 pr-24 sm:pr-28 bg-[#09090b] border border-zinc-800 rounded-l-lg text-xs sm:text-sm text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/20 transition-all duration-200" />
                 <span translate="no" className="absolute right-0 top-0 h-10 sm:h-11 px-2.5 sm:px-3 flex items-center text-[11px] sm:text-xs text-zinc-500 bg-zinc-800/50 border border-l-0 border-zinc-800 rounded-r-lg select-none pointer-events-none whitespace-nowrap overflow-hidden text-ellipsis max-w-[40%]">
                   @{selectedDomain}
@@ -340,7 +340,7 @@ export default function AuthForm({ onAuthenticated, initialMode }: AuthFormProps
               <div className="relative">
                 <Tag className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 sm:w-4 sm:h-4 text-zinc-500 pointer-events-none" />
                 <input type="text" value={accountLabel} onChange={(e) => setAccountLabel(e.target.value)}
-                  placeholder='Label (ex: Netflix, Test Dev)'
+                  placeholder='Label (e.g. Netflix, Dev Test)'
                   className="w-full h-10 sm:h-11 pl-9 sm:pl-10 pr-3 bg-[#09090b] border border-zinc-800 rounded-lg text-xs sm:text-sm text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/20 transition-all duration-200" />
               </div>
             )}
