@@ -73,7 +73,7 @@ export default function SessionSelector({ onContinue, onNewMailbox }: SessionSel
                 </div>
                 <div className="min-w-0">
                   <div className="flex items-center gap-2">
-                    <span className="text-sm font-medium text-zinc-100 truncate">{truncateEmail(storedSession.email)}</span>
+                    <span translate="no" className="text-sm font-medium text-zinc-100 truncate">{truncateEmail(storedSession.email)}</span>
                     <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex-shrink-0">
                       <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse-dot" />
                       <span className="text-[9px] font-medium text-emerald-400 uppercase tracking-wider">Active</span>

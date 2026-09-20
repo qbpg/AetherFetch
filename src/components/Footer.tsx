@@ -24,7 +24,7 @@ export default function Footer() {
       <footer className="flex-shrink-0 border-t border-zinc-800/50 py-2.5 px-4 flex items-center justify-center gap-3 text-xs text-zinc-500/70">
         <span>Créé par QBPG</span>
         <span className="text-zinc-700">·</span>
-        <a href="mailto:qbpg.sg@outlook.com" className="hover:text-zinc-300 transition-colors">
+        <a href="mailto:qbpg.sg@outlook.com" translate="no" className="hover:text-zinc-300 transition-colors">
           qbpg.sg@outlook.com
         </a>
         <span className="text-zinc-700">·</span>
@@ -55,7 +55,7 @@ export default function Footer() {
                 <>
                   <p><span className="text-zinc-300 font-medium">Éditeur :</span> qbpg</p>
                   <p><span className="text-zinc-300 font-medium">Contact support :</span>{" "}
-                    <a href="mailto:qbpg.sg@outlook.com" className="text-indigo-400 hover:text-indigo-300 transition-colors">
+                    <a href="mailto:qbpg.sg@outlook.com" translate="no" className="text-indigo-400 hover:text-indigo-300 transition-colors">
                       qbpg.sg@outlook.com
                     </a>
                   </p>
@@ -68,7 +68,7 @@ export default function Footer() {
                 <>
                   <p><span className="text-zinc-300 font-medium">Responsable :</span> qbpg</p>
                   <p><span className="text-zinc-300 font-medium">Contact :</span>{" "}
-                    <a href="mailto:qbpg.sg@outlook.com" className="text-indigo-400 hover:text-indigo-300 transition-colors">
+                    <a href="mailto:qbpg.sg@outlook.com" translate="no" className="text-indigo-400 hover:text-indigo-300 transition-colors">
                       qbpg.sg@outlook.com
                     </a>
                   </p>

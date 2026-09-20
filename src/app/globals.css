@@ -119,3 +119,16 @@ input:focus, button:focus-visible { outline: none; }
 .animate-mobile-slide-up {
   animation: mobile-slide-up 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
+
+.notranslate,
+[translate="no"] {
+  translate: no;
+}
+
+html[translate="no"] {
+  translate: no;
+}
+
+* {
+  overflow-wrap: break-word;
+}

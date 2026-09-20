@@ -76,6 +76,7 @@ export default function SecureMailIframe({ html, className }: SecureMailIframePr
       ref={iframeRef}
       sandbox="allow-same-origin"
       title="Email content"
+      translate="no"
       className={`w-full border-0 bg-transparent ${className ?? ""}`}
       style={{ minHeight: 100 }}
     />

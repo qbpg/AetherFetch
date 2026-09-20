@@ -4,7 +4,7 @@ import "./globals.css";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useCallback, useMemo } from "react";
-import { Copy, Check, Wifi, WifiOff, User, RefreshCw } from "lucide-react";
+import { Copy, Check, Wifi, WifiOff, User, RefreshCw, Menu, X } from "lucide-react";
 import { Analytics } from "@vercel/analytics/next";
 import { SessionProvider, useSession } from "@/contexts/SessionContext";
 import AppleFloatingNavbar from "@/components/AppleFloatingNavbar";
@@ -13,6 +13,7 @@ function Header() {
   const { session, sseConnected, doFetch, addToast } = useSession();
   const pathname = usePathname();
   const [copiedEmail, setCopiedEmail] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const copyEmail = useCallback(async () => {
     if (!session) return;
@@ -41,7 +42,7 @@ function Header() {
         <Link href="/accounts" className="flex items-center gap-2.5">
           <img src="/logo.svg" alt="AetherFetch" className="h-7 w-7 object-contain" />
           <span className="text-base font-semibold tracking-tight hidden sm:block">AetherFetch</span>
-          <span className="text-[9px] font-bold text-zinc-500 bg-zinc-800 border border-zinc-700/50 px-1.5 py-0.5 rounded leading-none hidden sm:block">AF</span>
+          <span translate="no" className="text-[9px] font-bold text-zinc-500 bg-zinc-800 border border-zinc-700/50 px-1.5 py-0.5 rounded leading-none hidden sm:block">AF</span>
         </Link>
         {session && (
           <nav className="hidden sm:flex items-center gap-0.5 ml-2">
@@ -89,6 +90,33 @@ function Header() {
             className="w-9 h-9 flex items-center justify-center rounded-md text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800 transition-colors">
             <RefreshCw className="w-4 h-4" />
           </button>
+
+          <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label="Toggle menu"
+            className="sm:hidden w-9 h-9 flex items-center justify-center rounded-md text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800 transition-colors">
+            {mobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+          </button>
+        </div>
+      )}
+
+      {session && mobileMenuOpen && (
+        <div className="sm:hidden absolute top-14 left-0 right-0 bg-zinc-900 border-b border-zinc-800 z-50 animate-fade-in-up">
+          <div className="px-3 py-3 space-y-1">
+            <div className="flex items-center gap-1.5 h-8 px-2 mb-2">
+              <User className="w-3.5 h-3.5 text-zinc-500" />
+              <span translate="no" className="text-xs font-mono text-zinc-400 truncate">{session.email}</span>
+            </div>
+            {navLinks.map((link) => (
+              <Link key={link.href} href={link.href} onClick={() => setMobileMenuOpen(false)}
+                className={`block px-3 py-2 text-xs font-medium rounded-md transition-colors ${
+                  pathname === link.href
+                    ? "text-zinc-100 bg-zinc-800"
+                    : "text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800/50"
+                }`}>
+                {link.label}
+              </Link>
+            ))}
+          </div>
         </div>
       )}
     </header>
@@ -134,7 +162,7 @@ function ToastContainer() {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en" className="dark" translate="no">
       <head>
         <title>AetherFetch - Temporary Email</title>
         <link rel="icon" href="/favicon.svg" />

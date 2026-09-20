@@ -359,11 +359,11 @@ export default function DashboardPage() {
             <p className="text-xs text-zinc-700 mt-1">Choose from the inbox to read</p>
             <div className="flex items-center gap-4 mt-6">
               <div className="flex items-center gap-1.5 text-[10px] text-zinc-700">
-                <span className="border border-zinc-800 bg-zinc-900 px-1.5 py-0.5 rounded font-mono text-zinc-500">C</span>
+                <span translate="no" className="border border-zinc-800 bg-zinc-900 px-1.5 py-0.5 rounded font-mono text-zinc-500">C</span>
                 <span>Copy email</span>
               </div>
               <div className="flex items-center gap-1.5 text-[10px] text-zinc-700">
-                <span className="border border-zinc-800 bg-zinc-900 px-1.5 py-0.5 rounded font-mono text-zinc-500">R</span>
+                <span translate="no" className="border border-zinc-800 bg-zinc-900 px-1.5 py-0.5 rounded font-mono text-zinc-500">R</span>
                 <span>Refresh</span>
               </div>
             </div>
@@ -372,8 +372,8 @@ export default function DashboardPage() {
       </main>
 
       {/* Keyboard shortcut bar */}
-      <div className="fixed bottom-5 left-1/2 -translate-x-1/2 z-40 pointer-events-none">
-        <div className="border border-zinc-800/80 bg-zinc-900/95 text-zinc-400 text-xs font-mono px-4 py-2 rounded-lg shadow-lg shadow-black/30 flex items-center gap-4 backdrop-blur-sm">
+      <div className="fixed bottom-5 left-1/2 -translate-x-1/2 z-40 pointer-events-none max-w-[calc(100vw-2rem)]">
+        <div translate="no" className="border border-zinc-800/80 bg-zinc-900/95 text-zinc-400 text-xs font-mono px-4 py-2 rounded-lg shadow-lg shadow-black/30 flex items-center gap-4 backdrop-blur-sm">
           <div className="flex items-center gap-2">
             <span className={`border px-2 py-1 rounded-md text-xs font-medium transition-all duration-200 ${activeKey === "c" ? "bg-zinc-700 border-zinc-500 text-zinc-100 scale-95" : "border-zinc-800 bg-zinc-900 text-zinc-300"}`}>C</span>
             <span className="text-xs text-zinc-500">Copy email</span>

@@ -284,7 +284,7 @@ export default function AuthForm({ onAuthenticated, initialMode }: AuthFormProps
                 <div className="relative" ref={dropdownRef}>
                   <button type="button" onClick={() => setDomainOpen(!domainOpen)}
                     className="h-10 sm:h-11 px-2.5 sm:px-3 pr-7 sm:pr-8 bg-[#09090b] border border-zinc-800 rounded-lg text-xs sm:text-sm text-zinc-100 focus:outline-none focus:border-indigo-500/50 transition-all duration-200 whitespace-nowrap flex items-center gap-0.5 hover:border-zinc-700">
-                    @{selectedDomain}
+                    <span translate="no">@{selectedDomain}</span>
                     <ChevronDown className={`w-3 h-3 text-zinc-500 transition-transform duration-200 ${domainOpen ? "rotate-180" : ""}`} />
                   </button>
                   {domainOpen && domains.length > 0 && (
@@ -311,8 +311,8 @@ export default function AuthForm({ onAuthenticated, initialMode }: AuthFormProps
                   type="text" value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   placeholder="Identifiant / Pseudo" autoComplete="username"
-                  className="w-full h-10 sm:h-11 pl-9 sm:pl-10 pr-24 sm:pr-28 bg-[#09090b] border border-zinc-800 rounded-l-lg text-xs sm:text-sm text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/20 transition-all duration-200" />
-                <span className="absolute right-0 top-0 h-10 sm:h-11 px-2.5 sm:px-3 flex items-center text-[11px] sm:text-xs text-zinc-500 bg-zinc-800/50 border border-l-0 border-zinc-800 rounded-r-lg select-none pointer-events-none whitespace-nowrap">
+                  className="w-full min-w-0 h-10 sm:h-11 pl-9 sm:pl-10 pr-24 sm:pr-28 bg-[#09090b] border border-zinc-800 rounded-l-lg text-xs sm:text-sm text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/20 transition-all duration-200" />
+                <span translate="no" className="absolute right-0 top-0 h-10 sm:h-11 px-2.5 sm:px-3 flex items-center text-[11px] sm:text-xs text-zinc-500 bg-zinc-800/50 border border-l-0 border-zinc-800 rounded-r-lg select-none pointer-events-none whitespace-nowrap overflow-hidden text-ellipsis max-w-[40%]">
                   @{selectedDomain}
                 </span>
               </div>
@@ -371,7 +371,7 @@ export default function AuthForm({ onAuthenticated, initialMode }: AuthFormProps
             )}
           </form>
 
-          <div className="mt-3 sm:mt-4 text-center">
+          <div className="mt-3 sm:mt-4 text-center overflow-hidden">
             <p className="text-[11px] sm:text-xs text-zinc-600">
               {mode === "register" ? "Already have an account?" : "No account yet?"}{" "}
               <button type="button" onClick={() => router.push(mode === "register" ? "/login" : "/register")}

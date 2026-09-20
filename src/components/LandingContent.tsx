@@ -330,7 +330,7 @@ export default function LandingContent() {
           </div>
           <div className="flex items-center gap-4 text-xs text-zinc-600">
             <span>Created by QBPG</span>
-            <a href="mailto:qbpg.sg@outlook.com" className="hover:text-zinc-400 transition-colors">
+            <a href="mailto:qbpg.sg@outlook.com" translate="no" className="hover:text-zinc-400 transition-colors">
               qbpg.sg@outlook.com
             </a>
           </div>
