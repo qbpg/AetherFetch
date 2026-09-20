@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { useRouter } from "next/navigation";
 import {
   Mail, MailOpen, Trash2,
@@ -22,6 +22,7 @@ export default function DashboardPage() {
   const [mobileView, setMobileView] = useState<"inbox" | "detail">("inbox");
   const [initialLoading, setInitialLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const messageCache = useRef<Map<string, MessageDetail>>(new Map());
 
 
   useEffect(() => {
@@ -83,6 +84,14 @@ export default function DashboardPage() {
 
   const handleSelectMessage = async (msg: Msg) => {
     if (!session) return;
+
+    const cached = messageCache.current.get(msg.id);
+    if (cached) {
+      setSelectedMsg(cached);
+      setMobileView("detail");
+      return;
+    }
+
     setLoadingDetail(true);
     const MAX_RETRIES = 3;
     const RETRY_DELAY = 3000;
@@ -90,6 +99,7 @@ export default function DashboardPage() {
     for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
       try {
         const detail = await getMessage(session.token, msg.id);
+        messageCache.current.set(msg.id, detail);
         setSelectedMsg(detail);
         setMobileView("detail");
         if (!msg.seen) {
@@ -115,6 +125,7 @@ export default function DashboardPage() {
     setDeletingMsg(msgId);
     try {
       await deleteMessage(session.token, msgId);
+      messageCache.current.delete(msgId);
       setMessages((prev) => prev.filter((m) => m.id !== msgId));
       if (selectedMsg?.id === msgId) { setSelectedMsg(null); setMobileView("inbox"); }
       addToast("Message deleted", "success");
