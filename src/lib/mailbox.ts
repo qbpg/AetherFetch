@@ -53,10 +53,14 @@ async function apiFetch<T>(endpoint: string, options: RequestInit = {}): Promise
     ...(customHeaders as Record<string, string>),
   };
 
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 10000);
   const response = await fetch(`${BASE_URL}${endpoint}`, {
     ...restOptions,
     headers: mergedHeaders,
+    signal: controller.signal,
   });
+  clearTimeout(timeout);
 
   if (response.status === 204) return null as T;
 

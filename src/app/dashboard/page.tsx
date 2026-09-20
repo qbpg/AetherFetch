@@ -31,6 +31,17 @@ export default function DashboardPage() {
     doFetch(session.token).finally(() => setInitialLoading(false));
   }, [session, router, doFetch]);
 
+  useEffect(() => {
+    if (!session || messages.length === 0) return;
+    for (const msg of messages) {
+      if (!messageCache.current.has(msg.id) && !msg.seen) {
+        getMessage(session.token, msg.id).then((detail) => {
+          messageCache.current.set(msg.id, detail);
+        }).catch(() => {});
+      }
+    }
+  }, [session, messages]);
+
   const copyEmail = useCallback(async () => {
     if (!session) return;
     try { await navigator.clipboard.writeText(session.email); }
@@ -93,8 +104,8 @@ export default function DashboardPage() {
     }
 
     setLoadingDetail(true);
-    const MAX_RETRIES = 3;
-    const RETRY_DELAY = 3000;
+    const MAX_RETRIES = 2;
+    const RETRY_DELAY = 800;
     let lastError: unknown;
     for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
       try {
@@ -102,11 +113,12 @@ export default function DashboardPage() {
         messageCache.current.set(msg.id, detail);
         setSelectedMsg(detail);
         setMobileView("detail");
-        if (!msg.seen) {
-          await markAsRead(session.token, msg.id);
-          setMessages((prev) => prev.map((m) => (m.id === msg.id ? { ...m, seen: true } : m)));
-        }
         setLoadingDetail(false);
+        if (!msg.seen) {
+          markAsRead(session.token, msg.id).then(() => {
+            setMessages((prev) => prev.map((m) => (m.id === msg.id ? { ...m, seen: true } : m)));
+          }).catch(() => {});
+        }
         return;
       } catch (err) {
         lastError = err;
