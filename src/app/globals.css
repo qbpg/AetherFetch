@@ -145,3 +145,49 @@ html[translate="no"] {
     display: block;
   }
 }
+
+/* Hero aurora orbs */
+@keyframes hero-float {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); }
+  33% { transform: translate(-40%, -60%) scale(1.1); }
+  66% { transform: translate(-60%, -40%) scale(0.95); }
+}
+
+.hero-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  animation: hero-float 12s ease-in-out infinite;
+  will-change: transform;
+}
+
+.hero-orb-1 {
+  width: 500px;
+  height: 500px;
+  top: 20%;
+  left: 50%;
+  background: radial-gradient(circle, rgba(99,102,241,0.12) 0%, transparent 70%);
+  animation-delay: 0s;
+}
+
+.hero-orb-2 {
+  width: 400px;
+  height: 400px;
+  top: 40%;
+  left: 30%;
+  background: radial-gradient(circle, rgba(139,92,246,0.08) 0%, transparent 70%);
+  animation-delay: -4s;
+}
+
+.hero-orb-3 {
+  width: 300px;
+  height: 300px;
+  top: 60%;
+  left: 70%;
+  background: radial-gradient(circle, rgba(79,70,229,0.1) 0%, transparent 70%);
+  animation-delay: -8s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-orb { animation: none; }
+}
