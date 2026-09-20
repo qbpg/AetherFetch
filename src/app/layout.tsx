@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useCallback } from "react";
 import { Copy, Check, Wifi, WifiOff, User, RefreshCw } from "lucide-react";
+import { Analytics } from "@vercel/analytics/next";
 import { SessionProvider, useSession } from "@/contexts/SessionContext";
 
 function Header() {
@@ -138,6 +139,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             {children}
           </AppShell>
         </SessionProvider>
+        <Analytics />
       </body>
     </html>
   );
