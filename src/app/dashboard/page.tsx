@@ -25,7 +25,7 @@ export default function DashboardPage() {
   const activeKeyTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    if (!session) { router.replace("/home"); return; }
+    if (!session) { router.replace("/"); return; }
     setInitialLoading(true);
     doFetch(session.token).finally(() => setInitialLoading(false));
   }, [session, router, doFetch]);

@@ -123,7 +123,7 @@ function Header() {
   );
 }
 
-const LANDING_ROUTES = ["/"];
+const LANDING_ROUTES = ["/", "/home"];
 
 function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();

@@ -114,6 +114,7 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
   const handleLogout = useCallback(() => {
     clearSession();
     setSession(null);
+    window.location.replace("/");
   }, [setSession]);
 
   return (

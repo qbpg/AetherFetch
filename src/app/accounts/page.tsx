@@ -16,6 +16,13 @@ import {
 } from "@/lib/mailbox";
 import type { SavedAccount } from "@/lib/types";
 
+function redirectIfEmpty() {
+  const remaining = getSavedAccounts();
+  if (remaining.length === 0) {
+    window.location.replace("/");
+  }
+}
+
 export default function AccountsPage() {
   const { session, setSession, addToast } = useSession();
   const router = useRouter();
@@ -70,6 +77,7 @@ export default function AccountsPage() {
       setSession(null);
     }
     addToast("Account removed from history", "info");
+    redirectIfEmpty();
   };
 
   const handleToggleFavorite = (address: string) => {
@@ -122,6 +130,7 @@ export default function AccountsPage() {
       clearSession();
       setSession(null);
       addToast("Account deleted permanently", "success");
+      window.location.replace("/");
     } catch (err) {
       setDeleteError(err instanceof Error ? err.message : "Failed to delete account.");
     } finally {
@@ -130,7 +139,7 @@ export default function AccountsPage() {
   };
 
   if (!session) {
-    if (typeof window !== "undefined") router.replace("/home");
+    if (typeof window !== "undefined") router.replace("/");
     return <div className="min-h-screen bg-zinc-950" />;
   }
 
