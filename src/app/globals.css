@@ -15,6 +15,9 @@
 *::-webkit-scrollbar-thumb { background-color: #27272a; border-radius: 3px; }
 *::-webkit-scrollbar-thumb:hover { background-color: #3f3f46; }
 
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { scrollbar-width: none; }
+
 ::selection { background-color: rgba(99, 102, 241, 0.2); color: #e4e4e7; }
 
 body {

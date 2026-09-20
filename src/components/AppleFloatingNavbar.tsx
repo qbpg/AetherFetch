@@ -53,17 +53,17 @@ export default function AppleFloatingNavbar() {
               alt="AetherFetch"
               className="h-6 w-6 object-contain"
             />
-            <span className="font-semibold tracking-tight text-zinc-100 text-sm">
+            <span className="font-semibold tracking-tight text-zinc-100 text-sm hidden md:inline">
               AetherFetch
             </span>
           </Link>
 
-          <div className="flex items-center justify-center gap-1.5 overflow-hidden">
+          <div className="flex items-center justify-center gap-1 md:gap-1.5 overflow-x-auto no-scrollbar flex-shrink min-w-0">
             {NAV_LINKS.map((link) => (
               <button
                 key={link.href}
                 onClick={() => scrollTo(link.href)}
-                className={`relative px-3 py-1 text-xs font-medium rounded-full transition-all duration-300 whitespace-nowrap ${
+                className={`relative px-2 md:px-3 py-1 text-[11px] md:text-xs font-medium rounded-full transition-all duration-300 whitespace-nowrap ${
                   activeSection === link.href.replace("#", "")
                     ? "text-zinc-100 bg-white/10 shadow-[0_0_12px_rgba(255,255,255,0.06)] border border-white/[0.08]"
                     : "text-zinc-400 hover:text-zinc-200 hover:bg-white/5 hover:shadow-[0_0_16px_rgba(255,255,255,0.04)] hover:border-zinc-700/80"
@@ -74,7 +74,7 @@ export default function AppleFloatingNavbar() {
             ))}
           </div>
 
-          <div className="flex shrink-0 items-center gap-1 ml-2">
+          <div className="flex shrink-0 items-center gap-1 ml-1 md:ml-2">
             {session ? (
               <Link
                 href="/dashboard"

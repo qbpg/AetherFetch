@@ -21,6 +21,7 @@ export default function DashboardPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [mobileView, setMobileView] = useState<"inbox" | "detail">("inbox");
   const [initialLoading, setInitialLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
 
 
   useEffect(() => {
@@ -54,7 +55,8 @@ export default function DashboardPage() {
       }
       if ((e.key === "r" || e.key === "R") && session) {
         e.preventDefault();
-        doFetch(session.token, { manual: true });
+        setRefreshing(true);
+        doFetch(session.token, { manual: true }).finally(() => setRefreshing(false));
         addToast("Refreshing...", "info");
       }
     }
@@ -82,19 +84,30 @@ export default function DashboardPage() {
   const handleSelectMessage = async (msg: Msg) => {
     if (!session) return;
     setLoadingDetail(true);
-    try {
-      const detail = await getMessage(session.token, msg.id);
-      setSelectedMsg(detail);
-      setMobileView("detail");
-      if (!msg.seen) {
-        await markAsRead(session.token, msg.id);
-        setMessages((prev) => prev.map((m) => (m.id === msg.id ? { ...m, seen: true } : m)));
+    const MAX_RETRIES = 3;
+    const RETRY_DELAY = 3000;
+    let lastError: unknown;
+    for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+      try {
+        const detail = await getMessage(session.token, msg.id);
+        setSelectedMsg(detail);
+        setMobileView("detail");
+        if (!msg.seen) {
+          await markAsRead(session.token, msg.id);
+          setMessages((prev) => prev.map((m) => (m.id === msg.id ? { ...m, seen: true } : m)));
+        }
+        setLoadingDetail(false);
+        return;
+      } catch (err) {
+        lastError = err;
+        if (attempt < MAX_RETRIES) {
+          await new Promise((r) => setTimeout(r, RETRY_DELAY));
+        }
       }
-    } catch {
-      addToast("Failed to load message", "error");
-    } finally {
-      setLoadingDetail(false);
     }
+    setLoadingDetail(false);
+    const msg2 = lastError instanceof Error ? lastError.message : "Failed to load message";
+    addToast(msg2, "error");
   };
 
   const handleDeleteMessage = async (msgId: string) => {
@@ -161,11 +174,11 @@ export default function DashboardPage() {
             <span className="text-xs font-medium text-zinc-400 uppercase tracking-wider">Inbox</span>
           </div>
           <button
-            onClick={() => { doFetch(session.token, { manual: true }); addToast("Refreshing...", "info"); }}
+            onClick={() => { setRefreshing(true); doFetch(session.token, { manual: true }).finally(() => setRefreshing(false)); addToast("Refreshing...", "info"); }}
             className="w-7 h-7 flex items-center justify-center rounded-md text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800 transition-colors"
             aria-label="Refresh"
           >
-            <RefreshCw className="w-3.5 h-3.5" />
+            <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? "animate-spin" : ""}`} />
           </button>
         </div>
 
