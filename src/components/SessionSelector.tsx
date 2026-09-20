@@ -53,7 +53,7 @@ export default function SessionSelector({ onContinue, onNewMailbox }: SessionSel
       <div className={`w-full max-w-lg transition-all duration-300 ${exiting ? "opacity-0 scale-[0.97] translate-y-1" : "opacity-100 scale-100 translate-y-0"}`}>
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-11 h-11 mb-4">
-            <img src="/logo.svg" alt="AegisFlow" className="w-11 h-11 object-contain" />
+            <img src="/logo.svg" alt="AetherFetch" className="w-11 h-11 object-contain" />
           </div>
           <h1 className="text-lg font-semibold text-zinc-100 tracking-tight">Welcome back</h1>
           <p className="text-xs text-zinc-500 mt-1.5">You have an existing session. What would you like to do?</p>
