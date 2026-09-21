@@ -31,52 +31,56 @@ export default function LandingContent() {
     <div className="flex-1 overflow-y-auto">
       {/* Hero */}
       <section className="relative min-h-[100dvh] flex items-center justify-center px-4 pt-20 pb-16">
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-zinc-100/[0.03] rounded-full blur-[100px]" />
+        </div>
         <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-zinc-800 to-transparent" />
 
-        <div className="max-w-2xl mx-auto text-center">
+        <div className="relative max-w-2xl mx-auto text-center">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-zinc-900 border border-zinc-800 rounded-full text-xs text-zinc-500 mb-8">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse-dot" />
             Temporary email, zero footprint
           </div>
 
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-zinc-100 leading-[1.1] mb-6">
+          <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold tracking-tight text-zinc-100 leading-[1.05] mb-6">
             Your inbox.
             <br />
-            <span className="text-zinc-500">Ephemeral by design.</span>
+            <span className="text-zinc-500">Ephemeral.</span>
           </h1>
 
-          <p className="text-base sm:text-lg text-zinc-500 max-w-lg mx-auto mb-10 leading-relaxed">
-            Disposable email addresses in seconds. Protect your real inbox
-            from spam, trackers, and unwanted signups.
+          <p className="text-lg sm:text-xl text-zinc-400 max-w-lg mx-auto mb-12 leading-relaxed">
+            Disposable email addresses in seconds.
+            <br className="hidden sm:block" />
+            Protect your real inbox from spam and trackers.
           </p>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
               href="/register"
-              className="group h-11 px-7 flex items-center gap-2 bg-zinc-100 hover:bg-white text-zinc-900 text-sm font-medium rounded-lg transition-all duration-200 active:scale-[0.98]"
+              className="group h-12 px-8 flex items-center gap-2.5 bg-white hover:bg-zinc-200 text-zinc-900 text-sm font-semibold rounded-xl transition-all duration-200 shadow-[0_0_30px_rgba(255,255,255,0.06)] hover:shadow-[0_0_40px_rgba(255,255,255,0.1)] active:scale-[0.98]"
             >
-              Get Started
+              Get Started Free
               <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
             </Link>
             <Link
               href="/login"
-              className="h-11 px-7 flex items-center gap-2 text-sm font-medium text-zinc-400 hover:text-zinc-300 rounded-lg transition-colors duration-200"
+              className="h-12 px-8 flex items-center gap-2 text-sm font-medium text-zinc-400 hover:text-zinc-200 border border-zinc-800 hover:border-zinc-700 rounded-xl transition-all duration-200"
             >
               I have an account
             </Link>
           </div>
 
-          <div className="mt-16 flex items-center justify-center gap-8 text-xs text-zinc-600">
+          <div className="mt-16 flex items-center justify-center gap-6 sm:gap-10 text-xs text-zinc-600">
             <div className="flex items-center gap-2">
-              <Shield className="w-3.5 h-3.5" />
+              <Shield className="w-4 h-4 text-zinc-500" />
               <span>No tracking</span>
             </div>
             <div className="flex items-center gap-2">
-              <Zap className="w-3.5 h-3.5" />
+              <Zap className="w-4 h-4 text-zinc-500" />
               <span>Instant setup</span>
             </div>
             <div className="flex items-center gap-2">
-              <Clock className="w-3.5 h-3.5" />
+              <Clock className="w-4 h-4 text-zinc-500" />
               <span>Live updates</span>
             </div>
           </div>
@@ -249,17 +253,17 @@ export default function LandingContent() {
           <p className="text-sm text-zinc-500 mb-8 max-w-md mx-auto">
             Create your first temporary email in seconds. No account required.
           </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
               href="/register"
-              className="group h-11 px-7 flex items-center gap-2 bg-zinc-100 hover:bg-white text-zinc-900 text-sm font-medium rounded-lg transition-all duration-200 active:scale-[0.98]"
+              className="group h-12 px-8 flex items-center gap-2.5 bg-white hover:bg-zinc-200 text-zinc-900 text-sm font-semibold rounded-xl transition-all duration-200 shadow-[0_0_30px_rgba(255,255,255,0.06)] hover:shadow-[0_0_40px_rgba(255,255,255,0.1)] active:scale-[0.98]"
             >
               Get Started Free
               <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
             </Link>
             <a
               href="mailto:qbpg.sg@outlook.com"
-              className="h-11 px-7 flex items-center gap-2 text-sm font-medium text-zinc-500 hover:text-zinc-300 transition-colors"
+              className="h-12 px-8 flex items-center gap-2 text-sm font-medium text-zinc-500 hover:text-zinc-300 border border-zinc-800 hover:border-zinc-700 rounded-xl transition-all duration-200"
             >
               Contact support
             </a>

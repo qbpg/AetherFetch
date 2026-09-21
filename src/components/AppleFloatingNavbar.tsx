@@ -20,17 +20,17 @@ export default function AppleFloatingNavbar() {
 
   return (
     <div className="fixed top-0 left-0 right-0 z-[100] pointer-events-none">
-      <div className="flex justify-center pt-2.5 sm:pt-3">
+      <div className="flex justify-center pt-3 sm:pt-4">
         <nav
-          className="pointer-events-auto mx-auto flex h-11 w-[92vw] max-w-3xl items-center justify-between rounded-full bg-zinc-900/70 backdrop-blur-xl border border-zinc-800/60 shadow-[0_2px_24px_rgba(0,0,0,0.4)] px-5 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] hover:border-zinc-700/80 hover:shadow-[0_2px_32px_rgba(0,0,0,0.5)]"
+          className="pointer-events-auto mx-auto flex h-12 sm:h-13 w-[94vw] max-w-3xl items-center justify-between rounded-2xl bg-zinc-900/80 backdrop-blur-xl border border-zinc-800/60 shadow-[0_4px_30px_rgba(0,0,0,0.5)] px-5 sm:px-6 transition-all duration-300 hover:border-zinc-700/80"
         >
-          <Link href="/" className="flex shrink-0 items-center gap-2">
+          <Link href="/" className="flex shrink-0 items-center gap-2.5">
             <img
               src="/logo.svg"
               alt="AetherFetch"
-              className="h-6 w-6 object-contain"
+              className="h-7 w-7 object-contain"
             />
-            <span className="font-semibold tracking-tight text-zinc-100 text-sm hidden sm:inline">
+            <span className="font-semibold tracking-tight text-zinc-100 text-[15px] hidden sm:inline">
               AetherFetch
             </span>
           </Link>
@@ -40,7 +40,7 @@ export default function AppleFloatingNavbar() {
               <button
                 key={link.href}
                 onClick={() => scrollTo(link.href)}
-                className="px-3 py-1 text-xs font-medium text-zinc-400 hover:text-zinc-200 hover:bg-white/5 rounded-full transition-all duration-200 whitespace-nowrap"
+                className="px-3 py-1.5 text-[13px] font-medium text-zinc-400 hover:text-zinc-200 hover:bg-white/5 rounded-lg transition-colors duration-200 whitespace-nowrap"
               >
                 {link.label}
               </button>
@@ -51,14 +51,14 @@ export default function AppleFloatingNavbar() {
             {session ? (
               <Link
                 href="/dashboard"
-                className="px-3.5 py-1 text-xs font-medium text-zinc-100 bg-indigo-500 hover:bg-indigo-400 rounded-full transition-all duration-200 hover:shadow-[0_0_16px_rgba(99,102,241,0.3)] active:scale-95 whitespace-nowrap"
+                className="px-4 py-1.5 text-[13px] font-medium text-zinc-100 bg-indigo-500 hover:bg-indigo-400 rounded-lg transition-all duration-200 active:scale-95 whitespace-nowrap"
               >
                 Dashboard
               </Link>
             ) : (
               <Link
                 href="/login"
-                className="px-3.5 py-1 text-xs font-medium text-zinc-950 bg-white hover:bg-zinc-200 rounded-full transition-all duration-200 active:scale-95 whitespace-nowrap"
+                className="px-4 py-1.5 text-[13px] font-medium text-zinc-950 bg-white hover:bg-zinc-200 rounded-lg transition-all duration-200 active:scale-95 whitespace-nowrap"
               >
                 Get Started
               </Link>
