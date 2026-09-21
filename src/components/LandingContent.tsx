@@ -1,9 +1,10 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import Link from "next/link";
 import {
   Mail, Shield, Zap, Clock, Globe, ArrowRight,
-  Inbox, Eye, Terminal,
+  Inbox, Eye, Terminal, ArrowUpRight, Code2,
 } from "lucide-react";
 
 const FEATURES = [
@@ -26,9 +27,43 @@ const FAQ_ITEMS = [
   { q: "Can I use this for production email?", a: "No. AetherFetch is for temporary, disposable use. Do not rely on it for important or long-term communication." },
 ];
 
+const NUMBERS = [
+  { value: "< 3s", label: "Email creation" },
+  { value: "0", label: "Server-side data" },
+  { value: "100%", label: "Client-side" },
+  { value: "Free", label: "Forever" },
+];
+
+const CODE_SNIPPET = `// Generate a temp email in 3 lines
+const email = await createAccount(
+  "user@uberip.com", password
+);
+// Done. Start receiving mail.`;
+
 export default function LandingContent() {
+  const sectionsRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const sections = sectionsRef.current?.querySelectorAll(".reveal");
+    if (!sections) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("visible");
+          }
+        }
+      },
+      { threshold: 0.1, rootMargin: "0px 0px -60px 0px" }
+    );
+
+    sections.forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <div className="flex-1 overflow-y-auto">
+    <div ref={sectionsRef} className="flex-1 overflow-y-auto">
       {/* Hero */}
       <section className="relative min-h-[100dvh] flex items-center justify-center px-4 pt-20 pb-16">
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
@@ -87,10 +122,22 @@ export default function LandingContent() {
         </div>
       </section>
 
+      {/* Numbers */}
+      <section className="border-y border-zinc-800/50">
+        <div className="max-w-4xl mx-auto px-4 py-10 grid grid-cols-2 sm:grid-cols-4 gap-8 text-center">
+          {NUMBERS.map((s) => (
+            <div key={s.label}>
+              <p className="text-3xl sm:text-4xl font-bold text-zinc-100 tracking-tight">{s.value}</p>
+              <p className="text-xs text-zinc-500 mt-2">{s.label}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* Features */}
       <section id="features" className="py-24 sm:py-32 px-4 border-t border-zinc-800/50">
         <div className="max-w-4xl mx-auto">
-          <div className="mb-14">
+          <div className="reveal mb-14">
             <p className="text-xs font-medium text-zinc-500 uppercase tracking-wider mb-3">Features</p>
             <h2 className="text-2xl sm:text-3xl font-bold text-zinc-100 tracking-tight">
               Everything you need,
@@ -99,10 +146,11 @@ export default function LandingContent() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {FEATURES.map((f) => (
+            {FEATURES.map((f, i) => (
               <div
                 key={f.title}
-                className="p-6 bg-zinc-900 border border-zinc-800 rounded-xl hover:border-zinc-700 transition-colors duration-200"
+                className="reveal p-6 bg-zinc-900 border border-zinc-800 rounded-xl hover:border-zinc-700 transition-colors duration-200"
+                style={{ transitionDelay: `${i * 80}ms` }}
               >
                 <div className="w-9 h-9 rounded-lg bg-zinc-800 border border-zinc-700/50 flex items-center justify-center mb-4">
                   <f.icon className="w-4 h-4 text-zinc-400" />
@@ -118,7 +166,7 @@ export default function LandingContent() {
       {/* How it works */}
       <section className="py-24 sm:py-32 px-4 border-t border-zinc-800/50">
         <div className="max-w-4xl mx-auto">
-          <div className="mb-14">
+          <div className="reveal mb-14">
             <p className="text-xs font-medium text-zinc-500 uppercase tracking-wider mb-3">How it works</p>
             <h2 className="text-2xl sm:text-3xl font-bold text-zinc-100 tracking-tight">
               Three steps.
@@ -128,7 +176,7 @@ export default function LandingContent() {
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
             {STEPS.map((s, i) => (
-              <div key={s.num} className="relative">
+              <div key={s.num} className="reveal relative" style={{ transitionDelay: `${i * 100}ms` }}>
                 {i < STEPS.length - 1 && (
                   <div className="hidden sm:block absolute top-10 left-[calc(100%+8px)] w-[calc(100%-80px)] h-px bg-zinc-800/80 z-0" />
                 )}
@@ -148,17 +196,52 @@ export default function LandingContent() {
         </div>
       </section>
 
+      {/* Code snippet */}
+      <section className="py-24 sm:py-32 px-4 border-t border-zinc-800/50">
+        <div className="max-w-4xl mx-auto">
+          <div className="reveal flex flex-col sm:flex-row gap-10 items-center">
+            <div className="flex-1">
+              <p className="text-xs font-medium text-zinc-500 uppercase tracking-wider mb-3">Developers</p>
+              <h2 className="text-2xl sm:text-3xl font-bold text-zinc-100 tracking-tight mb-4">
+                Simple by design.
+              </h2>
+              <p className="text-sm text-zinc-500 leading-relaxed mb-6">
+                A clean API, no dependencies, no complexity. Create an account, get a token, receive mail. That&apos;s it.
+              </p>
+              <Link
+                href="/register"
+                className="inline-flex items-center gap-1.5 text-sm font-medium text-zinc-300 hover:text-zinc-100 transition-colors"
+              >
+                Try it now
+                <ArrowUpRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
+            <div className="flex-1 w-full max-w-md">
+              <div className="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden">
+                <div className="flex items-center gap-2 px-4 py-3 border-b border-zinc-800">
+                  <Code2 className="w-3.5 h-3.5 text-zinc-600" />
+                  <span className="text-[10px] text-zinc-600 font-mono">example.js</span>
+                </div>
+                <pre className="p-4 text-xs text-zinc-400 font-mono leading-relaxed overflow-x-auto">
+                  <code>{CODE_SNIPPET}</code>
+                </pre>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Inbox preview */}
       <section className="py-24 sm:py-32 px-4 border-t border-zinc-800/50">
         <div className="max-w-3xl mx-auto">
-          <div className="mb-10">
+          <div className="reveal mb-10">
             <p className="text-xs font-medium text-zinc-500 uppercase tracking-wider mb-3">Interface</p>
             <h2 className="text-2xl sm:text-3xl font-bold text-zinc-100 tracking-tight">
               Crafted for clarity.
             </h2>
           </div>
 
-          <div className="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden">
+          <div className="reveal bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden">
             <div className="flex items-center gap-2 px-4 py-3 border-b border-zinc-800">
               <div className="flex gap-1.5">
                 <div className="w-2.5 h-2.5 rounded-full bg-zinc-700" />
@@ -214,7 +297,7 @@ export default function LandingContent() {
       {/* FAQ */}
       <section id="faq" className="py-24 sm:py-32 px-4 border-t border-zinc-800/50">
         <div className="max-w-2xl mx-auto">
-          <div className="mb-12">
+          <div className="reveal mb-12">
             <p className="text-xs font-medium text-zinc-500 uppercase tracking-wider mb-3">FAQ</p>
             <h2 className="text-2xl sm:text-3xl font-bold text-zinc-100 tracking-tight">
               Common questions.
@@ -225,7 +308,8 @@ export default function LandingContent() {
             {FAQ_ITEMS.map((item, i) => (
               <details
                 key={i}
-                className="group bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden"
+                className="reveal group bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden"
+                style={{ transitionDelay: `${i * 60}ms` }}
               >
                 <summary className="px-5 py-4 cursor-pointer text-sm font-medium text-zinc-200 hover:text-zinc-100 transition-colors list-none flex items-center justify-between">
                   {item.q}
@@ -246,7 +330,7 @@ export default function LandingContent() {
 
       {/* CTA */}
       <section id="contact" className="py-24 sm:py-32 px-4 border-t border-zinc-800/50">
-        <div className="max-w-xl mx-auto text-center">
+        <div className="reveal max-w-xl mx-auto text-center">
           <h2 className="text-2xl sm:text-3xl font-bold text-zinc-100 tracking-tight mb-4">
             Ready to protect your inbox?
           </h2>
