@@ -8,6 +8,26 @@ export interface Domain {
   created: string;
 }
 
+export interface PlatformAdapter {
+  detect(): boolean;
+  getPlatformName(): string;
+  getStatusSelector(): string;
+  getHeaderSelector(): string;
+  getContentArea(): string;
+}
+
+export interface PlatformDetection {
+  platform: keyof typeof PlatformAdapters | null;
+  confidence: number;
+  domain: string;
+}
+
+export interface AIMessage {
+  role: "user" | "assistant";
+  content: string;
+  model?: string;
+}
+
 export interface Account {
   "@id": string;
   "@type": string;
@@ -93,3 +113,10 @@ export interface SavedAccount {
   favorite?: boolean;
   archived?: boolean;
 }
+
+export const PlatformAdapters = {
+  claude: require("./ai-adapters/claude").default,
+  chatgpt: require("./ai-adapters/chatgpt").default,
+  deepseek: require("./ai-adapters/deepseek").default,
+  mistral: require("./ai-adapters/mistral").default,
+};
