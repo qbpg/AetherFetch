@@ -36,7 +36,7 @@ export default function CookieConsent() {
             We use local storage to remember your session and preferences.
             No third-party tracking cookies are set. By continuing to use this site you agree to our{" "}
             <button onClick={() => document.querySelector<HTMLElement>("[data-modal='privacy']")?.click()}
-              className="text-indigo-400 hover:text-indigo-300 underline-offset-2 underline transition-colors">
+              className="text-zinc-300 hover:text-zinc-50 underline-offset-2 underline transition-colors">
               Privacy Policy
             </button>.
           </div>
@@ -46,7 +46,7 @@ export default function CookieConsent() {
               Reject
             </button>
             <button onClick={() => decide("accepted")}
-              className="h-7 px-3 text-xs font-medium text-zinc-100 bg-indigo-600 hover:bg-indigo-500 rounded-md transition-colors">
+              className="h-7 px-3 text-xs font-medium text-zinc-950 bg-zinc-100 hover:bg-white rounded-md transition-colors">
               Accept
             </button>
             <button onClick={() => setVisible(false)} aria-label="Dismiss"

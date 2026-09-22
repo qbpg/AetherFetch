@@ -158,7 +158,7 @@ export default function AccountsPage() {
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-2xl font-semibold text-zinc-100 tracking-tight">Accounts</h1>
-            <p className="text-sm text-zinc-500 mt-1.5">Manage your mailboxes and credentials</p>
+            <p className="text-sm text-zinc-400 mt-1.5">Manage your mailboxes and credentials</p>
           </div>
           <Link href="/login"
             className="h-9 px-4 flex items-center gap-1.5 text-sm font-medium text-zinc-950 bg-white hover:bg-zinc-200 rounded-lg transition-colors">
@@ -208,10 +208,10 @@ export default function AccountsPage() {
                           <span className="bg-zinc-800 text-zinc-300 text-[10px] px-1.5 py-0.5 rounded border border-zinc-700/50">
                             {lbl}
                           </span>
-                          <Pencil className="w-3 h-3 text-zinc-600 opacity-0 group-hover/label:opacity-100 transition-opacity" />
+                          <Pencil className="w-3 h-3 text-zinc-600" />
                         </>
                       ) : (
-                        <span className="text-[10px] text-zinc-600 hover:text-zinc-400 transition-colors">
+                        <span className="text-[10px] text-zinc-500 hover:text-zinc-400 transition-colors">
                           + Add label
                         </span>
                       );
@@ -229,7 +229,7 @@ export default function AccountsPage() {
 
           <div className="mt-4 pt-4 border-t border-zinc-800">
             <div className="flex items-center gap-2 mb-2.5">
-              <span className="text-[11px] text-zinc-600 uppercase tracking-wider font-medium">Password</span>
+              <span className="text-[11px] text-zinc-500 uppercase tracking-wider font-medium">Password</span>
             </div>
             <div className="flex items-center gap-2">
               <span translate="no" className="text-sm font-mono text-zinc-400 flex-1 truncate">
@@ -317,12 +317,12 @@ export default function AccountsPage() {
                         {acc.label || acc.address}
                         {acc.label ? (
                           <button onClick={() => startEditLabel(acc)}
-                            className="text-zinc-700 hover:text-zinc-400 opacity-0 group-hover:opacity-100 transition-opacity">
+                            className="text-zinc-700 hover:text-zinc-400 transition-colors">
                             <Pencil className="w-3.5 h-3.5" />
                           </button>
                         ) : (
                           <button onClick={() => startEditLabel(acc)}
-                            className="text-[10px] text-zinc-600 hover:text-zinc-400 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                            className="text-[10px] text-zinc-500 hover:text-zinc-400 transition-colors whitespace-nowrap">
                             + Add label
                           </button>
                         )}
@@ -341,7 +341,7 @@ export default function AccountsPage() {
                     <>
                       <button onClick={() => handleToggleArchive(acc.address)}
                         aria-label={acc.archived ? "Unarchive" : "Archive"}
-                        className="w-8 h-8 flex items-center justify-center text-zinc-600 hover:text-zinc-400 rounded-lg transition-colors sm:opacity-0 sm:group-hover:opacity-100">
+                        className="w-8 h-8 flex items-center justify-center text-zinc-600 hover:text-zinc-400 rounded-lg transition-colors">
                         {acc.archived ? <ArchiveRestore className="w-4 h-4" /> : <Archive className="w-4 h-4" />}
                       </button>
                       <button onClick={() => handleSwitchAccount(acc)} disabled={switchingAccount === acc.address}
@@ -352,7 +352,7 @@ export default function AccountsPage() {
                         }
                       </button>
                       <button onClick={() => handleRemoveSaved(acc.address)}
-                        className="w-8 h-8 flex items-center justify-center text-zinc-700 hover:text-red-400 rounded-lg transition-colors sm:opacity-0 sm:group-hover:opacity-100">
+                        className="w-8 h-8 flex items-center justify-center text-zinc-700 hover:text-red-400 rounded-lg transition-colors">
                         <X className="w-4 h-4" />
                       </button>
                     </>
@@ -370,7 +370,7 @@ export default function AccountsPage() {
               <p className="text-sm text-zinc-500 mb-1">
                 {showArchived ? "No archived accounts" : "No saved accounts"}
               </p>
-              <p className="text-xs text-zinc-600">
+              <p className="text-xs text-zinc-500">
                 {showArchived ? "Archived accounts will appear here" : "Create or connect an account to get started"}
               </p>
             </div>

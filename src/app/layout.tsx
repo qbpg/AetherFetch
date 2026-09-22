@@ -3,13 +3,14 @@
 import "./globals.css";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback } from "react";
 import { Copy, Check, Wifi, WifiOff, User, RefreshCw, Menu, X } from "lucide-react";
 import { Analytics } from "@vercel/analytics/next";
+import { GeistSans } from "geist/font/sans";
+import { GeistMono } from "geist/font/mono";
 import { SessionProvider, useSession } from "@/contexts/SessionContext";
 import AppleFloatingNavbar from "@/components/AppleFloatingNavbar";
 import CookieConsent from "@/components/CookieConsent";
-import CursorGlow from "@/components/CursorGlow";
 
 function Header() {
   const { session, sseConnected, doFetch, addToast } = useSession();
@@ -140,7 +141,6 @@ function AppShell({ children }: { children: React.ReactNode }) {
       </div>
       {isLanding ? <AppleFloatingNavbar /> : <Header />}
       {children}
-      <CursorGlow />
     </div>
   );
 }
@@ -151,10 +151,10 @@ function ToastContainer() {
     <>
       {toasts.map((t) => (
         <div key={t.id}
-          className={`self-end px-3 py-2 rounded-lg text-xs font-medium shadow-lg border animate-toast-in pointer-events-auto transition-colors ${
-            t.type === "success" ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-400" :
-            t.type === "error" ? "bg-red-500/10 border-red-500/20 text-red-400" :
-            "bg-zinc-800/80 border-zinc-700/50 text-zinc-300"
+          className={`self-end px-3 py-2 rounded-lg text-xs font-medium border border-zinc-800 bg-zinc-900 animate-toast-in pointer-events-auto transition-colors ${
+            t.type === "success" ? "text-emerald-400" :
+            t.type === "error" ? "text-red-400" :
+            "text-zinc-100"
           }`}>
           {t.message}
         </div>
@@ -165,13 +165,13 @@ function ToastContainer() {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className="dark" translate="no">
+    <html lang="en" className={`dark ${GeistSans.variable} ${GeistMono.variable}`} translate="no">
       <head>
         <title>AetherFetch - Temporary Email</title>
         <link rel="icon" href="/favicon.svg" />
         <meta name="google-site-verification" content="SxrUNkyvIqXp3QQLSjsYbPZa5EWW1SgbHQiYqZKgpbg" />
       </head>
-      <body className="h-full antialiased" style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
+      <body className="h-full antialiased">
         <SessionProvider>
           <AppShell>
             {children}

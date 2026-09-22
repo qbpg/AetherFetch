@@ -213,7 +213,7 @@ export default function AuthForm({ onAuthenticated, initialMode }: AuthFormProps
             <img src="/logo.svg" alt="AetherFetch" className="w-12 h-12 sm:w-14 sm:h-14 object-contain" />
           </div>
           <h1 className="text-xl sm:text-2xl font-semibold text-zinc-100 tracking-tight">AetherFetch</h1>
-          <p className="text-xs sm:text-sm text-zinc-500 mt-1">Temporary email, instant access.</p>
+          <p className="text-xs sm:text-sm text-zinc-400 mt-1">Temporary email, instant access.</p>
         </div>
 
         <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 sm:p-6 shadow-2xl shadow-black/40">
@@ -238,12 +238,12 @@ export default function AuthForm({ onAuthenticated, initialMode }: AuthFormProps
 
           {mode === "login" && savedAccounts.length > 0 && (
             <div className="mb-4 space-y-1.5">
-              <p className="text-[9px] font-medium text-zinc-600 uppercase tracking-wider px-1">Quick connect</p>
+              <p className="text-[9px] font-medium text-zinc-500 uppercase tracking-wider px-1">Quick connect</p>
               {savedAccounts.map((acc) => (
                 <button key={acc.address} type="button" onClick={() => handleQuickLogin(acc)} disabled={loading}
                   className="w-full flex items-center gap-2.5 px-3 py-2.5 bg-[#09090b] border border-zinc-800 rounded-lg hover:border-zinc-700 hover:bg-zinc-800/50 transition-all duration-150 group text-left disabled:opacity-50">
-                  <div className="w-7 h-7 rounded-md bg-zinc-800 border border-zinc-700/50 flex items-center justify-center flex-shrink-0 group-hover:border-indigo-500/30 transition-colors">
-                    <User className="w-3.5 h-3.5 text-zinc-500 group-hover:text-indigo-400 transition-colors" />
+                  <div className="w-7 h-7 rounded-md bg-zinc-800 border border-zinc-700/50 flex items-center justify-center flex-shrink-0 group-hover:border-zinc-600 transition-colors">
+                    <User className="w-3.5 h-3.5 text-zinc-500 group-hover:text-zinc-300 transition-colors" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-1.5">
@@ -257,7 +257,7 @@ export default function AuthForm({ onAuthenticated, initialMode }: AuthFormProps
                     <p translate="no" className="text-[10px] text-zinc-600 font-mono truncate">{acc.password}</p>
                   </div>
                   <span onClick={(e) => handleRemoveAccount(e, acc.address)}
-                    className="flex-shrink-0 p-1 rounded text-zinc-600 hover:text-red-400 hover:bg-red-500/10 transition-colors opacity-0 group-hover:opacity-100"
+                    className="flex-shrink-0 p-1 rounded text-zinc-600 hover:text-red-400 hover:bg-red-500/10 transition-colors"
                     aria-label="Remove account">
                     <Trash2 className="w-3 h-3" />
                   </span>
@@ -272,7 +272,7 @@ export default function AuthForm({ onAuthenticated, initialMode }: AuthFormProps
               className="absolute opacity-0 pointer-events-none h-0 w-0 -z-10" aria-hidden="true" />
 
             {mode === "login" && savedAccounts.length > 0 && (
-              <p className="text-[10px] text-zinc-600 text-center -mt-1">Or sign in with another account</p>
+              <p className="text-[10px] text-zinc-500 text-center -mt-1">Or sign in with another account</p>
             )}
 
             {mode === "register" && (
@@ -281,11 +281,11 @@ export default function AuthForm({ onAuthenticated, initialMode }: AuthFormProps
                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 sm:w-4 sm:h-4 text-zinc-500" />
                   <input type="text" value={username} onChange={(e) => setUsername(e.target.value)}
                     placeholder="username" autoComplete="username"
-                    className="w-full h-10 sm:h-11 pl-9 sm:pl-10 pr-3 bg-[#09090b] border border-zinc-800 rounded-lg text-xs sm:text-sm text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/20 transition-all duration-200" />
+                    className="w-full h-10 sm:h-11 pl-9 sm:pl-10 pr-3 bg-[#09090b] border border-zinc-800 rounded-lg text-xs sm:text-sm text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:border-zinc-600 focus:ring-1 focus:ring-zinc-700 transition-all duration-200" />
                 </div>
                 <div className="relative" ref={dropdownRef}>
                   <button type="button" onClick={() => setDomainOpen(!domainOpen)}
-                    className="h-10 sm:h-11 px-2.5 sm:px-3 pr-7 sm:pr-8 bg-[#09090b] border border-zinc-800 rounded-lg text-xs sm:text-sm text-zinc-100 focus:outline-none focus:border-indigo-500/50 transition-all duration-200 whitespace-nowrap flex items-center gap-0.5 hover:border-zinc-700">
+                    className="h-10 sm:h-11 px-2.5 sm:px-3 pr-7 sm:pr-8 bg-[#09090b] border border-zinc-800 rounded-lg text-xs sm:text-sm text-zinc-100 focus:outline-none focus:border-zinc-600 transition-all duration-200 whitespace-nowrap flex items-center gap-0.5 hover:border-zinc-700">
                     <span translate="no">@{selectedDomain}</span>
                     <ChevronDown className={`w-3 h-3 text-zinc-500 transition-transform duration-200 ${domainOpen ? "rotate-180" : ""}`} />
                   </button>
@@ -295,7 +295,7 @@ export default function AuthForm({ onAuthenticated, initialMode }: AuthFormProps
                         <button key={d.id} type="button"
                           onClick={() => { setSelectedDomain(d.domain); setDomainOpen(false); }}
                           className={`w-full px-3 py-2 text-left text-xs sm:text-sm transition-colors duration-150 ${
-                            d.domain === selectedDomain ? "bg-indigo-500/10 text-indigo-400" : "text-zinc-300 hover:bg-zinc-800"
+                            d.domain === selectedDomain ? "bg-zinc-800 text-zinc-50" : "text-zinc-300 hover:bg-zinc-800"
                           }`}>
                           {d.domain}
                         </button>
@@ -313,7 +313,7 @@ export default function AuthForm({ onAuthenticated, initialMode }: AuthFormProps
                   type="text" value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   placeholder="username" autoComplete="username"
-                  className="w-full min-w-0 h-10 sm:h-11 pl-9 sm:pl-10 pr-24 sm:pr-28 bg-[#09090b] border border-zinc-800 rounded-l-lg text-xs sm:text-sm text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/20 transition-all duration-200" />
+                  className="w-full min-w-0 h-10 sm:h-11 pl-9 sm:pl-10 pr-24 sm:pr-28 bg-[#09090b] border border-zinc-800 rounded-l-lg text-xs sm:text-sm text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:border-zinc-600 focus:ring-1 focus:ring-zinc-700 transition-all duration-200" />
                 <span translate="no" className="absolute right-0 top-0 h-10 sm:h-11 px-2.5 sm:px-3 flex items-center text-[11px] sm:text-xs text-zinc-500 bg-zinc-800/50 border border-l-0 border-zinc-800 rounded-r-lg select-none pointer-events-none whitespace-nowrap overflow-hidden text-ellipsis max-w-[40%]">
                   @{selectedDomain}
                 </span>
@@ -324,7 +324,7 @@ export default function AuthForm({ onAuthenticated, initialMode }: AuthFormProps
               <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 sm:w-4 sm:h-4 text-zinc-500 pointer-events-none" />
               <input type={showPassword ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)}
                 placeholder="Password" autoComplete={mode === "register" ? "new-password" : "current-password"}
-                className="w-full h-10 sm:h-11 pl-9 sm:pl-10 pr-9 sm:pr-10 bg-[#09090b] border border-zinc-800 rounded-lg text-xs sm:text-sm text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/20 transition-all duration-200" />
+                className="w-full h-10 sm:h-11 pl-9 sm:pl-10 pr-9 sm:pr-10 bg-[#09090b] border border-zinc-800 rounded-lg text-xs sm:text-sm text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:border-zinc-600 focus:ring-1 focus:ring-zinc-700 transition-all duration-200" />
               <button type="button" onClick={() => setShowPassword(!showPassword)}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300 transition-colors duration-150">
                 {showPassword ? <EyeOff className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> : <Eye className="w-3.5 h-3.5 sm:w-4 sm:h-4" />}
@@ -336,7 +336,7 @@ export default function AuthForm({ onAuthenticated, initialMode }: AuthFormProps
                 <Tag className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 sm:w-4 sm:h-4 text-zinc-500 pointer-events-none" />
                 <input type="text" value={accountLabel} onChange={(e) => setAccountLabel(e.target.value)}
                   placeholder='Label (e.g. Netflix, Dev Test)'
-                  className="w-full h-10 sm:h-11 pl-9 sm:pl-10 pr-3 bg-[#09090b] border border-zinc-800 rounded-lg text-xs sm:text-sm text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/20 transition-all duration-200" />
+                  className="w-full h-10 sm:h-11 pl-9 sm:pl-10 pr-3 bg-[#09090b] border border-zinc-800 rounded-lg text-xs sm:text-sm text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:border-zinc-600 focus:ring-1 focus:ring-zinc-700 transition-all duration-200" />
               </div>
             )}
 
@@ -356,7 +356,7 @@ export default function AuthForm({ onAuthenticated, initialMode }: AuthFormProps
             )}
 
             <button type="submit" disabled={loading}
-              className="w-full h-10 sm:h-11 bg-indigo-500 hover:bg-indigo-400 active:bg-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed text-white text-xs sm:text-sm font-medium rounded-lg transition-all duration-200 flex items-center justify-center gap-2 hover:shadow-lg hover:shadow-indigo-500/10 active:scale-[0.98]">
+              className="w-full h-10 sm:h-11 bg-white hover:bg-zinc-200 disabled:opacity-50 disabled:cursor-not-allowed text-zinc-950 text-xs sm:text-sm font-semibold rounded-lg transition-colors flex items-center justify-center gap-2">
               {loading ? <Loader2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 animate-spin" /> : (
                 <>{mode === "register" ? "Create account" : "Sign in"}<ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 transition-transform group-hover:translate-x-0.5" /></>
               )}
@@ -364,7 +364,7 @@ export default function AuthForm({ onAuthenticated, initialMode }: AuthFormProps
 
             {mode === "register" && username.trim() && selectedDomain && (
               <button type="button" onClick={handleCreateAndCopy} disabled={loading}
-                className="w-full h-8 sm:h-9 flex items-center justify-center gap-2 text-[11px] sm:text-xs font-medium text-indigo-400/70 hover:text-indigo-400 bg-indigo-500/5 hover:bg-indigo-500/10 border border-indigo-500/10 rounded-lg transition-all duration-200 active:scale-[0.98] disabled:opacity-50">
+                className="w-full h-8 sm:h-9 flex items-center justify-center gap-2 text-[11px] sm:text-xs font-medium text-zinc-400 bg-zinc-800/50 hover:bg-zinc-800 hover:text-zinc-50 border border-zinc-800 rounded-lg transition-colors disabled:opacity-50">
                 {loading ? <Loader2 className="w-3 h-3 sm:w-3.5 sm:h-3.5 animate-spin" /> : (
                   copiedAddr ? <Check className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-emerald-400" /> : <Copy className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                 )}
@@ -374,18 +374,18 @@ export default function AuthForm({ onAuthenticated, initialMode }: AuthFormProps
           </form>
 
           <div className="mt-3 sm:mt-4 text-center overflow-hidden">
-            <p className="text-[11px] sm:text-xs text-zinc-600">
+            <p className="text-[11px] sm:text-xs text-zinc-500">
               {mode === "register" ? "Already have an account?" : "No account yet?"}{" "}
               <button type="button" onClick={() => router.push(mode === "register" ? "/login" : "/register")}
-                className="text-indigo-400 hover:text-indigo-300 transition-colors duration-150 underline-offset-2 hover:underline">
+                className="text-zinc-300 hover:text-zinc-50 transition-colors duration-150 underline underline-offset-2">
                 {mode === "register" ? "Sign in" : "Register"}
               </button>
             </p>
           </div>
         </div>
 
-        <p className="text-center text-[10px] sm:text-xs text-zinc-700 mt-4 sm:mt-6">
-          AetherFetch &mdash; Temporary email, instant access.
+        <p className="text-center text-[10px] sm:text-xs text-zinc-600 mt-4 sm:mt-6">
+          AetherFetch. Temporary email, instant access.
         </p>
       </div>
       <Footer />

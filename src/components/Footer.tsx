@@ -39,7 +39,7 @@ export default function Footer() {
 
   return (
     <>
-      <footer className="flex-shrink-0 border-t border-zinc-800/60 mt-8 pt-6 pb-4 px-4 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-xs text-zinc-500/70">
+      <footer className="flex-shrink-0 border-t border-zinc-800 mt-8 pt-6 pb-4 px-4 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-xs text-zinc-500">
         <span>Created by qpbg</span>
         <span className="text-zinc-700">·</span>
         <a href="mailto:qbpg.sg@outlook.com" translate="no" className="hover:text-zinc-300 transition-colors">
@@ -64,7 +64,7 @@ export default function Footer() {
       </footer>
 
       {modal && (
-        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/60 backdrop-blur-sm px-4"
+        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/70 px-4"
           onClick={(e) => { if (e.target === e.currentTarget) close(); }}>
           <div className="w-full max-w-lg max-h-[80vh] bg-zinc-900 border border-zinc-800 rounded-xl shadow-2xl shadow-black/60 animate-fade-in-up flex flex-col">
             <div className="flex items-center justify-between px-5 py-4 border-b border-zinc-800 shrink-0">
@@ -79,7 +79,7 @@ export default function Footer() {
                 <>
                   <p><span className="text-zinc-300 font-medium">Publisher:</span> qbpg</p>
                   <p><span className="text-zinc-300 font-medium">Support Contact:</span>{" "}
-                    <a href="mailto:qbpg.sg@outlook.com" translate="no" className="text-indigo-400 hover:text-indigo-300 transition-colors">
+                    <a href="mailto:qbpg.sg@outlook.com" translate="no" className="text-zinc-300 hover:text-zinc-50 transition-colors underline underline-offset-2">
                       qbpg.sg@outlook.com
                     </a>
                   </p>
@@ -93,7 +93,7 @@ export default function Footer() {
                 <>
                   <p><span className="text-zinc-300 font-medium">Data Controller:</span> qbpg</p>
                   <p><span className="text-zinc-300 font-medium">Contact:</span>{" "}
-                    <a href="mailto:qbpg.sg@outlook.com" translate="no" className="text-indigo-400 hover:text-indigo-300 transition-colors">
+                    <a href="mailto:qbpg.sg@outlook.com" translate="no" className="text-zinc-300 hover:text-zinc-50 transition-colors underline underline-offset-2">
                       qbpg.sg@outlook.com
                     </a>
                   </p>

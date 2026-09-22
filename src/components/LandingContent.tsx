@@ -1,23 +1,19 @@
 "use client";
 
-import { useEffect, useRef } from "react";
 import Link from "next/link";
-import {
-  Mail, Shield, Zap, Clock, Globe, ArrowRight,
-  Inbox, Eye, Terminal, ArrowUpRight, Code2,
-} from "lucide-react";
+import { ArrowRight, Code2, Mail } from "lucide-react";
 
 const FEATURES = [
-  { icon: Zap, title: "Instant Access", desc: "Generate a temporary email in seconds. No signup, no commitment, no trace." },
-  { icon: Shield, title: "Privacy First", desc: "Your real inbox stays untouched. All data lives in your browser, nothing stored server-side." },
-  { icon: Clock, title: "Auto-Refresh", desc: "Live SSE connection delivers messages in real-time. Fallback polling every 30s." },
-  { icon: Globe, title: "Multiple Domains", desc: "Choose from available domains. Create and manage multiple accounts effortlessly." },
+  { title: "Instant creation", desc: "Generate a temporary address in seconds. No signup form, no commitment, no trace left behind." },
+  { title: "Local by default", desc: "Your session and messages live in browser localStorage. Nothing is persisted server-side." },
+  { title: "Live delivery", desc: "SSE connection pushes messages as they arrive. Falls back to 30s polling when SSE drops." },
+  { title: "Multiple domains", desc: "Pick from the available domains. Keep several accounts and switch between them." },
 ];
 
 const STEPS = [
-  { num: "01", icon: Terminal, title: "Generate or Login", desc: "Create a new address or sign into an existing one in one click." },
-  { num: "02", icon: Inbox, title: "Receive Messages", desc: "Share your address. Emails arrive instantly in your inbox." },
-  { num: "03", icon: Eye, title: "Read & Manage", desc: "View, search, copy, and delete messages on your terms." },
+  { num: "01", title: "Generate or sign in", desc: "Create a new address or log into a saved one in a single click." },
+  { num: "02", title: "Receive messages", desc: "Share the address. Mail lands in the inbox as soon as it is delivered." },
+  { num: "03", title: "Read and manage", desc: "View, filter, copy, and delete messages on your terms." },
 ];
 
 const FAQ_ITEMS = [
@@ -41,122 +37,76 @@ const email = await createAccount(
 // Done. Start receiving mail.`;
 
 export default function LandingContent() {
-  const sectionsRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const sections = sectionsRef.current?.querySelectorAll(".reveal");
-    if (!sections) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("visible");
-          }
-        }
-      },
-      { threshold: 0.1, rootMargin: "0px 0px -60px 0px" }
-    );
-
-    sections.forEach((el) => observer.observe(el));
-    return () => observer.disconnect();
-  }, []);
-
   return (
-    <div ref={sectionsRef} className="flex-1 overflow-y-auto">
+    <div className="flex-1 overflow-y-auto">
       {/* Hero */}
       <section className="relative min-h-[100dvh] flex items-center justify-center px-4 pt-20 pb-16">
-        <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-zinc-100/[0.03] rounded-full blur-[100px]" />
-        </div>
-        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-zinc-800 to-transparent" />
-
         <div className="relative max-w-2xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-zinc-900 border border-zinc-800 rounded-full text-xs text-zinc-500 mb-8">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse-dot" />
-            Temporary email, zero footprint
-          </div>
-
-          <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold tracking-tight text-zinc-100 leading-[1.05] mb-6">
+          <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold tracking-tight text-zinc-50 leading-[1.05] mb-6">
             Your inbox.
             <br />
-            <span className="text-zinc-500">Ephemeral.</span>
+            Ephemeral.
           </h1>
 
           <p className="text-lg sm:text-xl text-zinc-400 max-w-lg mx-auto mb-12 leading-relaxed">
             Disposable email addresses in seconds.
             <br className="hidden sm:block" />
-            Protect your real inbox from spam and trackers.
+            Keep your real inbox free of spam and trackers.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
               href="/register"
-              className="group h-12 px-8 flex items-center gap-2.5 bg-white hover:bg-zinc-200 text-zinc-900 text-sm font-semibold rounded-xl transition-all duration-200 shadow-[0_0_30px_rgba(255,255,255,0.06)] hover:shadow-[0_0_40px_rgba(255,255,255,0.1)] active:scale-[0.98]"
+              className="h-12 px-8 flex items-center gap-2.5 bg-white hover:bg-zinc-200 text-zinc-950 text-sm font-semibold rounded-lg transition-colors"
             >
-              Get Started Free
-              <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
+              Create an address
+              <ArrowRight className="w-4 h-4" />
             </Link>
             <Link
               href="/login"
-              className="h-12 px-8 flex items-center gap-2 text-sm font-medium text-zinc-400 hover:text-zinc-200 border border-zinc-800 hover:border-zinc-700 rounded-xl transition-all duration-200"
+              className="h-12 px-8 flex items-center gap-2 text-sm font-medium text-zinc-400 hover:text-zinc-50 hover:bg-zinc-800 border border-zinc-800 rounded-lg transition-colors"
             >
-              I have an account
+              Sign in
             </Link>
           </div>
 
-          <div className="mt-16 flex items-center justify-center gap-6 sm:gap-10 text-xs text-zinc-600">
-            <div className="flex items-center gap-2">
-              <Shield className="w-4 h-4 text-zinc-500" />
-              <span>No tracking</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Zap className="w-4 h-4 text-zinc-500" />
-              <span>Instant setup</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Clock className="w-4 h-4 text-zinc-500" />
-              <span>Live updates</span>
-            </div>
+          <div className="mt-16 flex items-center justify-center gap-6 sm:gap-10 text-xs text-zinc-500">
+            <span>No tracking</span>
+            <span className="text-zinc-700">/</span>
+            <span>Instant setup</span>
+            <span className="text-zinc-700">/</span>
+            <span>Live updates</span>
           </div>
         </div>
       </section>
 
       {/* Numbers */}
-      <section className="border-y border-zinc-800/50">
+      <section className="border-y border-zinc-800">
         <div className="max-w-4xl mx-auto px-4 py-10 grid grid-cols-2 sm:grid-cols-4 gap-8 text-center">
           {NUMBERS.map((s) => (
             <div key={s.label}>
-              <p className="text-3xl sm:text-4xl font-bold text-zinc-100 tracking-tight">{s.value}</p>
-              <p className="text-xs text-zinc-500 mt-2">{s.label}</p>
+              <p className="text-3xl sm:text-4xl font-bold text-zinc-50 tracking-tight">{s.value}</p>
+              <p className="text-xs text-zinc-400 mt-2">{s.label}</p>
             </div>
           ))}
         </div>
       </section>
 
       {/* Features */}
-      <section id="features" className="py-24 sm:py-32 px-4 border-t border-zinc-800/50">
+      <section id="features" className="py-24 sm:py-32 px-4 border-t border-zinc-800">
         <div className="max-w-4xl mx-auto">
-          <div className="reveal mb-14">
-            <p className="text-xs font-medium text-zinc-500 uppercase tracking-wider mb-3">Features</p>
-            <h2 className="text-2xl sm:text-3xl font-bold text-zinc-100 tracking-tight">
-              Everything you need,
-              <span className="text-zinc-500"> nothing you don&apos;t.</span>
+          <div className="mb-14">
+            <p className="text-xs font-medium text-zinc-500 uppercase tracking-wider mb-3 font-mono">Features</p>
+            <h2 className="text-2xl sm:text-3xl font-bold text-zinc-50 tracking-tight">
+              What it does.
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {FEATURES.map((f, i) => (
-              <div
-                key={f.title}
-                className="reveal p-6 bg-zinc-900 border border-zinc-800 rounded-xl hover:border-zinc-700 transition-colors duration-200"
-                style={{ transitionDelay: `${i * 80}ms` }}
-              >
-                <div className="w-9 h-9 rounded-lg bg-zinc-800 border border-zinc-700/50 flex items-center justify-center mb-4">
-                  <f.icon className="w-4 h-4 text-zinc-400" />
-                </div>
-                <h3 className="text-sm font-semibold text-zinc-100 mb-1.5">{f.title}</h3>
-                <p className="text-xs text-zinc-500 leading-relaxed">{f.desc}</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-10">
+            {FEATURES.map((f) => (
+              <div key={f.title} className="py-5 border-t border-zinc-800">
+                <h3 className="text-sm font-semibold text-zinc-50 mb-1.5 tracking-tight">{f.title}</h3>
+                <p className="text-sm text-zinc-400 leading-relaxed">{f.desc}</p>
               </div>
             ))}
           </div>
@@ -164,32 +114,23 @@ export default function LandingContent() {
       </section>
 
       {/* How it works */}
-      <section className="py-24 sm:py-32 px-4 border-t border-zinc-800/50">
+      <section className="py-24 sm:py-32 px-4 border-t border-zinc-800">
         <div className="max-w-4xl mx-auto">
-          <div className="reveal mb-14">
-            <p className="text-xs font-medium text-zinc-500 uppercase tracking-wider mb-3">How it works</p>
-            <h2 className="text-2xl sm:text-3xl font-bold text-zinc-100 tracking-tight">
+          <div className="mb-14">
+            <p className="text-xs font-medium text-zinc-500 uppercase tracking-wider mb-3 font-mono">How it works</p>
+            <h2 className="text-2xl sm:text-3xl font-bold text-zinc-50 tracking-tight">
               Three steps.
-              <span className="text-zinc-500"> Zero friction.</span>
             </h2>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-            {STEPS.map((s, i) => (
-              <div key={s.num} className="reveal relative" style={{ transitionDelay: `${i * 100}ms` }}>
-                {i < STEPS.length - 1 && (
-                  <div className="hidden sm:block absolute top-10 left-[calc(100%+8px)] w-[calc(100%-80px)] h-px bg-zinc-800/80 z-0" />
-                )}
-                <div className="relative p-6 bg-zinc-900 border border-zinc-800 rounded-xl">
-                  <div className="flex items-center gap-3 mb-4">
-                    <span className="text-[10px] font-bold text-zinc-500 bg-zinc-800 border border-zinc-700 px-2 py-0.5 rounded-full font-mono">
-                      {s.num}
-                    </span>
-                    <s.icon className="w-4 h-4 text-zinc-600" />
-                  </div>
-                  <h3 className="text-sm font-semibold text-zinc-100 mb-1.5">{s.title}</h3>
-                  <p className="text-xs text-zinc-500 leading-relaxed">{s.desc}</p>
-                </div>
+            {STEPS.map((s) => (
+              <div key={s.num} className="p-6 bg-zinc-900 border border-zinc-800 rounded-lg">
+                <span className="block text-[10px] font-bold text-zinc-500 font-mono mb-4">
+                  {s.num}
+                </span>
+                <h3 className="text-sm font-semibold text-zinc-50 mb-1.5 tracking-tight">{s.title}</h3>
+                <p className="text-xs text-zinc-400 leading-relaxed">{s.desc}</p>
               </div>
             ))}
           </div>
@@ -197,30 +138,29 @@ export default function LandingContent() {
       </section>
 
       {/* Code snippet */}
-      <section className="py-24 sm:py-32 px-4 border-t border-zinc-800/50">
+      <section className="py-24 sm:py-32 px-4 border-t border-zinc-800">
         <div className="max-w-4xl mx-auto">
-          <div className="reveal flex flex-col sm:flex-row gap-10 items-center">
+          <div className="flex flex-col sm:flex-row gap-10 items-center">
             <div className="flex-1">
-              <p className="text-xs font-medium text-zinc-500 uppercase tracking-wider mb-3">Developers</p>
-              <h2 className="text-2xl sm:text-3xl font-bold text-zinc-100 tracking-tight mb-4">
-                Simple by design.
+              <p className="text-xs font-medium text-zinc-500 uppercase tracking-wider mb-3 font-mono">Developers</p>
+              <h2 className="text-2xl sm:text-3xl font-bold text-zinc-50 tracking-tight mb-4">
+                Three lines of code.
               </h2>
-              <p className="text-sm text-zinc-500 leading-relaxed mb-6">
-                A clean API, no dependencies, no complexity. Create an account, get a token, receive mail. That&apos;s it.
+              <p className="text-sm text-zinc-400 leading-relaxed mb-6">
+                Create an account, get a token, receive mail. No SDK, no dependency, no build step.
               </p>
               <Link
                 href="/register"
-                className="inline-flex items-center gap-1.5 text-sm font-medium text-zinc-300 hover:text-zinc-100 transition-colors"
+                className="inline-flex items-center text-sm font-medium text-zinc-300 hover:text-zinc-50 hover:bg-zinc-800 border border-zinc-800 rounded-lg px-4 py-2 transition-colors"
               >
                 Try it now
-                <ArrowUpRight className="w-3.5 h-3.5" />
               </Link>
             </div>
             <div className="flex-1 w-full max-w-md">
-              <div className="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden">
+              <div className="bg-zinc-900 border border-zinc-800 rounded-lg overflow-hidden">
                 <div className="flex items-center gap-2 px-4 py-3 border-b border-zinc-800">
-                  <Code2 className="w-3.5 h-3.5 text-zinc-600" />
-                  <span className="text-[10px] text-zinc-600 font-mono">example.js</span>
+                  <Code2 className="w-3.5 h-3.5 text-zinc-500" />
+                  <span className="text-[10px] text-zinc-500 font-mono">example.js</span>
                 </div>
                 <pre className="p-4 text-xs text-zinc-400 font-mono leading-relaxed overflow-x-auto">
                   <code>{CODE_SNIPPET}</code>
@@ -232,16 +172,16 @@ export default function LandingContent() {
       </section>
 
       {/* Inbox preview */}
-      <section className="py-24 sm:py-32 px-4 border-t border-zinc-800/50">
+      <section className="py-24 sm:py-32 px-4 border-t border-zinc-800">
         <div className="max-w-3xl mx-auto">
-          <div className="reveal mb-10">
-            <p className="text-xs font-medium text-zinc-500 uppercase tracking-wider mb-3">Interface</p>
-            <h2 className="text-2xl sm:text-3xl font-bold text-zinc-100 tracking-tight">
-              Crafted for clarity.
+          <div className="mb-10">
+            <p className="text-xs font-medium text-zinc-500 uppercase tracking-wider mb-3 font-mono">Interface</p>
+            <h2 className="text-2xl sm:text-3xl font-bold text-zinc-50 tracking-tight">
+              The inbox, nothing else.
             </h2>
           </div>
 
-          <div className="reveal bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden">
+          <div className="bg-zinc-900 border border-zinc-800 rounded-lg overflow-hidden">
             <div className="flex items-center gap-2 px-4 py-3 border-b border-zinc-800">
               <div className="flex gap-1.5">
                 <div className="w-2.5 h-2.5 rounded-full bg-zinc-700" />
@@ -249,24 +189,24 @@ export default function LandingContent() {
                 <div className="w-2.5 h-2.5 rounded-full bg-zinc-700" />
               </div>
               <div className="flex-1 text-center">
-                <span className="text-[10px] text-zinc-600 font-mono">AetherFetch Dashboard</span>
+                <span className="text-[10px] text-zinc-500 font-mono">AetherFetch Dashboard</span>
               </div>
             </div>
             <div className="flex min-h-[320px]">
               <div className="w-64 border-r border-zinc-800 p-3 space-y-1 hidden sm:block">
-                <div className="flex items-center gap-2 px-3 py-2 bg-zinc-800/50 rounded-lg">
-                  <Mail className="w-3.5 h-3.5 text-zinc-500" />
-                  <span className="text-xs text-zinc-300">Inbox</span>
-                  <span className="ml-auto text-[10px] text-zinc-500 bg-zinc-800 px-1.5 py-0.5 rounded-full">3</span>
+                <div className="flex items-center gap-2 px-3 py-2 bg-zinc-800 rounded-md">
+                  <Mail className="w-3.5 h-3.5 text-zinc-400" />
+                  <span className="text-xs text-zinc-200">Inbox</span>
+                  <span className="ml-auto text-[10px] text-zinc-400 bg-zinc-900 px-1.5 py-0.5 rounded-full">3</span>
                 </div>
                 {[1, 2, 3].map((i) => (
-                  <div key={i} className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-zinc-800/30 transition-colors">
+                  <div key={i} className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-zinc-800/50 transition-colors">
                     <div className="w-6 h-6 rounded-full bg-zinc-800 flex items-center justify-center flex-shrink-0">
-                      <span className="text-[8px] text-zinc-500">{["N", "G", "S"][i - 1]}</span>
+                      <span className="text-[8px] text-zinc-400">{["N", "G", "S"][i - 1]}</span>
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-[10px] text-zinc-300 truncate">{["Netflix", "GitHub", "Stripe"][i - 1]}</p>
-                      <p className="text-[9px] text-zinc-600 truncate">{["Verify your email", "Welcome to GitHub", "Payment receipt"][i - 1]}</p>
+                      <p className="text-[9px] text-zinc-500 truncate">{["Verify your email", "Welcome to GitHub", "Payment receipt"][i - 1]}</p>
                     </div>
                   </div>
                 ))}
@@ -277,13 +217,13 @@ export default function LandingContent() {
                     <span className="text-xs text-zinc-400">N</span>
                   </div>
                   <div>
-                    <p className="text-xs text-zinc-300 font-medium">Netflix</p>
-                    <p className="text-[10px] text-zinc-600">noreply@netflix.com</p>
+                    <p className="text-xs text-zinc-200 font-medium">Netflix</p>
+                    <p className="text-[10px] text-zinc-500">noreply@netflix.com</p>
                   </div>
-                  <span className="ml-auto text-[10px] text-zinc-600">2m ago</span>
+                  <span className="ml-auto text-[10px] text-zinc-500">2m ago</span>
                 </div>
-                <div className="flex-1 bg-zinc-800/30 rounded-lg p-4 border border-zinc-800/50">
-                  <p className="text-[11px] text-zinc-400 leading-relaxed">
+                <div className="flex-1 bg-zinc-800/50 rounded-md p-4 border border-zinc-800">
+                  <p className="text-[11px] text-zinc-300 leading-relaxed">
                     Welcome to Netflix! Your account has been created. Please verify
                     your email address to start watching.
                   </p>
@@ -295,11 +235,11 @@ export default function LandingContent() {
       </section>
 
       {/* FAQ */}
-      <section id="faq" className="py-24 sm:py-32 px-4 border-t border-zinc-800/50">
+      <section id="faq" className="py-24 sm:py-32 px-4 border-t border-zinc-800">
         <div className="max-w-2xl mx-auto">
-          <div className="reveal mb-12">
-            <p className="text-xs font-medium text-zinc-500 uppercase tracking-wider mb-3">FAQ</p>
-            <h2 className="text-2xl sm:text-3xl font-bold text-zinc-100 tracking-tight">
+          <div className="mb-12">
+            <p className="text-xs font-medium text-zinc-500 uppercase tracking-wider mb-3 font-mono">FAQ</p>
+            <h2 className="text-2xl sm:text-3xl font-bold text-zinc-50 tracking-tight">
               Common questions.
             </h2>
           </div>
@@ -308,18 +248,17 @@ export default function LandingContent() {
             {FAQ_ITEMS.map((item, i) => (
               <details
                 key={i}
-                className="reveal group bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden"
-                style={{ transitionDelay: `${i * 60}ms` }}
+                className="group bg-zinc-900 border border-zinc-800 rounded-lg overflow-hidden"
               >
-                <summary className="px-5 py-4 cursor-pointer text-sm font-medium text-zinc-200 hover:text-zinc-100 transition-colors list-none flex items-center justify-between">
+                <summary className="px-5 py-4 cursor-pointer text-sm font-medium text-zinc-200 hover:text-zinc-50 transition-colors list-none flex items-center justify-between">
                   {item.q}
-                  <span className="text-zinc-600 group-open:rotate-180 transition-transform duration-200">
+                  <span className="text-zinc-500 group-open:rotate-180 transition-transform duration-200">
                     <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
                       <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                   </span>
                 </summary>
-                <div className="px-5 pb-4 text-xs text-zinc-500 leading-relaxed border-t border-zinc-800/50 pt-3">
+                <div className="px-5 pb-4 text-xs text-zinc-400 leading-relaxed border-t border-zinc-800 pt-3">
                   {item.a}
                 </div>
               </details>
@@ -329,25 +268,25 @@ export default function LandingContent() {
       </section>
 
       {/* CTA */}
-      <section id="contact" className="py-24 sm:py-32 px-4 border-t border-zinc-800/50">
-        <div className="reveal max-w-xl mx-auto text-center">
-          <h2 className="text-2xl sm:text-3xl font-bold text-zinc-100 tracking-tight mb-4">
-            Ready to protect your inbox?
+      <section id="contact" className="py-24 sm:py-32 px-4 border-t border-zinc-800">
+        <div className="max-w-xl mx-auto text-center">
+          <h2 className="text-2xl sm:text-3xl font-bold text-zinc-50 tracking-tight mb-4">
+            Create a temporary address.
           </h2>
-          <p className="text-sm text-zinc-500 mb-8 max-w-md mx-auto">
-            Create your first temporary email in seconds. No account required.
+          <p className="text-sm text-zinc-400 mb-8 max-w-md mx-auto">
+            No account required to start. The address works the moment it is generated.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
               href="/register"
-              className="group h-12 px-8 flex items-center gap-2.5 bg-white hover:bg-zinc-200 text-zinc-900 text-sm font-semibold rounded-xl transition-all duration-200 shadow-[0_0_30px_rgba(255,255,255,0.06)] hover:shadow-[0_0_40px_rgba(255,255,255,0.1)] active:scale-[0.98]"
+              className="h-12 px-8 flex items-center gap-2.5 bg-white hover:bg-zinc-200 text-zinc-950 text-sm font-semibold rounded-lg transition-colors"
             >
-              Get Started Free
-              <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
+              Create an address
+              <ArrowRight className="w-4 h-4" />
             </Link>
             <a
               href="mailto:qbpg.sg@outlook.com"
-              className="h-12 px-8 flex items-center gap-2 text-sm font-medium text-zinc-500 hover:text-zinc-300 border border-zinc-800 hover:border-zinc-700 rounded-xl transition-all duration-200"
+              className="h-12 px-8 flex items-center gap-2 text-sm font-medium text-zinc-400 hover:text-zinc-50 hover:bg-zinc-800 border border-zinc-800 rounded-lg transition-colors"
             >
               Contact support
             </a>
@@ -356,15 +295,15 @@ export default function LandingContent() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-zinc-800/50 py-6 px-4">
+      <footer className="border-t border-zinc-800 py-6 px-4">
         <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2.5">
             <img src="/logo.svg" alt="AetherFetch" className="h-5 w-5 object-contain" />
             <span className="text-xs font-semibold text-zinc-400">AetherFetch</span>
           </div>
-          <div className="flex items-center gap-4 text-xs text-zinc-600">
+          <div className="flex items-center gap-4 text-xs text-zinc-500">
             <span>Created by qpbg</span>
-            <a href="mailto:qbpg.sg@outlook.com" translate="no" className="hover:text-zinc-400 transition-colors">
+            <a href="mailto:qbpg.sg@outlook.com" translate="no" className="hover:text-zinc-300 transition-colors">
               qbpg.sg@outlook.com
             </a>
           </div>

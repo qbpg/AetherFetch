@@ -22,7 +22,7 @@ export default function AppleFloatingNavbar() {
     <div className="fixed top-0 left-0 right-0 z-[100] pointer-events-none">
       <div className="flex justify-center pt-3 sm:pt-4">
         <nav
-          className="pointer-events-auto mx-auto flex h-13 sm:h-14 w-[94vw] max-w-3xl items-center justify-between rounded-2xl bg-zinc-900/80 backdrop-blur-xl border border-zinc-800/60 shadow-[0_4px_30px_rgba(0,0,0,0.5)] px-5 sm:px-7 transition-all duration-300 hover:border-zinc-700/80"
+          className="pointer-events-auto mx-auto flex h-13 sm:h-14 w-[94vw] max-w-3xl items-center justify-between rounded-2xl bg-zinc-900 border border-zinc-800 px-5 sm:px-7"
         >
           <Link href="/" className="flex shrink-0 items-center gap-3">
             <img
@@ -40,7 +40,7 @@ export default function AppleFloatingNavbar() {
               <button
                 key={link.href}
                 onClick={() => scrollTo(link.href)}
-                className="px-3.5 py-1.5 text-[13px] font-medium text-zinc-400 hover:text-zinc-200 hover:bg-white/5 rounded-lg transition-colors duration-200 whitespace-nowrap"
+                className="px-3.5 py-1.5 text-[13px] font-medium text-zinc-400 hover:text-zinc-50 hover:bg-zinc-800 rounded-lg transition-colors whitespace-nowrap"
               >
                 {link.label}
               </button>
@@ -51,14 +51,14 @@ export default function AppleFloatingNavbar() {
             {session ? (
               <Link
                 href="/dashboard"
-                className="px-5 py-2 text-[13px] font-medium text-zinc-100 bg-indigo-500 hover:bg-indigo-400 rounded-xl transition-all duration-200 active:scale-95 whitespace-nowrap"
+                className="px-5 py-2 text-[13px] font-medium text-zinc-100 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 rounded-lg transition-colors whitespace-nowrap"
               >
                 Dashboard
               </Link>
             ) : (
               <Link
                 href="/login"
-                className="px-5 py-2 text-[13px] font-medium text-zinc-950 bg-white hover:bg-zinc-200 rounded-xl transition-all duration-200 active:scale-95 whitespace-nowrap"
+                className="px-5 py-2 text-[13px] font-medium text-zinc-950 bg-white hover:bg-zinc-200 rounded-lg transition-colors whitespace-nowrap"
               >
                 Get Started
               </Link>

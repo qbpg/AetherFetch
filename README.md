@@ -34,7 +34,7 @@ Multi-account management, real-time inbox with Mercure SSE, keyboard shortcuts, 
 | Language | TypeScript 5 (strict) |
 | Styling | Tailwind CSS 4 |
 | Icons | lucide-react |
-| Fonts | Inter + Geist Mono |
+| Fonts | Geist Sans + Geist Mono |
 | API | [mail.tm](https://mail.tm) (temporary email) |
 | Realtime | Mercure SSE (`mercure.mail.tm`) |
 | Proxy | Cloudflare Worker (CORS) |
