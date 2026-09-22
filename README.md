@@ -85,8 +85,10 @@ Open [http://localhost:3000](http://localhost:3000).
 src/
   app/
     page.tsx                 # Root redirect → /home
-    layout.tsx               # Root layout (SessionProvider, Header, Toasts)
+    layout.tsx               # Root layout (metadata, SessionProvider, AppShell)
     globals.css              # Tailwind + custom animations
+    sitemap.ts               # Sitemap for search engines
+    robots.txt               # Crawler rules + sitemap reference
     api/mailbox/[...path]/   # Catch-all API proxy → Cloudflare Worker
     home/page.tsx            # Home / session selector
     dashboard/page.tsx       # Inbox + mail reader
@@ -94,6 +96,7 @@ src/
     login/page.tsx           # Login view
     register/page.tsx        # Register view
   components/
+    AppShell.tsx             # Client shell: header, toasts, landing/app chrome
     AuthForm.tsx             # Login / Register form + quick connect
     Footer.tsx               # Footer with legal modals
     SecureMailIframe.tsx     # Sandboxed HTML email renderer
