@@ -169,6 +169,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <title>AetherFetch - Temporary Email</title>
         <link rel="icon" href="/favicon.svg" />
+        <meta name="google-site-verification" content="SxrUNkyvIqXp3QQLSjsYbPZa5EWW1SgbHQiYqZKgpbg" />
       </head>
       <body className="h-full antialiased" style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
         <SessionProvider>
