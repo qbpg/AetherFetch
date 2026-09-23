@@ -1,5 +1,7 @@
 "use client";
 
+import Image from "next/image";
+
 import Link from "next/link";
 import { ArrowRight, Code2, Mail } from "lucide-react";
 
@@ -298,7 +300,7 @@ export default function LandingContent() {
       <footer className="border-t border-zinc-800 py-6 px-4">
         <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2.5">
-            <img src="/logo.svg" alt="AetherFetch" className="h-5 w-5 object-contain" />
+            <Image src="/logo.svg" alt="AetherFetch" width={20} height={20} className="h-5 w-5 object-contain" />
             <span className="text-xs font-semibold text-zinc-400">AetherFetch</span>
           </div>
           <div className="flex items-center gap-4 text-xs text-zinc-500">

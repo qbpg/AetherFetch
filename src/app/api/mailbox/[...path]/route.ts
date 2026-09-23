@@ -1,7 +1,10 @@
 const WORKER_URL = "https://mailbox-proxy.mailbox-proxy-app.workers.dev";
 
 function buildHeaders(request: Request): Record<string, string> {
-  const h: Record<string, string> = { "Content-Type": "application/json", "Accept": "application/json" };
+  const h: Record<string, string> = {
+    "Content-Type": request.headers.get("Content-Type") || "application/json",
+    "Accept": "application/json",
+  };
   const auth = request.headers.get("Authorization");
   if (auth) h["Authorization"] = auth;
   return h;
@@ -16,11 +19,16 @@ function proxyPath(request: Request): string {
 async function proxyResponse(res: Response): Promise<Response> {
   if (res.status === 204) return new Response(null, { status: 204 });
   const text = await res.text();
-  if (!text) return Response.json({}, { status: res.status });
+  const headers = new Headers();
+  const retryAfter = res.headers.get("Retry-After");
+  if (retryAfter) headers.set("Retry-After", retryAfter);
+  headers.set("Cache-Control", "no-store");
+  if (!text) return Response.json({}, { status: res.status, headers });
   try {
-    return Response.json(JSON.parse(text), { status: res.status });
+    return Response.json(JSON.parse(text), { status: res.status, headers });
   } catch {
-    return new Response(text, { status: res.status, headers: { "Content-Type": "text/plain" } });
+    headers.set("Content-Type", "text/plain");
+    return new Response(text, { status: res.status, headers });
   }
 }
 

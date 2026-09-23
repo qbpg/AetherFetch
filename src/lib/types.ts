@@ -17,7 +17,7 @@ export interface PlatformAdapter {
 }
 
 export interface PlatformDetection {
-  platform: keyof typeof PlatformAdapters | null;
+  platform: "claude" | "chatgpt" | "deepseek" | "mistral" | null;
   confidence: number;
   domain: string;
 }
@@ -113,10 +113,3 @@ export interface SavedAccount {
   favorite?: boolean;
   archived?: boolean;
 }
-
-export const PlatformAdapters = {
-  claude: require("./ai-adapters/claude").default,
-  chatgpt: require("./ai-adapters/chatgpt").default,
-  deepseek: require("./ai-adapters/deepseek").default,
-  mistral: require("./ai-adapters/mistral").default,
-};

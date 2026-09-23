@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import {
   Mail, Lock, Eye, EyeOff, ArrowRight, Loader2, ChevronDown,
   AlertCircle, Shuffle, Copy, Check, User, Tag, Trash2,
@@ -19,7 +20,6 @@ interface AuthFormProps {
   initialMode?: "login" | "register";
 }
 
-const DEFAULT_DOMAIN = "uberip.com";
 const MIN_SUBMIT_MS = 1500;
 
 function getInitialMode(): "login" | "register" {
@@ -35,9 +35,11 @@ function getInitialMode(): "login" | "register" {
 
 export default function AuthForm({ onAuthenticated, initialMode }: AuthFormProps) {
   const router = useRouter();
+  const hydrated = useSyncExternalStore(() => () => {}, () => true, () => false);
   const [mode, setMode] = useState<"login" | "register">(initialMode ?? getInitialMode());
   const [domains, setDomains] = useState<Domain[]>([]);
-  const [selectedDomain, setSelectedDomain] = useState(DEFAULT_DOMAIN);
+  const [selectedDomain, setSelectedDomain] = useState("");
+  const [domainsError, setDomainsError] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -46,30 +48,30 @@ export default function AuthForm({ onAuthenticated, initialMode }: AuthFormProps
   const [domainOpen, setDomainOpen] = useState(false);
   const [copiedAddr, setCopiedAddr] = useState(false);
   const [accountLabel, setAccountLabel] = useState("");
-  const [savedAccounts, setSavedAccounts] = useState<SavedAccount[]>(() => {
+  const [storedAccounts, setSavedAccounts] = useState<SavedAccount[]>(() => {
     if (typeof window === "undefined") return [];
     try {
       const raw = localStorage.getItem("mailbox_saved_accounts");
       return raw ? (JSON.parse(raw) as SavedAccount[]) : [];
     } catch { return []; }
   });
+  const savedAccounts = hydrated ? storedAccounts : [];
   const dropdownRef = useRef<HTMLDivElement>(null);
   const honeypotRef = useRef<HTMLInputElement>(null);
-  const formLoadTime = useRef<number>(Date.now());
+  const formLoadTime = useRef<number>(0);
 
   useEffect(() => {
+    formLoadTime.current = Date.now();
     let cancelled = false;
     getDomains()
       .then((d) => {
         if (cancelled) return;
         setDomains(d);
-        const active = d.find((domain) => domain.isActive);
-        if (active) setSelectedDomain(active.domain);
-        else if (d.length > 0) setSelectedDomain(d[0].domain);
+        setSelectedDomain(d[0].domain);
       })
       .catch(() => {
         if (!cancelled) {
-          setDomains([{ "@id": "/domains/1", "@type": "Domain", id: "1", domain: DEFAULT_DOMAIN, isActive: true, isPrivate: false, created: "" }]);
+          setDomainsError("Could not load available domains. Please try again later.");
         }
       });
     return () => { cancelled = true; };
@@ -135,7 +137,7 @@ export default function AuthForm({ onAuthenticated, initialMode }: AuthFormProps
     if (mode === "register") {
       const trimmed = username.trim();
       if (!trimmed) { setError("Username is required."); return; }
-      if (!selectedDomain) { setError("Please wait for domains to load."); return; }
+      if (!selectedDomain) { setError(domainsError || "Please wait for domains to load."); return; }
       if (!password) { setError("Password is required."); return; }
 
       const fullAddress = `${trimmed}@${selectedDomain}`;
@@ -155,10 +157,10 @@ export default function AuthForm({ onAuthenticated, initialMode }: AuthFormProps
     } else {
       const trimmed = username.trim();
       if (!trimmed) { setError("Username is required."); return; }
-      if (!selectedDomain) { setError("Please wait for domains to load."); return; }
+      if (!selectedDomain && !trimmed.includes("@")) { setError(domainsError || "Enter your full email address."); return; }
       if (!password) { setError("Password is required."); return; }
 
-      const fullAddress = `${trimmed}@${selectedDomain}`;
+      const fullAddress = trimmed.includes("@") ? trimmed : `${trimmed}@${selectedDomain}`;
       setLoading(true);
       try {
         const tokenRes = await getToken(fullAddress, password);
@@ -177,7 +179,7 @@ export default function AuthForm({ onAuthenticated, initialMode }: AuthFormProps
   const handleCreateAndCopy = async () => {
     const trimmed = username.trim();
     if (!trimmed) { setError("Username is required."); return; }
-    if (!selectedDomain) { setError("Please wait for domains to load."); return; }
+    if (!selectedDomain) { setError(domainsError || "Please wait for domains to load."); return; }
     if (!password) { setError("Password is required."); return; }
 
     if (!checkAntiBot()) {
@@ -210,7 +212,7 @@ export default function AuthForm({ onAuthenticated, initialMode }: AuthFormProps
       <div className="w-full max-w-sm flex flex-col sm:justify-center mt-auto sm:mt-0 mb-auto sm:mb-0">
         <div className="text-center mb-6 sm:mb-8">
           <div className="inline-flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 mb-3 sm:mb-4 transition-transform duration-300 hover:scale-105">
-            <img src="/logo.svg" alt="AetherFetch" className="w-12 h-12 sm:w-14 sm:h-14 object-contain" />
+            <Image src="/logo.svg" alt="AetherFetch" width={56} height={56} className="w-12 h-12 sm:w-14 sm:h-14 object-contain" />
           </div>
           <h1 className="text-xl sm:text-2xl font-semibold text-zinc-100 tracking-tight">AetherFetch</h1>
           <p className="text-xs sm:text-sm text-zinc-400 mt-1">Temporary email, instant access.</p>
@@ -286,7 +288,7 @@ export default function AuthForm({ onAuthenticated, initialMode }: AuthFormProps
                 <div className="relative" ref={dropdownRef}>
                   <button type="button" onClick={() => setDomainOpen(!domainOpen)}
                     className="h-10 sm:h-11 px-2.5 sm:px-3 pr-7 sm:pr-8 bg-[#09090b] border border-zinc-800 rounded-lg text-xs sm:text-sm text-zinc-100 focus:outline-none focus:border-zinc-600 transition-all duration-200 whitespace-nowrap flex items-center gap-0.5 hover:border-zinc-700">
-                    <span translate="no">@{selectedDomain}</span>
+                    <span translate="no">{selectedDomain ? `@${selectedDomain}` : "No domain"}</span>
                     <ChevronDown className={`w-3 h-3 text-zinc-500 transition-transform duration-200 ${domainOpen ? "rotate-180" : ""}`} />
                   </button>
                   {domainOpen && domains.length > 0 && (
@@ -315,7 +317,7 @@ export default function AuthForm({ onAuthenticated, initialMode }: AuthFormProps
                   placeholder="username" autoComplete="username"
                   className="w-full min-w-0 h-10 sm:h-11 pl-9 sm:pl-10 pr-24 sm:pr-28 bg-[#09090b] border border-zinc-800 rounded-l-lg text-xs sm:text-sm text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:border-zinc-600 focus:ring-1 focus:ring-zinc-700 transition-all duration-200" />
                 <span translate="no" className="absolute right-0 top-0 h-10 sm:h-11 px-2.5 sm:px-3 flex items-center text-[11px] sm:text-xs text-zinc-500 bg-zinc-800/50 border border-l-0 border-zinc-800 rounded-r-lg select-none pointer-events-none whitespace-nowrap overflow-hidden text-ellipsis max-w-[40%]">
-                  @{selectedDomain}
+                  {selectedDomain ? `@${selectedDomain}` : "Use full email"}
                 </span>
               </div>
             )}
@@ -348,10 +350,10 @@ export default function AuthForm({ onAuthenticated, initialMode }: AuthFormProps
               </button>
             )}
 
-            {error && (
+            {(error || (mode === "register" && domainsError)) && (
               <div className="flex items-start gap-2 text-xs sm:text-sm text-red-400 bg-red-400/5 border border-red-400/10 rounded-lg px-3 py-2 animate-in">
                 <AlertCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 mt-0.5 flex-shrink-0" />
-                <span>{error}</span>
+                <span>{error || domainsError}</span>
               </div>
             )}
 

@@ -11,18 +11,6 @@ import type {
 
 const BASE_URL = "/api/mailbox";
 
-const FALLBACK_DOMAINS: Domain[] = [
-  {
-    "@id": "/domains/1",
-    "@type": "Domain",
-    id: "1",
-    domain: "uberip.com",
-    isActive: true,
-    isPrivate: false,
-    created: "",
-  },
-];
-
 export function generateValidPassword(): string {
   const chars = "abcdefghijklmnopqrstuvwxyz";
   const upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -55,18 +43,23 @@ async function apiFetch<T>(endpoint: string, options: RequestInit = {}): Promise
 
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 10000);
-  const response = await fetch(`${BASE_URL}${endpoint}`, {
-    ...restOptions,
-    headers: mergedHeaders,
-    signal: controller.signal,
-  });
-  clearTimeout(timeout);
+  let response: Response;
+  try {
+    response = await fetch(`${BASE_URL}${endpoint}`, {
+      ...restOptions,
+      headers: mergedHeaders,
+      signal: controller.signal,
+    });
+  } finally {
+    clearTimeout(timeout);
+  }
 
   if (response.status === 204) return null as T;
 
   if (response.status === 429) {
     const retryAfter = response.headers.get("Retry-After");
-    const waitMs = retryAfter ? parseInt(retryAfter, 10) * 1000 : 30000;
+    const seconds = retryAfter ? Number.parseInt(retryAfter, 10) : NaN;
+    const waitMs = Number.isFinite(seconds) && seconds > 0 ? seconds * 1000 : 30000;
     rateLimitUntil = Date.now() + Math.min(waitMs, 60000);
     throw new Error("Rate limited");
   }
@@ -96,18 +89,12 @@ function authHeaders(token: string): Record<string, string> {
 }
 
 export async function getDomains(): Promise<Domain[]> {
-  try {
-    const data = await apiFetch<{ "hydra:member"?: Domain[]; domains?: Domain[]; data?: Domain[] }>("/domains");
-    const list = data["hydra:member"] || data.domains || (Array.isArray(data) ? data : null);
-    if (Array.isArray(list) && list.length > 0) {
-      const active = list.filter((d) => d.isActive);
-      if (active.length > 0) return active;
-      return list;
-    }
-  } catch {
-    // API unreachable, use fallback
-  }
-  return FALLBACK_DOMAINS;
+  const data = await apiFetch<{ "hydra:member"?: Domain[]; domains?: Domain[]; data?: Domain[] }>("/domains");
+  const list = data["hydra:member"] || data.domains || data.data || (Array.isArray(data) ? data : null);
+  if (!Array.isArray(list)) throw new Error("Could not load available domains");
+  const active = list.filter((domain) => domain.isActive);
+  if (active.length === 0) throw new Error("No domains are currently available");
+  return active;
 }
 
 export async function createAccount(address: string, password: string): Promise<Account> {
@@ -138,15 +125,12 @@ export async function deleteAccount(token: string, accountId: string): Promise<v
 }
 
 export async function getMessages(token: string): Promise<MessagesResponse> {
-  try {
-    const data = await apiFetch<Record<string, unknown>>("/messages", { headers: authHeaders(token) });
-    if (Array.isArray(data)) {
-      return { "hydra:member": data as Message[], "hydra:totalItems": data.length };
-    }
-    return data as unknown as MessagesResponse;
-  } catch {
-    return { "hydra:member": [], "hydra:totalItems": 0 };
+  const data = await apiFetch<Record<string, unknown>>("/messages", { headers: authHeaders(token) });
+  if (Array.isArray(data)) {
+    return { "hydra:member": data as Message[], "hydra:totalItems": data.length };
   }
+  if (!Array.isArray(data["hydra:member"])) throw new Error("Invalid message response");
+  return data as unknown as MessagesResponse;
 }
 
 export async function getMessage(token: string, messageId: string): Promise<MessageDetail> {
@@ -176,25 +160,30 @@ const MERCURE_URL = "https://mercure.mail.tm/.well-known/mercure";
 export function subscribeMercure(
   accountId: string,
   _token: string,
-  onMessage: () => void
+  onMessage: () => void,
+  onStatus: (connected: boolean) => void
 ): () => void {
   const url = new URL(MERCURE_URL);
   url.searchParams.append("topic", `/accounts/${accountId}`);
 
   let eventSource: EventSource | null = null;
   let alive = true;
+  let retryTimer: ReturnType<typeof setTimeout> | null = null;
 
   function connect() {
     if (!alive) return;
     try {
       eventSource = new EventSource(url.toString());
+      eventSource.onopen = () => onStatus(true);
       eventSource.onmessage = () => onMessage();
       eventSource.onerror = () => {
+        onStatus(false);
         eventSource?.close();
-        if (alive) setTimeout(connect, 5000);
+        if (alive) retryTimer = setTimeout(connect, 5000);
       };
     } catch {
-      if (alive) setTimeout(connect, 5000);
+      onStatus(false);
+      if (alive) retryTimer = setTimeout(connect, 5000);
     }
   }
 
@@ -202,6 +191,7 @@ export function subscribeMercure(
 
   return () => {
     alive = false;
+    if (retryTimer) clearTimeout(retryTimer);
     eventSource?.close();
   };
 }

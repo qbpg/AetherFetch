@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import {
   Mail, MailOpen, Trash2,
   Download, Inbox, Search, ChevronLeft, X,
-  RefreshCw, Clock, Wifi, WifiOff, Hash,
+  RefreshCw, Clock, Hash,
 } from "lucide-react";
 import { useSession } from "@/contexts/SessionContext";
 import SecureMailIframe from "@/components/SecureMailIframe";
@@ -27,7 +27,6 @@ export default function DashboardPage() {
 
   useEffect(() => {
     if (!session) { router.replace("/"); return; }
-    setInitialLoading(true);
     doFetch(session.token).finally(() => setInitialLoading(false));
   }, [session, router, doFetch]);
 

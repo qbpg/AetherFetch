@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect, useCallback, useRef } from "react";
+import { createContext, useContext, useState, useEffect, useCallback, useRef, useSyncExternalStore } from "react";
 import { clearSession, getMessages, subscribeMercure, isRateLimited } from "@/lib/mailbox";
 import type { SessionData, Message as Msg } from "@/lib/types";
 
@@ -42,23 +42,30 @@ function getInitialSession(): SessionData | null {
 }
 
 export function SessionProvider({ children }: { children: React.ReactNode }) {
-  const [session, setSessionState] = useState<SessionData | null>(() => getInitialSession());
+  const hydrated = useSyncExternalStore(() => () => {}, () => true, () => false);
+  const [storedSession, setSessionState] = useState<SessionData | null>(() => getInitialSession());
+  const session = hydrated ? storedSession : null;
   const [messages, setMessages] = useState<Msg[]>([]);
   const [sseConnected, setSseConnected] = useState(false);
   const [toasts, setToasts] = useState<Toast[]>([]);
   const sessionRef = useRef<SessionData | null>(null);
   const prevCountRef = useRef(0);
+  const connectedRef = useRef(false);
+  const pendingFetchRef = useRef<{ token: string; promise: Promise<void> } | null>(null);
 
   useEffect(() => {
     sessionRef.current = session;
   }, [session]);
 
   const setSession = useCallback((s: SessionData | null) => {
-    setSessionState(s);
-    if (!s) {
+    if (sessionRef.current?.token !== s?.token) {
       setMessages([]);
       setSseConnected(false);
+      connectedRef.current = false;
+      prevCountRef.current = 0;
     }
+    sessionRef.current = s;
+    setSessionState(s);
   }, []);
 
   const addToast = useCallback((message: string, type: Toast["type"] = "info") => {
@@ -67,49 +74,57 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
     setTimeout(() => setToasts((prev) => prev.filter((t) => t.id !== id)), 3000);
   }, []);
 
-  const doFetch = useCallback(async (token: string, opts?: { silent?: boolean; manual?: boolean }) => {
-    try {
-      const res = await getMessages(token);
-      const newList = res["hydra:member"] ?? [];
-      if (prevCountRef.current > 0 && newList.length > prevCountRef.current) {
-        addToast("New message received", "info");
+  const doFetch = useCallback((token: string, opts?: { silent?: boolean; manual?: boolean }): Promise<void> => {
+    if (pendingFetchRef.current?.token === token) return pendingFetchRef.current.promise;
+    const promise = (async () => {
+      try {
+        const res = await getMessages(token);
+        if (sessionRef.current?.token !== token) return;
+        const newList = res["hydra:member"];
+        if (prevCountRef.current > 0 && newList.length > prevCountRef.current) {
+          addToast("New message received", "info");
+        }
+        prevCountRef.current = newList.length;
+        setMessages(newList);
+      } catch (err) {
+        if (opts?.manual) {
+          addToast(err instanceof Error ? err.message : "Failed to refresh inbox", "error");
+        } else if (!opts?.silent) {
+          addToast("Could not load inbox. Retrying automatically.", "error");
+        }
       }
-      prevCountRef.current = newList.length;
-      setMessages(newList);
-    } catch (err) {
-      if (err instanceof Error && err.message === "Rate limited" && opts?.manual) {
-        addToast("Rate limited. Waiting...", "error");
-      }
-    }
+    })();
+    pendingFetchRef.current = { token, promise };
+    void promise.finally(() => {
+      if (pendingFetchRef.current?.promise === promise) pendingFetchRef.current = null;
+    });
+    return promise;
   }, [addToast]);
 
   useEffect(() => {
     if (!session) return;
 
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- legitimate data fetch on mount
     void doFetch(session.token);
 
     const cleanupSse = subscribeMercure(session.accountId, session.token, () => {
-      setSseConnected(true);
-      if (sessionRef.current) doFetch(sessionRef.current.token, { silent: true });
+      if (sessionRef.current) void doFetch(sessionRef.current.token, { silent: true });
+    }, (connected) => {
+      connectedRef.current = connected;
+      setSseConnected(connected);
     });
 
     const poll = setInterval(() => {
-      if (sseConnected) return;
+      if (connectedRef.current) return;
       if (isRateLimited()) return;
       if (sessionRef.current) doFetch(sessionRef.current.token, { silent: true });
     }, 30000);
 
-    const sseTimeout = setTimeout(() => {
-      setSseConnected(false);
-    }, 10000);
-
     return () => {
       cleanupSse();
       clearInterval(poll);
-      clearTimeout(sseTimeout);
+      connectedRef.current = false;
     };
-  }, [session, doFetch, sseConnected]);
+  }, [session, doFetch]);
 
   const handleLogout = useCallback(() => {
     clearSession();

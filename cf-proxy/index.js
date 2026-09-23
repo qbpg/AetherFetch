@@ -1,4 +1,4 @@
-export default {
+const worker = {
   async fetch(request, env) {
     const url = new URL(request.url);
 
@@ -31,7 +31,7 @@ export default {
     headers.set("Sec-Fetch-Mode", "cors");
     headers.set("Sec-Fetch-Site", "cross-site");
 
-    headers.set("Content-Type", "application/json");
+    headers.set("Content-Type", request.headers.get("Content-Type") || "application/json");
 
     const authHeader = request.headers.get("Authorization");
     if (authHeader) {
@@ -59,6 +59,9 @@ export default {
 
     const respContentType = resp.headers.get("content-type") || "application/json";
     respHeaders.set("Content-Type", respContentType);
+    const retryAfter = resp.headers.get("Retry-After");
+    if (retryAfter) respHeaders.set("Retry-After", retryAfter);
+    respHeaders.set("Cache-Control", "no-store");
 
     const body = await resp.text();
 
@@ -68,3 +71,5 @@ export default {
     });
   },
 };
+
+export default worker;
