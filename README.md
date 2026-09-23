@@ -46,8 +46,12 @@ Multi-account management, real-time inbox with Mercure SSE, keyboard shortcuts, 
 - **Quick connect** — Saved accounts with favorites, archiving, and custom labels
 - **Synchronized deletion** — Account removal stays in sync across profile and quick-connect
 - **Real-time inbox** — Mercure SSE for live updates with 30s polling fallback
+- **Quick address creation** — Create and copy another address from the dashboard, with an optional label
+- **Verification shortcuts** — Surface likely confirmation codes and links when reading a message
+- **Older messages** — Load paginated inbox results beyond the first 30 messages
+- **Attachments** — Download files supplied by mail.tm from the message reader
 - **Secure mail reader** — Sandboxed iframe (`allow-same-origin` only) for rendering HTML emails
-- **Full-text search** — Filter messages by sender, subject, or content
+- **Inbox search** — Filter currently loaded messages by sender, subject, or preview
 - **Keyboard shortcuts** — `C` to copy email, `R` to refresh (with micro-animation feedback)
 - **Toast notifications** — Success, error, and info feedback with animated transitions
 - **Silent anti-bot** — Honeypot field + minimum submission time (no CAPTCHA)

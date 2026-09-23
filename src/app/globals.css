@@ -28,7 +28,8 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-input:focus, button:focus-visible { outline: none; }
+input:focus { outline: none; }
+:where(button, a, summary, input):focus-visible { outline: 2px solid #a5b4fc; outline-offset: 3px; }
 
 @keyframes fade-in {
   from { opacity: 0; transform: translateY(-4px); }
@@ -134,4 +135,57 @@ html[translate="no"] {
 
 * {
   overflow-wrap: break-word;
+}
+
+.landing-hero {
+  background:
+    linear-gradient(90deg, rgba(165, 180, 252, 0.035) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(165, 180, 252, 0.035) 1px, transparent 1px),
+    radial-gradient(circle at 72% 38%, rgba(99, 102, 241, 0.14), transparent 38%),
+    #09090b;
+  background-size: 48px 48px, 48px 48px, auto, auto;
+}
+
+.landing-hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(to bottom, #09090b00 55%, #09090b 100%);
+}
+
+.landing-orb {
+  position: absolute;
+  width: 30rem;
+  height: 30rem;
+  border-radius: 999px;
+  filter: blur(110px);
+  opacity: 0.24;
+  pointer-events: none;
+  animation: landing-drift 14s ease-in-out infinite alternate;
+}
+.landing-orb-one { top: -13rem; right: -9rem; background: #6366f1; }
+.landing-orb-two { bottom: -18rem; left: -12rem; background: #4338ca; animation-delay: -7s; }
+.landing-gradient-text { background: linear-gradient(100deg, #f4f4f5 5%, #a5b4fc 64%, #c4b5fd); color: transparent; background-clip: text; }
+.landing-reveal { animation: landing-enter 0.9s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.landing-preview { animation: landing-enter 1s 0.18s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.landing-float { animation: landing-float 5s ease-in-out infinite; }
+.landing-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(165, 180, 252, 0.18); }
+
+@keyframes landing-enter {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes landing-drift {
+  from { transform: translate(0, 0); }
+  to { transform: translate(-35px, 28px); }
+}
+@keyframes landing-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-9px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landing-orb, .landing-reveal, .landing-preview, .landing-float { animation: none; }
+  .landing-primary:hover { transform: none; }
 }

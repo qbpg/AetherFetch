@@ -91,6 +91,7 @@ export interface Attachment {
   transferEncoding: string;
   related: boolean;
   size: number;
+  downloadUrl?: string;
 }
 
 export interface MessagesResponse {

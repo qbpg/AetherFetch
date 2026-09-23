@@ -16,9 +16,15 @@ export function generateValidPassword(): string {
   const upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   const digits = "0123456789";
   const specials = "!@#$%^&*";
-  const pick = (s: string) => s[Math.floor(Math.random() * s.length)];
+  const pick = (s: string) => s[crypto.getRandomValues(new Uint32Array(1))[0] % s.length];
   const randChars = (n: number) => Array.from({ length: n }, () => pick(chars + digits)).join("");
-  return pick(upper) + pick(chars) + pick(digits) + pick(specials) + randChars(4);
+  const password = pick(upper) + pick(chars) + pick(digits) + pick(specials) + randChars(8);
+  const shuffled = Array.from(password);
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = crypto.getRandomValues(new Uint32Array(1))[0] % (i + 1);
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled.join("");
 }
 
 let rateLimitUntil = 0;
@@ -124,13 +130,30 @@ export async function deleteAccount(token: string, accountId: string): Promise<v
   });
 }
 
-export async function getMessages(token: string): Promise<MessagesResponse> {
-  const data = await apiFetch<Record<string, unknown>>("/messages", { headers: authHeaders(token) });
+export async function getMessages(token: string, page = 1): Promise<MessagesResponse> {
+  const data = await apiFetch<Record<string, unknown>>(`/messages?page=${page}`, { headers: authHeaders(token) });
   if (Array.isArray(data)) {
     return { "hydra:member": data as Message[], "hydra:totalItems": data.length };
   }
   if (!Array.isArray(data["hydra:member"])) throw new Error("Invalid message response");
   return data as unknown as MessagesResponse;
+}
+
+export async function downloadAttachment(token: string, attachment: { downloadUrl?: string; filename: string }): Promise<void> {
+  if (!attachment.downloadUrl) throw new Error("Attachment download is unavailable");
+  const url = new URL(attachment.downloadUrl, "https://api.mail.tm");
+  if (url.origin !== "https://api.mail.tm") throw new Error("Untrusted attachment URL");
+  const response = await fetch(url.toString(), { headers: authHeaders(token) });
+  if (!response.ok) throw new Error(`Download failed (${response.status})`);
+  const blob = await response.blob();
+  const objectUrl = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = objectUrl;
+  link.download = attachment.filename || "attachment";
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  setTimeout(() => URL.revokeObjectURL(objectUrl), 60000);
 }
 
 export async function getMessage(token: string, messageId: string): Promise<MessageDetail> {
@@ -159,40 +182,57 @@ const MERCURE_URL = "https://mercure.mail.tm/.well-known/mercure";
 
 export function subscribeMercure(
   accountId: string,
-  _token: string,
+  token: string,
   onMessage: () => void,
   onStatus: (connected: boolean) => void
 ): () => void {
   const url = new URL(MERCURE_URL);
   url.searchParams.append("topic", `/accounts/${accountId}`);
 
-  let eventSource: EventSource | null = null;
+  const controller = new AbortController();
   let alive = true;
   let retryTimer: ReturnType<typeof setTimeout> | null = null;
 
-  function connect() {
+  async function connect() {
     if (!alive) return;
     try {
-      eventSource = new EventSource(url.toString());
-      eventSource.onopen = () => onStatus(true);
-      eventSource.onmessage = () => onMessage();
-      eventSource.onerror = () => {
-        onStatus(false);
-        eventSource?.close();
-        if (alive) retryTimer = setTimeout(connect, 5000);
-      };
+      const response = await fetch(url.toString(), {
+        headers: { Authorization: `Bearer ${token}`, Accept: "text/event-stream" },
+        signal: controller.signal,
+        cache: "no-store",
+      });
+      if (!response.ok || !response.body) throw new Error("Live connection unavailable");
+      onStatus(true);
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = "";
+      while (alive) {
+        const { value, done } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        let boundary = buffer.search(/\r?\n\r?\n/);
+        while (boundary >= 0) {
+          const event = buffer.slice(0, boundary);
+          buffer = buffer.slice(boundary).replace(/^\r?\n\r?\n/, "");
+          if (event.split(/\r?\n/).some((line) => line.startsWith("data:"))) onMessage();
+          boundary = buffer.search(/\r?\n\r?\n/);
+        }
+      }
     } catch {
+      // Polling remains active when the browser cannot reach Mercure.
+    }
+    if (alive) {
       onStatus(false);
-      if (alive) retryTimer = setTimeout(connect, 5000);
+      retryTimer = setTimeout(connect, 5000);
     }
   }
 
-  connect();
+  void connect();
 
   return () => {
     alive = false;
     if (retryTimer) clearTimeout(retryTimer);
-    eventSource?.close();
+    controller.abort();
   };
 }
 
