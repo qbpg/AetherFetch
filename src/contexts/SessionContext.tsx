@@ -59,6 +59,7 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
   const connectedRef = useRef(false);
   const pendingFetchRef = useRef<{ token: string; promise: Promise<void> } | null>(null);
   const nextPageRef = useRef(2);
+  const lastFetchRef = useRef(0);
 
   useEffect(() => {
     sessionRef.current = session;
@@ -72,6 +73,7 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
       setSseConnected(false);
       connectedRef.current = false;
       prevCountRef.current = 0;
+      lastFetchRef.current = 0;
     }
     sessionRef.current = s;
     setSessionState(s);
@@ -85,6 +87,8 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
 
   const doFetch = useCallback((token: string, opts?: { silent?: boolean; manual?: boolean }): Promise<void> => {
     if (pendingFetchRef.current?.token === token) return pendingFetchRef.current.promise;
+    if (isRateLimited() || (!opts?.manual && Date.now() - lastFetchRef.current < 10000)) return Promise.resolve();
+    lastFetchRef.current = Date.now();
     const promise = (async () => {
       try {
         const res = await getMessages(token);
@@ -150,7 +154,7 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
       if (connectedRef.current) return;
       if (isRateLimited()) return;
       if (sessionRef.current) doFetch(sessionRef.current.token, { silent: true });
-    }, 30000);
+    }, 60000);
 
     return () => {
       cleanupSse();
