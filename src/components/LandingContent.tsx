@@ -1,13 +1,14 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Code2, Mail } from "lucide-react";
+import { ArrowRight, Code2, Mail, ShieldCheck, Sparkles, Zap, Paperclip, KeyRound } from "lucide-react";
 
 const FEATURES = [
-  { title: "Instant creation", desc: "Generate a temporary address in seconds. No signup form, no commitment, no trace left behind." },
-  { title: "Local by default", desc: "Your session and messages live in browser localStorage. Nothing is persisted server-side." },
-  { title: "Live delivery", desc: "SSE connection pushes messages as they arrive. Falls back to 30s polling when SSE drops." },
-  { title: "Multiple domains", desc: "Pick from the available domains. Keep several accounts and switch between them." },
+  { title: "Instant addresses", desc: "Create and copy a fresh address in one step. Add a label when you need to recognize it later." },
+  { title: "Codes at a glance", desc: "Verification codes and confirmation links are pulled out of messages for quick access." },
+  { title: "Complete inbox", desc: "Browse older pages, search messages, and download attachments from one focused workspace." },
+  { title: "Live when available", desc: "Authenticated live updates keep the inbox fresh, with polling when the connection drops." },
 ];
 
 const STEPS = [
@@ -18,64 +19,83 @@ const STEPS = [
 
 const FAQ_ITEMS = [
   { q: "What is AetherFetch?", a: "A temporary email service for disposable addresses. Quick signups, verifications, and privacy protection. No personal data required." },
-  { q: "Are my messages stored on a server?", a: "No. Your session and messages are stored locally in your browser via localStorage. Nothing is persisted on our servers." },
-  { q: "How long do messages stay?", a: "As long as your session is active. Clear your browser data or let the session expire, and everything is gone." },
+  { q: "Where are my messages stored?", a: "Messages are held by mail.tm and fetched when you open your inbox. AetherFetch stores your session and saved account credentials in this browser." },
+  { q: "How long do messages stay?", a: "Retention is controlled by mail.tm. Temporary addresses are not suitable for long-term storage." },
   { q: "Can I use this for production email?", a: "No. AetherFetch is for temporary, disposable use. Do not rely on it for important or long-term communication." },
 ];
 
 const NUMBERS = [
-  { value: "< 3s", label: "Email creation" },
-  { value: "0", label: "Server-side data" },
-  { value: "100%", label: "Client-side" },
-  { value: "Free", label: "Forever" },
+  { value: "01", label: "Create an address" },
+  { value: "02", label: "Receive a message" },
+  { value: "03", label: "Copy your code" },
+  { value: "∞", label: "Less inbox clutter" },
 ];
 
-const CODE_SNIPPET = `// Generate a temp email in 3 lines
-const email = await createAccount(
-  "user@uberip.com", password
-);
-// Done. Start receiving mail.`;
+const CODE_SNIPPET = `1. Create an address
+2. Use it where you need a verification email
+3. Copy the code from your inbox`;
 
 export default function LandingContent() {
   return (
     <div className="flex-1 overflow-y-auto">
       {/* Hero */}
-      <section className="relative min-h-[100dvh] flex items-center justify-center px-4 pt-20 pb-16">
-        <div className="relative max-w-2xl mx-auto text-center">
-          <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold tracking-tight text-zinc-50 leading-[1.05] mb-6">
-            Your inbox.
-            <br />
-            Ephemeral.
-          </h1>
-
-          <p className="text-lg sm:text-xl text-zinc-400 max-w-lg mx-auto mb-12 leading-relaxed">
-            Disposable email addresses in seconds.
-            <br className="hidden sm:block" />
-            Keep your real inbox free of spam and trackers.
-          </p>
-
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+      <section className="landing-hero relative min-h-[100dvh] overflow-hidden flex items-center px-5 pt-28 pb-20 sm:pt-32">
+        <div className="landing-orb landing-orb-one" aria-hidden="true" />
+        <div className="landing-orb landing-orb-two" aria-hidden="true" />
+        <div className="relative z-10 max-w-6xl w-full mx-auto grid lg:grid-cols-[1fr_0.9fr] items-center gap-16 lg:gap-10">
+          <div className="landing-reveal">
+            <div className="inline-flex items-center gap-2 rounded-full border border-indigo-400/20 bg-indigo-400/10 px-3 py-1.5 text-xs text-indigo-200 mb-7">
+              <Sparkles className="w-3.5 h-3.5" /> A calmer way to use temporary email
+            </div>
+            <h1 className="text-5xl sm:text-6xl xl:text-7xl font-semibold tracking-[-0.055em] text-zinc-50 leading-[1.05] mb-7">
+              Email for the moment.<br /><span className="landing-gradient-text">Clarity for everything else.</span>
+            </h1>
+            <p className="text-base sm:text-lg text-zinc-400 max-w-xl mb-9 leading-relaxed">
+              Create a fresh address, catch the message, copy the code, and move on. Your everyday inbox stays yours.
+            </p>
+            <div className="flex flex-col sm:flex-row items-start gap-3">
             <Link
               href="/register"
-              className="h-12 px-8 flex items-center gap-2.5 bg-white hover:bg-zinc-200 text-zinc-950 text-sm font-semibold rounded-lg transition-colors"
+              className="landing-primary h-12 px-6 flex items-center gap-2.5 bg-white hover:bg-zinc-200 text-zinc-950 text-sm font-semibold rounded-xl transition-all"
             >
-              Create an address
+              Get a new address
               <ArrowRight className="w-4 h-4" />
             </Link>
             <Link
               href="/login"
-              className="h-12 px-8 flex items-center gap-2 text-sm font-medium text-zinc-400 hover:text-zinc-50 hover:bg-zinc-800 border border-zinc-800 rounded-lg transition-colors"
+              className="h-12 px-6 flex items-center gap-2 text-sm font-medium text-zinc-300 hover:text-zinc-50 hover:bg-zinc-800/60 border border-zinc-700 rounded-xl transition-colors"
             >
-              Sign in
+              Open my inbox
             </Link>
           </div>
-
-          <div className="mt-16 flex items-center justify-center gap-6 sm:gap-10 text-xs text-zinc-500">
-            <span>No tracking</span>
-            <span className="text-zinc-700">/</span>
-            <span>Instant setup</span>
-            <span className="text-zinc-700">/</span>
-            <span>Live updates</span>
+            <div className="mt-9 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-zinc-500">
+              <span className="inline-flex items-center gap-1.5"><Zap className="w-3.5 h-3.5 text-indigo-300" /> Fast setup</span>
+              <span className="inline-flex items-center gap-1.5"><KeyRound className="w-3.5 h-3.5 text-indigo-300" /> Easy verification</span>
+              <span className="inline-flex items-center gap-1.5"><ShieldCheck className="w-3.5 h-3.5 text-indigo-300" /> Disposable by design</span>
+            </div>
+          </div>
+          <div className="landing-preview relative mx-auto w-full max-w-md">
+            <div className="absolute -inset-4 rounded-[32px] bg-indigo-500/10 blur-3xl" aria-hidden="true" />
+            <div className="relative rounded-2xl border border-zinc-700/80 bg-[#121218]/95 shadow-[0_32px_100px_rgba(0,0,0,0.55)] overflow-hidden">
+              <div className="flex items-center gap-2 px-5 py-4 border-b border-zinc-800/80">
+                <div className="w-2 h-2 rounded-full bg-indigo-300 shadow-[0_0_12px_#a5b4fc]" />
+                <span className="text-xs font-medium text-zinc-300">AetherFetch</span>
+                <span className="ml-auto text-[10px] text-zinc-500 font-mono">LIVE INBOX</span>
+              </div>
+              <div className="p-5 sm:p-6">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-9 h-9 rounded-lg bg-indigo-400/10 border border-indigo-400/20 flex items-center justify-center"><Mail className="w-4 h-4 text-indigo-300" /></div>
+                  <div><p className="text-xs text-zinc-200 font-medium">Welcome to your new inbox</p><p className="text-[11px] text-zinc-500">A message just arrived</p></div>
+                  <span className="ml-auto w-2 h-2 rounded-full bg-indigo-300" />
+                </div>
+                <div className="rounded-xl border border-indigo-400/20 bg-indigo-400/5 p-4 mb-4">
+                  <div className="text-[10px] text-indigo-300 uppercase tracking-[0.18em] mb-2">Verification code</div>
+                  <div className="flex items-center justify-between"><span className="text-3xl tracking-[0.2em] text-white font-mono">482 931</span><span className="text-[10px] rounded-md bg-indigo-300 text-zinc-950 px-2 py-1 font-semibold">COPY</span></div>
+                </div>
+                <div className="flex items-center gap-2 rounded-lg border border-zinc-800 bg-zinc-900/70 px-3 py-2.5 text-xs text-zinc-400"><Paperclip className="w-3.5 h-3.5" /> Your messages, codes and files together</div>
+              </div>
+            </div>
+            <div className="landing-float absolute -bottom-5 -left-5 sm:-left-9 rounded-xl border border-zinc-700 bg-zinc-900 px-3 py-2 shadow-xl text-[11px] text-zinc-300"><span className="text-indigo-300">●</span> Address ready to use</div>
           </div>
         </div>
       </section>
@@ -144,10 +164,10 @@ export default function LandingContent() {
             <div className="flex-1">
               <p className="text-xs font-medium text-zinc-500 uppercase tracking-wider mb-3 font-mono">Developers</p>
               <h2 className="text-2xl sm:text-3xl font-bold text-zinc-50 tracking-tight mb-4">
-                Three lines of code.
+                Simple from the start.
               </h2>
               <p className="text-sm text-zinc-400 leading-relaxed mb-6">
-                Create an account, get a token, receive mail. No SDK, no dependency, no build step.
+                An address, a message, a verification code. The essentials stay close at hand.
               </p>
               <Link
                 href="/register"
@@ -160,7 +180,7 @@ export default function LandingContent() {
               <div className="bg-zinc-900 border border-zinc-800 rounded-lg overflow-hidden">
                 <div className="flex items-center gap-2 px-4 py-3 border-b border-zinc-800">
                   <Code2 className="w-3.5 h-3.5 text-zinc-500" />
-                  <span className="text-[10px] text-zinc-500 font-mono">example.js</span>
+                  <span className="text-[10px] text-zinc-500 font-mono">your flow</span>
                 </div>
                 <pre className="p-4 text-xs text-zinc-400 font-mono leading-relaxed overflow-x-auto">
                   <code>{CODE_SNIPPET}</code>
@@ -298,11 +318,12 @@ export default function LandingContent() {
       <footer className="border-t border-zinc-800 py-6 px-4">
         <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2.5">
-            <img src="/logo.svg" alt="AetherFetch" className="h-5 w-5 object-contain" />
+            <Image src="/logo.svg" alt="AetherFetch" width={20} height={20} className="h-5 w-5 object-contain" />
             <span className="text-xs font-semibold text-zinc-400">AetherFetch</span>
           </div>
           <div className="flex items-center gap-4 text-xs text-zinc-500">
             <span>Created by qpbg</span>
+            <a href="https://mail.tm" target="_blank" rel="noopener noreferrer" className="hover:text-zinc-300 transition-colors">Powered by mail.tm</a>
             <a href="mailto:qbpg.sg@outlook.com" translate="no" className="hover:text-zinc-300 transition-colors">
               qbpg.sg@outlook.com
             </a>

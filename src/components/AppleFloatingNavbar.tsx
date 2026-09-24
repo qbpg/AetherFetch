@@ -2,6 +2,7 @@
 
 import { useCallback } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useSession } from "@/contexts/SessionContext";
 
 const NAV_LINKS = [
@@ -25,9 +26,11 @@ export default function AppleFloatingNavbar() {
           className="pointer-events-auto mx-auto flex h-13 sm:h-14 w-[94vw] max-w-3xl items-center justify-between rounded-2xl bg-zinc-900 border border-zinc-800 px-5 sm:px-7"
         >
           <Link href="/" className="flex shrink-0 items-center gap-3">
-            <img
+            <Image
               src="/logo.svg"
               alt="AetherFetch"
+              width={32}
+              height={32}
               className="h-8 w-8 object-contain"
             />
             <span className="font-semibold tracking-tight text-zinc-100 text-base hidden sm:inline">

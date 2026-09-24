@@ -11,26 +11,20 @@ import type {
 
 const BASE_URL = "/api/mailbox";
 
-const FALLBACK_DOMAINS: Domain[] = [
-  {
-    "@id": "/domains/1",
-    "@type": "Domain",
-    id: "1",
-    domain: "uberip.com",
-    isActive: true,
-    isPrivate: false,
-    created: "",
-  },
-];
-
 export function generateValidPassword(): string {
   const chars = "abcdefghijklmnopqrstuvwxyz";
   const upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   const digits = "0123456789";
   const specials = "!@#$%^&*";
-  const pick = (s: string) => s[Math.floor(Math.random() * s.length)];
+  const pick = (s: string) => s[crypto.getRandomValues(new Uint32Array(1))[0] % s.length];
   const randChars = (n: number) => Array.from({ length: n }, () => pick(chars + digits)).join("");
-  return pick(upper) + pick(chars) + pick(digits) + pick(specials) + randChars(4);
+  const password = pick(upper) + pick(chars) + pick(digits) + pick(specials) + randChars(8);
+  const shuffled = Array.from(password);
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = crypto.getRandomValues(new Uint32Array(1))[0] % (i + 1);
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled.join("");
 }
 
 let rateLimitUntil = 0;
@@ -55,18 +49,23 @@ async function apiFetch<T>(endpoint: string, options: RequestInit = {}): Promise
 
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 10000);
-  const response = await fetch(`${BASE_URL}${endpoint}`, {
-    ...restOptions,
-    headers: mergedHeaders,
-    signal: controller.signal,
-  });
-  clearTimeout(timeout);
+  let response: Response;
+  try {
+    response = await fetch(`${BASE_URL}${endpoint}`, {
+      ...restOptions,
+      headers: mergedHeaders,
+      signal: controller.signal,
+    });
+  } finally {
+    clearTimeout(timeout);
+  }
 
   if (response.status === 204) return null as T;
 
   if (response.status === 429) {
     const retryAfter = response.headers.get("Retry-After");
-    const waitMs = retryAfter ? parseInt(retryAfter, 10) * 1000 : 30000;
+    const seconds = retryAfter ? Number.parseInt(retryAfter, 10) : NaN;
+    const waitMs = Number.isFinite(seconds) && seconds > 0 ? seconds * 1000 : 30000;
     rateLimitUntil = Date.now() + Math.min(waitMs, 60000);
     throw new Error("Rate limited");
   }
@@ -96,18 +95,12 @@ function authHeaders(token: string): Record<string, string> {
 }
 
 export async function getDomains(): Promise<Domain[]> {
-  try {
-    const data = await apiFetch<{ "hydra:member"?: Domain[]; domains?: Domain[]; data?: Domain[] }>("/domains");
-    const list = data["hydra:member"] || data.domains || (Array.isArray(data) ? data : null);
-    if (Array.isArray(list) && list.length > 0) {
-      const active = list.filter((d) => d.isActive);
-      if (active.length > 0) return active;
-      return list;
-    }
-  } catch {
-    // API unreachable, use fallback
-  }
-  return FALLBACK_DOMAINS;
+  const data = await apiFetch<{ "hydra:member"?: Domain[]; domains?: Domain[]; data?: Domain[] }>("/domains");
+  const list = data["hydra:member"] || data.domains || data.data || (Array.isArray(data) ? data : null);
+  if (!Array.isArray(list)) throw new Error("Could not load available domains");
+  const active = list.filter((domain) => domain.isActive);
+  if (active.length === 0) throw new Error("No domains are currently available");
+  return active;
 }
 
 export async function createAccount(address: string, password: string): Promise<Account> {
@@ -137,16 +130,30 @@ export async function deleteAccount(token: string, accountId: string): Promise<v
   });
 }
 
-export async function getMessages(token: string): Promise<MessagesResponse> {
-  try {
-    const data = await apiFetch<Record<string, unknown>>("/messages", { headers: authHeaders(token) });
-    if (Array.isArray(data)) {
-      return { "hydra:member": data as Message[], "hydra:totalItems": data.length };
-    }
-    return data as unknown as MessagesResponse;
-  } catch {
-    return { "hydra:member": [], "hydra:totalItems": 0 };
+export async function getMessages(token: string, page = 1): Promise<MessagesResponse> {
+  const data = await apiFetch<Record<string, unknown>>(`/messages?page=${page}`, { headers: authHeaders(token) });
+  if (Array.isArray(data)) {
+    return { "hydra:member": data as Message[], "hydra:totalItems": data.length };
   }
+  if (!Array.isArray(data["hydra:member"])) throw new Error("Invalid message response");
+  return data as unknown as MessagesResponse;
+}
+
+export async function downloadAttachment(token: string, attachment: { downloadUrl?: string; filename: string }): Promise<void> {
+  if (!attachment.downloadUrl) throw new Error("Attachment download is unavailable");
+  const url = new URL(attachment.downloadUrl, "https://api.mail.tm");
+  if (url.origin !== "https://api.mail.tm") throw new Error("Untrusted attachment URL");
+  const response = await fetch(url.toString(), { headers: authHeaders(token) });
+  if (!response.ok) throw new Error(`Download failed (${response.status})`);
+  const blob = await response.blob();
+  const objectUrl = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = objectUrl;
+  link.download = attachment.filename || "attachment";
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  setTimeout(() => URL.revokeObjectURL(objectUrl), 60000);
 }
 
 export async function getMessage(token: string, messageId: string): Promise<MessageDetail> {
@@ -175,34 +182,57 @@ const MERCURE_URL = "https://mercure.mail.tm/.well-known/mercure";
 
 export function subscribeMercure(
   accountId: string,
-  _token: string,
-  onMessage: () => void
+  token: string,
+  onMessage: () => void,
+  onStatus: (connected: boolean) => void
 ): () => void {
   const url = new URL(MERCURE_URL);
   url.searchParams.append("topic", `/accounts/${accountId}`);
 
-  let eventSource: EventSource | null = null;
+  const controller = new AbortController();
   let alive = true;
+  let retryTimer: ReturnType<typeof setTimeout> | null = null;
 
-  function connect() {
+  async function connect() {
     if (!alive) return;
     try {
-      eventSource = new EventSource(url.toString());
-      eventSource.onmessage = () => onMessage();
-      eventSource.onerror = () => {
-        eventSource?.close();
-        if (alive) setTimeout(connect, 5000);
-      };
+      const response = await fetch(url.toString(), {
+        headers: { Authorization: `Bearer ${token}`, Accept: "text/event-stream" },
+        signal: controller.signal,
+        cache: "no-store",
+      });
+      if (!response.ok || !response.body) throw new Error("Live connection unavailable");
+      onStatus(true);
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = "";
+      while (alive) {
+        const { value, done } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        let boundary = buffer.search(/\r?\n\r?\n/);
+        while (boundary >= 0) {
+          const event = buffer.slice(0, boundary);
+          buffer = buffer.slice(boundary).replace(/^\r?\n\r?\n/, "");
+          if (event.split(/\r?\n/).some((line) => line.startsWith("data:"))) onMessage();
+          boundary = buffer.search(/\r?\n\r?\n/);
+        }
+      }
     } catch {
-      if (alive) setTimeout(connect, 5000);
+      // Polling remains active when the browser cannot reach Mercure.
+    }
+    if (alive) {
+      onStatus(false);
+      retryTimer = setTimeout(connect, 5000);
     }
   }
 
-  connect();
+  void connect();
 
   return () => {
     alive = false;
-    eventSource?.close();
+    if (retryTimer) clearTimeout(retryTimer);
+    controller.abort();
   };
 }
 

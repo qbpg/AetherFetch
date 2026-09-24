@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useSyncExternalStore } from "react";
 import { X } from "lucide-react";
 
 const STORAGE_KEY = "af_cookie_consent";
@@ -8,24 +8,23 @@ const STORAGE_KEY = "af_cookie_consent";
 type ConsentValue = "accepted" | "rejected" | null;
 
 function getStoredConsent(): ConsentValue {
-  const v = localStorage.getItem(STORAGE_KEY);
+  if (typeof window === "undefined") return null;
+  let v: string | null;
+  try { v = localStorage.getItem(STORAGE_KEY); } catch { return null; }
   if (v === "accepted" || v === "rejected") return v;
   return null;
 }
 
 export default function CookieConsent() {
-  const [visible, setVisible] = useState(false);
-
-  useEffect(() => {
-    if (getStoredConsent() === null) setVisible(true);
-  }, []);
+  const hydrated = useSyncExternalStore(() => () => {}, () => true, () => false);
+  const [dismissed, setDismissed] = useState(false);
 
   function decide(value: "accepted" | "rejected") {
-    localStorage.setItem(STORAGE_KEY, value);
-    setVisible(false);
+    try { localStorage.setItem(STORAGE_KEY, value); } catch { /* storage unavailable */ }
+    setDismissed(true);
   }
 
-  if (!visible) return null;
+  if (!hydrated || dismissed || getStoredConsent() !== null) return null;
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-[300] pointer-events-none">
@@ -49,7 +48,7 @@ export default function CookieConsent() {
               className="h-7 px-3 text-xs font-medium text-zinc-950 bg-zinc-100 hover:bg-white rounded-md transition-colors">
               Accept
             </button>
-            <button onClick={() => setVisible(false)} aria-label="Dismiss"
+            <button onClick={() => setDismissed(true)} aria-label="Dismiss"
               className="w-7 h-7 flex items-center justify-center rounded-md text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800 transition-colors">
               <X className="w-3.5 h-3.5" />
             </button>

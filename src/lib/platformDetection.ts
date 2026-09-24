@@ -1,5 +1,10 @@
 import type { PlatformAdapter, PlatformDetection } from "./types";
-import { PlatformAdapters } from "./types";
+import claude from "./ai-adapters/claude";
+import chatgpt from "./ai-adapters/chatgpt";
+import deepseek from "./ai-adapters/deepseek";
+import mistral from "./ai-adapters/mistral";
+
+const PlatformAdapters = { claude, chatgpt, deepseek, mistral };
 
 const DOMAIN_MAP: Record<string, keyof typeof PlatformAdapters> = {
   "claude.ai": "claude",

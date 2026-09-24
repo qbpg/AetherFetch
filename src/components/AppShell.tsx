@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState, useCallback } from "react";
 import { Copy, Check, Wifi, WifiOff, User, RefreshCw, Menu, X } from "lucide-react";
@@ -38,7 +39,7 @@ function Header() {
     <header className="relative h-14 border-b border-zinc-800 flex items-center justify-between px-3 sm:px-5 flex-shrink-0 z-[60]">
       <div className="flex items-center gap-3">
         <Link href="/accounts" className="flex items-center gap-2.5">
-          <img src="/logo.svg" alt="AetherFetch" className="h-7 w-7 object-contain" />
+          <Image src="/logo.svg" alt="AetherFetch" width={28} height={28} className="h-7 w-7 object-contain" />
           <span className="text-base font-semibold tracking-tight hidden sm:block">AetherFetch</span>
           <span translate="no" className="text-[9px] font-bold text-zinc-500 bg-zinc-800 border border-zinc-700/50 px-1.5 py-0.5 rounded leading-none hidden sm:block">AF</span>
         </Link>

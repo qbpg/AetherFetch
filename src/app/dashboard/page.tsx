@@ -5,15 +5,17 @@ import { useRouter } from "next/navigation";
 import {
   Mail, MailOpen, Trash2,
   Download, Inbox, Search, ChevronLeft, X,
-  RefreshCw, Clock, Wifi, WifiOff, Hash,
+  RefreshCw, Clock, Hash,
+  Plus, Copy, Check, ExternalLink, Loader2,
 } from "lucide-react";
 import { useSession } from "@/contexts/SessionContext";
 import SecureMailIframe from "@/components/SecureMailIframe";
-import { getMessage, deleteMessage, markAsRead } from "@/lib/mailbox";
+import { getMessage, deleteMessage, markAsRead, downloadAttachment, getDomains, createAccount, getToken, generateValidPassword, saveSession, saveAccountToHistory } from "@/lib/mailbox";
+import { extractVerification } from "@/lib/verification";
 import type { Message as Msg, MessageDetail } from "@/lib/types";
 
 export default function DashboardPage() {
-  const { session, messages, setMessages, doFetch, sseConnected, addToast } = useSession();
+  const { session, setSession, messages, setMessages, totalMessages, hasMoreMessages, loadingMore, loadMore, doFetch, sseConnected, addToast } = useSession();
   const router = useRouter();
   const [selectedMsg, setSelectedMsg] = useState<MessageDetail | null>(null);
   const [loadingDetail, setLoadingDetail] = useState(false);
@@ -22,12 +24,50 @@ export default function DashboardPage() {
   const [mobileView, setMobileView] = useState<"inbox" | "detail">("inbox");
   const [initialLoading, setInitialLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [creating, setCreating] = useState(false);
+  const [newLabel, setNewLabel] = useState("");
+  const [codeCopied, setCodeCopied] = useState(false);
+  const [downloading, setDownloading] = useState<string | null>(null);
   const messageCache = useRef<Map<string, MessageDetail>>(new Map());
+  const verification = useMemo(() => selectedMsg ? extractVerification(selectedMsg) : null, [selectedMsg]);
+
+  const createQuickAddress = async () => {
+    if (creating) return;
+    setCreating(true);
+    try {
+      const domains = await getDomains();
+      const bytes = crypto.getRandomValues(new Uint8Array(6));
+      const username = `af${Array.from(bytes, (byte) => byte.toString(16).padStart(2, "0")).join("")}`;
+      const address = `${username}@${domains[0].domain}`;
+      const password = generateValidPassword();
+      const account = await createAccount(address, password);
+      const token = (await getToken(address, password)).token;
+      const nextSession = { token, email: address, password, accountId: account.id };
+      saveSession(nextSession);
+      saveAccountToHistory(address, password, newLabel.trim() || undefined);
+      setSession(nextSession);
+      setSelectedMsg(null);
+      setNewLabel("");
+      try { await navigator.clipboard.writeText(address); addToast("New address created and copied", "success"); }
+      catch { addToast("New address created", "success"); }
+    } catch (err) {
+      addToast(err instanceof Error ? err.message : "Could not create an address", "error");
+    } finally {
+      setCreating(false);
+    }
+  };
+
+  const handleDownload = async (attachment: { id: string; filename: string; downloadUrl?: string }) => {
+    if (!session) return;
+    setDownloading(attachment.id);
+    try { await downloadAttachment(session.token, attachment); }
+    catch (err) { addToast(err instanceof Error ? err.message : "Download failed", "error"); }
+    finally { setDownloading(null); }
+  };
 
 
   useEffect(() => {
     if (!session) { router.replace("/"); return; }
-    setInitialLoading(true);
     doFetch(session.token).finally(() => setInitialLoading(false));
   }, [session, router, doFetch]);
 
@@ -168,6 +208,16 @@ export default function DashboardPage() {
   return (
     <div className="flex flex-1 min-h-0 overflow-hidden">
       <aside className={`w-full md:w-80 lg:w-96 border-r border-zinc-800 flex flex-col flex-shrink-0 ${mobileView === "detail" ? "hidden md:flex" : "flex"} md:flex`}>
+        <div className="flex items-center gap-2 px-3 py-2 border-b border-zinc-800 bg-zinc-900/40">
+          <input value={newLabel} onChange={(event) => setNewLabel(event.target.value)} maxLength={40}
+            aria-label="Name for new address" placeholder="Name (optional)"
+            className="min-w-0 flex-1 h-8 rounded-md border border-zinc-800 bg-zinc-950 px-2.5 text-xs text-zinc-100 placeholder:text-zinc-600 focus:border-zinc-600" />
+          <button onClick={createQuickAddress} disabled={creating} aria-label="Create a new address"
+            className="h-8 px-2.5 inline-flex items-center gap-1 rounded-md bg-white text-zinc-950 text-xs font-semibold hover:bg-zinc-200 disabled:opacity-50">
+            {creating ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Plus className="w-3.5 h-3.5" />}
+            New
+          </button>
+        </div>
         {/* Stats bar */}
         <div className="h-10 border-b border-zinc-800 flex items-center px-4 sm:px-5 gap-3 flex-shrink-0 bg-zinc-900/30">
           <div className="flex items-center gap-1.5">
@@ -177,7 +227,7 @@ export default function DashboardPage() {
           <div className="w-px h-3 bg-zinc-800" />
           <div className="flex items-center gap-1">
             <Hash className="w-3 h-3 text-zinc-600" />
-            <span className="text-[10px] text-zinc-500 font-mono">{totalCount}</span>
+            <span className="text-[10px] text-zinc-500 font-mono">{totalCount}{totalMessages > totalCount ? ` / ${totalMessages}` : ""}</span>
           </div>
           {unreadCount > 0 && (
             <>
@@ -295,6 +345,12 @@ export default function DashboardPage() {
               </button>
             ))
           )}
+          {hasMoreMessages && (
+            <button onClick={() => void loadMore()} disabled={loadingMore}
+              className="w-full py-3 text-xs text-zinc-400 hover:text-white hover:bg-zinc-900 disabled:opacity-50 transition-colors">
+              {loadingMore ? "Loading…" : `Load older messages (${Math.max(0, totalMessages - messages.length)} remaining)`}
+            </button>
+          )}
         </div>
       </aside>
 
@@ -346,17 +402,40 @@ export default function DashboardPage() {
               </div>
             </div>
 
+            {/* Verification shortcuts */}
+            {verification && (verification.code || verification.link) && (
+              <div className="border-b border-zinc-800 px-5 sm:px-7 py-3 bg-indigo-400/5 flex flex-wrap items-center gap-2.5">
+                <span className="text-[11px] font-semibold uppercase tracking-wider text-indigo-300 mr-1">Verification</span>
+                {verification.code && <button onClick={async () => {
+                  try {
+                    await navigator.clipboard.writeText(verification.code!);
+                    setCodeCopied(true);
+                    addToast("Code copied", "success");
+                    setTimeout(() => setCodeCopied(false), 2000);
+                  } catch { addToast("Could not copy code", "error"); }
+                }} className="inline-flex items-center gap-2 rounded-md border border-indigo-400/25 bg-indigo-400/10 px-3 py-1.5 text-sm font-mono tracking-[0.2em] text-indigo-100 hover:bg-indigo-400/20">
+                  {verification.code}{codeCopied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+                </button>}
+                {verification.link && <a href={verification.link} target="_blank" rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 rounded-md border border-zinc-700 px-3 py-1.5 text-xs text-zinc-200 hover:bg-zinc-800">
+                  Open verification link <ExternalLink className="w-3.5 h-3.5" />
+                </a>}
+              </div>
+            )}
+
             {/* Attachments */}
             {selectedMsg.attachments?.length > 0 && (
               <div className="border-b border-zinc-800 px-5 sm:px-7 py-3 flex-shrink-0 bg-zinc-900/10">
                 <p className="text-[11px] text-zinc-400 uppercase tracking-wider mb-2 font-medium">Attachments ({selectedMsg.attachments.length})</p>
                 <div className="flex flex-wrap gap-2">
                   {selectedMsg.attachments.map((att) => (
-                    <div key={att.id} className="flex items-center gap-1.5 h-7 px-2.5 bg-zinc-900 border border-zinc-800 rounded-md text-[11px] text-zinc-400 hover:border-zinc-700 transition-colors cursor-default">
-                      <Download className="w-3 h-3 text-zinc-600" />
+                    <button key={att.id} onClick={() => void handleDownload(att)} disabled={!att.downloadUrl || downloading === att.id}
+                      title={att.downloadUrl ? `Download ${att.filename}` : "Download unavailable"}
+                      className="flex items-center gap-1.5 h-7 px-2.5 bg-zinc-900 border border-zinc-800 rounded-md text-[11px] text-zinc-400 hover:border-zinc-700 hover:text-zinc-100 transition-colors disabled:opacity-50">
+                      {downloading === att.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Download className="w-3 h-3 text-zinc-600" />}
                       <span className="truncate max-w-[140px]">{att.filename}</span>
                       <span className="text-zinc-700">({(att.size / 1024).toFixed(1)}KB)</span>
-                    </div>
+                    </button>
                   ))}
                 </div>
               </div>
