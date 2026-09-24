@@ -145,9 +145,10 @@ function ToastContainer() {
 export default function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const isLanding = LANDING_ROUTES.includes(pathname);
+  const isDocument = ["/legal", "/privacy", "/terms", "/refund"].includes(pathname);
 
   return (
-    <div className={`${isLanding ? "min-h-[100dvh]" : "h-[100dvh]"} flex flex-col bg-[#09090b] text-zinc-100 ${isLanding ? "" : "overflow-hidden"}`}>
+    <div className={`${isLanding || isDocument ? "min-h-[100dvh]" : "h-[100dvh]"} flex flex-col bg-[#09090b] text-zinc-100 ${isLanding || isDocument ? "" : "overflow-hidden"}`}>
       <div className="absolute top-16 left-0 right-0 z-[90] pointer-events-none">
         <div className="absolute top-0 left-0 right-0 flex flex-col gap-2 pointer-events-auto px-4 pt-2">
           <ToastContainer />
