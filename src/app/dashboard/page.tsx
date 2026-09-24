@@ -71,16 +71,6 @@ export default function DashboardPage() {
     doFetch(session.token).finally(() => setInitialLoading(false));
   }, [session, router, doFetch]);
 
-  useEffect(() => {
-    if (!session || messages.length === 0) return;
-    for (const msg of messages) {
-      if (!messageCache.current.has(msg.id) && !msg.seen) {
-        getMessage(session.token, msg.id).then((detail) => {
-          messageCache.current.set(msg.id, detail);
-        }).catch(() => {});
-      }
-    }
-  }, [session, messages]);
 
   const copyEmail = useCallback(async () => {
     if (!session) return;
@@ -162,8 +152,10 @@ export default function DashboardPage() {
         return;
       } catch (err) {
         lastError = err;
-        if (attempt < MAX_RETRIES) {
+        if (attempt < MAX_RETRIES && !(err instanceof Error && err.message === "Rate limited")) {
           await new Promise((r) => setTimeout(r, RETRY_DELAY));
+        } else {
+          break;
         }
       }
     }
