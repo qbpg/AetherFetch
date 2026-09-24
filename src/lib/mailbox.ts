@@ -33,13 +33,10 @@ export function isRateLimited(): boolean {
   return Date.now() < rateLimitUntil;
 }
 
-const AUTH_ENDPOINTS = ["/token", "/me", "/accounts", "/domains"];
-
 async function apiFetch<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
   const { headers: customHeaders, ...restOptions } = options;
 
-  const isAuthEndpoint = AUTH_ENDPOINTS.some((ep) => endpoint.startsWith(ep));
-  if (!isAuthEndpoint && Date.now() < rateLimitUntil) {
+  if (Date.now() < rateLimitUntil) {
     throw new Error("Rate limited");
   }
 
@@ -65,8 +62,9 @@ async function apiFetch<T>(endpoint: string, options: RequestInit = {}): Promise
   if (response.status === 429) {
     const retryAfter = response.headers.get("Retry-After");
     const seconds = retryAfter ? Number.parseInt(retryAfter, 10) : NaN;
-    const waitMs = Number.isFinite(seconds) && seconds > 0 ? seconds * 1000 : 30000;
-    rateLimitUntil = Date.now() + Math.min(waitMs, 60000);
+    const date = retryAfter ? Date.parse(retryAfter) : NaN;
+    const waitMs = Number.isFinite(seconds) && seconds > 0 ? seconds * 1000 : Number.isFinite(date) ? date - Date.now() : 60000;
+    rateLimitUntil = Date.now() + Math.min(Math.max(waitMs, 1000), 300000);
     throw new Error("Rate limited");
   }
 
@@ -94,12 +92,16 @@ function authHeaders(token: string): Record<string, string> {
   return { Authorization: `Bearer ${token}` };
 }
 
+let cachedDomains: { list: Domain[]; expires: number } | null = null;
+
 export async function getDomains(): Promise<Domain[]> {
+  if (cachedDomains && Date.now() < cachedDomains.expires) return cachedDomains.list;
   const data = await apiFetch<{ "hydra:member"?: Domain[]; domains?: Domain[]; data?: Domain[] }>("/domains");
   const list = data["hydra:member"] || data.domains || data.data || (Array.isArray(data) ? data : null);
   if (!Array.isArray(list)) throw new Error("Could not load available domains");
   const active = list.filter((domain) => domain.isActive);
   if (active.length === 0) throw new Error("No domains are currently available");
+  cachedDomains = { list: active, expires: Date.now() + 10 * 60 * 1000 };
   return active;
 }
 
