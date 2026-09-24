@@ -2,6 +2,7 @@
 
 import { useState, useSyncExternalStore } from "react";
 import { X } from "lucide-react";
+import Link from "next/link";
 
 const STORAGE_KEY = "af_cookie_consent";
 
@@ -34,10 +35,10 @@ export default function CookieConsent() {
             <span className="text-zinc-300 font-medium">Cookie Notice.</span>{" "}
             We use local storage to remember your session and preferences.
             No third-party tracking cookies are set. By continuing to use this site you agree to our{" "}
-            <button onClick={() => document.querySelector<HTMLElement>("[data-modal='privacy']")?.click()}
+            <Link href="/privacy"
               className="text-zinc-300 hover:text-zinc-50 underline-offset-2 underline transition-colors">
               Privacy Policy
-            </button>.
+            </Link>.
           </div>
           <div className="flex items-center gap-2 shrink-0">
             <button onClick={() => decide("rejected")}
