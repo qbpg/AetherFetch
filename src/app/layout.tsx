@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     "Create a free temporary email address with AetherFetch. Receive verification emails, read messages and manage disposable inboxes in one place.",
   robots: { index: true, follow: true },
   applicationName: "AetherFetch",
-  alternates: { canonical: "/" },
+  alternates: { canonical: "/", languages: { en: "/", fr: "/fr", "x-default": "/" } },
   openGraph: {
     title: "AetherFetch — Free Temporary Email",
     description:
