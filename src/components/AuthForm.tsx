@@ -40,6 +40,7 @@ export default function AuthForm({ onAuthenticated, initialMode }: AuthFormProps
   const [domains, setDomains] = useState<Domain[]>([]);
   const [selectedDomain, setSelectedDomain] = useState("");
   const [domainsError, setDomainsError] = useState("");
+  const [domainsLoading, setDomainsLoading] = useState(true);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -60,22 +61,24 @@ export default function AuthForm({ onAuthenticated, initialMode }: AuthFormProps
   const honeypotRef = useRef<HTMLInputElement>(null);
   const formLoadTime = useRef<number>(0);
 
+  const loadDomains = useCallback(async () => {
+    setDomainsLoading(true);
+    setDomainsError("");
+    try {
+      const available = await getDomains();
+      setDomains(available);
+      setSelectedDomain((current) => current && available.some((item) => item.domain === current) ? current : available[0].domain);
+    } catch {
+      setDomainsError("Could not load available domains. Please try again.");
+    } finally {
+      setDomainsLoading(false);
+    }
+  }, []);
+
   useEffect(() => {
     formLoadTime.current = Date.now();
-    let cancelled = false;
-    getDomains()
-      .then((d) => {
-        if (cancelled) return;
-        setDomains(d);
-        setSelectedDomain(d[0].domain);
-      })
-      .catch(() => {
-        if (!cancelled) {
-          setDomainsError("Could not load available domains. Please try again later.");
-        }
-      });
-    return () => { cancelled = true; };
-  }, []);
+    void loadDomains();
+  }, [loadDomains]);
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -286,9 +289,9 @@ export default function AuthForm({ onAuthenticated, initialMode }: AuthFormProps
                     className="w-full h-10 sm:h-11 pl-9 sm:pl-10 pr-3 bg-[#09090b] border border-zinc-800 rounded-lg text-xs sm:text-sm text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:border-zinc-600 focus:ring-1 focus:ring-zinc-700 transition-all duration-200" />
                 </div>
                 <div className="relative" ref={dropdownRef}>
-                  <button type="button" onClick={() => setDomainOpen(!domainOpen)}
+                  <button type="button" onClick={() => setDomainOpen(!domainOpen)} disabled={domainsLoading || domains.length === 0}
                     className="h-10 sm:h-11 px-2.5 sm:px-3 pr-7 sm:pr-8 bg-[#09090b] border border-zinc-800 rounded-lg text-xs sm:text-sm text-zinc-100 focus:outline-none focus:border-zinc-600 transition-all duration-200 whitespace-nowrap flex items-center gap-0.5 hover:border-zinc-700">
-                    <span translate="no">{selectedDomain ? `@${selectedDomain}` : "No domain"}</span>
+                    <span translate="no">{selectedDomain ? `@${selectedDomain}` : domainsLoading ? "Loading..." : "No domain"}</span>
                     <ChevronDown className={`w-3 h-3 text-zinc-500 transition-transform duration-200 ${domainOpen ? "rotate-180" : ""}`} />
                   </button>
                   {domainOpen && domains.length > 0 && (
@@ -353,7 +356,7 @@ export default function AuthForm({ onAuthenticated, initialMode }: AuthFormProps
             {(error || (mode === "register" && domainsError)) && (
               <div className="flex items-start gap-2 text-xs sm:text-sm text-red-400 bg-red-400/5 border border-red-400/10 rounded-lg px-3 py-2 animate-in">
                 <AlertCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 mt-0.5 flex-shrink-0" />
-                <span>{error || domainsError}</span>
+                <div className="flex-1"><span>{error || domainsError}</span>{mode === "register" && domainsError && !domainsLoading && <button type="button" onClick={() => void loadDomains()} className="ml-2 font-medium underline underline-offset-2 hover:text-red-300">Retry</button>}</div>
               </div>
             )}
 
