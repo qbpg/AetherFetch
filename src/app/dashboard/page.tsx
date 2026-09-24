@@ -206,7 +206,23 @@ export default function DashboardPage() {
   const totalCount = messages.length;
 
   return (
-    <div className="flex flex-1 min-h-0 overflow-hidden">
+    <div className="flex flex-1 min-h-0 overflow-hidden flex-col">
+      <div className="flex items-center gap-3 border-b border-zinc-800 bg-zinc-900 px-4 py-3 md:hidden">
+        <div className="min-w-0 flex-1">
+          <p className="mb-1 text-[10px] font-medium uppercase tracking-wider text-zinc-500">Your email address</p>
+          <p className="truncate font-mono text-xs text-zinc-100" title={session.email}>{session.email}</p>
+        </div>
+        <button
+          type="button"
+          onClick={() => void copyEmail()}
+          aria-label="Copy email address"
+          className="inline-flex h-10 shrink-0 items-center gap-2 rounded-lg bg-zinc-100 px-3 text-xs font-semibold text-zinc-950 transition-colors hover:bg-white active:bg-zinc-200"
+        >
+          <Copy className="h-4 w-4" />
+          Copy email
+        </button>
+      </div>
+      <div className="flex flex-1 min-h-0 overflow-hidden">
       <aside className={`w-full md:w-80 lg:w-96 border-r border-zinc-800 flex flex-col flex-shrink-0 ${mobileView === "detail" ? "hidden md:flex" : "flex"} md:flex`}>
         <div className="flex items-center gap-2 px-3 py-2 border-b border-zinc-800 bg-zinc-900/40">
           <input value={newLabel} onChange={(event) => setNewLabel(event.target.value)} maxLength={40}
@@ -477,8 +493,7 @@ export default function DashboardPage() {
           </div>
         )}
       </main>
-
-
+      </div>
     </div>
   );
 }
