@@ -84,3 +84,5 @@ AetherFetch does not run its own mail server or offer addresses on a custom Aeth
 ## License
 
 [MIT](LICENSE).
+
+Created by **qbpg** · Contact: [qbpg.sg@outlook.com](mailto:qbpg.sg@outlook.com)
