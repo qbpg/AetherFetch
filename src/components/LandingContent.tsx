@@ -323,6 +323,10 @@ export default function LandingContent() {
           </div>
           <div className="flex items-center gap-4 text-xs text-zinc-500">
             <span>Created by qpbg</span>
+            <Link href="/legal" className="hover:text-zinc-300 transition-colors">Legal Notice</Link>
+            <Link href="/privacy" className="hover:text-zinc-300 transition-colors">Privacy Policy</Link>
+            <Link href="/terms" className="hover:text-zinc-300 transition-colors">Terms of Service</Link>
+            <Link href="/refund" className="hover:text-zinc-300 transition-colors">Refund Policy</Link>
             <a href="https://mail.tm" target="_blank" rel="noopener noreferrer" className="hover:text-zinc-300 transition-colors">Powered by mail.tm</a>
             <a href="mailto:qbpg.sg@outlook.com" translate="no" className="hover:text-zinc-300 transition-colors">
               qbpg.sg@outlook.com
