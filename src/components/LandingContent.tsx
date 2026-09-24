@@ -323,6 +323,7 @@ export default function LandingContent() {
           </div>
           <div className="flex items-center gap-4 text-xs text-zinc-500">
             <span>Created by qbpg</span>
+            <Link href="/fr" lang="fr" className="hover:text-zinc-300 transition-colors">Français</Link>
             <Link href="/legal" className="hover:text-zinc-300 transition-colors">Legal Notice</Link>
             <Link href="/privacy" className="hover:text-zinc-300 transition-colors">Privacy Policy</Link>
             <Link href="/terms" className="hover:text-zinc-300 transition-colors">Terms of Service</Link>
