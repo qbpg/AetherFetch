@@ -1,27 +1,43 @@
-<p align="center"><img src="public/logo.svg" alt="Logo AetherFetch" width="64"></p>
-<h1 align="center">AetherFetch</h1>
-<p align="center">Une boîte mail temporaire, simple et rapide.</p>
 <p align="center">
-  <a href="https://aetherfetch.vercel.app/">Ouvrir l'application</a> ·
-  <a href="#installation-locale">Installation</a> ·
-  <a href="#fonctionnement">Fonctionnement</a>
+  <img src="public/logo.svg" alt="AetherFetch logo" width="64">
 </p>
 
-AetherFetch permet de créer une adresse temporaire, de consulter les messages reçus et de gérer plusieurs comptes dans une interface adaptée au mobile. Le service repose actuellement sur **[mail.tm](https://mail.tm)** : il n'héberge pas son propre serveur de messagerie et ne fournit pas encore d'adresses sur un domaine AetherFetch.
+<h1 align="center">AetherFetch</h1>
 
-## Fonctionnalités
+<p align="center">Temporary inboxes, without the clutter.</p>
 
-- Création d'un compte temporaire et connexion à un compte existant.
-- Gestion de plusieurs comptes enregistrés, avec favoris, archives et libellés.
-- Réception des nouveaux messages via Mercure SSE, avec actualisation périodique en secours.
-- Lecture des messages, recherche parmi les messages chargés, pagination et suppression.
-- Accès rapide aux codes et liens de confirmation détectés dans un message.
-- Consultation des pièces jointes fournies par mail.tm.
-- Raccourcis clavier : `C` pour copier l'adresse et `R` pour actualiser la boîte de réception.
+<p align="center">
+  <a href="https://aetherfetch.vercel.app/">Live site</a> ·
+  <a href="#run-locally">Run locally</a> ·
+  <a href="#how-it-works">How it works</a>
+</p>
 
-## Installation locale
+AetherFetch lets you create a temporary email address, read incoming mail, and switch between saved accounts. It currently uses [mail.tm](https://mail.tm) for addresses and delivery.
 
-Prérequis : Node.js et npm.
+## What you can do
+
+- Create an address or sign in to an existing mail.tm account.
+- Save multiple accounts, add labels, and mark accounts as favorites or archived.
+- Read, search, and delete messages; load older pages when needed.
+- Pick out verification codes and links from messages.
+- Download attachments and copy your address quickly.
+- Get new mail updates through Mercure, with periodic refresh as a fallback.
+
+Press `C` to copy the current address or `R` to refresh the inbox. Shortcuts are ignored while typing in a form.
+
+## Built with
+
+<p>
+  <img src="https://cdn.jsdelivr.net/gh/glincker/thesvg@main/public/icons/nextjs/default.svg" alt="Next.js" width="28" height="28"> &nbsp;
+  <img src="https://cdn.jsdelivr.net/gh/glincker/thesvg@main/public/icons/cloudflare-workers/default.svg" alt="Cloudflare Workers" width="28" height="28"> &nbsp;
+  <img src="https://cdn.jsdelivr.net/gh/glincker/thesvg@main/public/icons/vercel/default.svg" alt="Vercel" width="28" height="28">
+</p>
+
+Next.js 16, React 19, TypeScript, Tailwind CSS 4, a Cloudflare Worker, and the mail.tm API. The icons above are from [theSVG](https://thesvg.org/).
+
+## Run locally
+
+You'll need Node.js and npm.
 
 ```bash
 git clone https://github.com/qbpg/AetherFetch.git
@@ -30,47 +46,41 @@ npm install
 npm run dev
 ```
 
-Ouvrir [http://localhost:3000](http://localhost:3000). Le développement local utilise le proxy Cloudflare Worker configuré dans `src/app/api/mailbox/[...path]/route.ts` ; une connexion à ce Worker et à mail.tm est nécessaire. Aucune variable d'environnement locale n'est requise par le code actuel.
+Open [localhost:3000](http://localhost:3000). The app uses the Cloudflare Worker URL set in `src/app/api/mailbox/[...path]/route.ts`, so that Worker and mail.tm must be reachable. The current code does not require a local `.env` file.
 
-| Commande | Action |
+| Command | Purpose |
 | --- | --- |
-| `npm run dev` | Démarrer le serveur de développement |
-| `npm run build` | Compiler l'application |
-| `npm start` | Démarrer la version compilée |
-| `npm run lint` | Vérifier le code avec ESLint |
+| `npm run dev` | Start the development server |
+| `npm run build` | Create a production build |
+| `npm start` | Serve the production build |
+| `npm run lint` | Run ESLint |
 
-## Fonctionnement
+## How it works
 
 ```text
-Navigateur → /api/mailbox/* (Next.js) → Cloudflare Worker → API mail.tm
-Navigateur → Mercure mail.tm (notifications de nouveaux messages)
+Browser → Next.js /api/mailbox/* → Cloudflare Worker → mail.tm
+Browser → mail.tm Mercure endpoint for live updates
 ```
 
-Le navigateur appelle la route API de Next.js, qui relaie les requêtes vers le Worker défini dans le code. Le Worker communique avec l'API mail.tm. La connexion Mercure sert à signaler de nouveaux messages ; l'application garde une actualisation périodique si la connexion en direct échoue.
+The Next.js API route forwards mailbox requests to the Worker. The Worker forwards them to mail.tm. If the live connection drops, the inbox still refreshes periodically.
 
-**Données locales :** la session et les comptes enregistrés, y compris leurs mots de passe, sont stockés dans le `localStorage` du navigateur. Ils peuvent être perdus si les données du navigateur sont effacées. Évitez d'enregistrer des comptes sur un appareil partagé et n'utilisez pas ces boîtes pour des informations sensibles.
+Saved accounts and the active session are kept in your browser's `localStorage`. Saved account passwords are stored there too. Clearing site data removes those saved details, and a shared device can expose them to other users of that browser. Avoid using temporary inboxes for sensitive or long-term accounts.
 
-### Modifier le proxy
+### Use your own Worker
 
-Le fichier `cf-proxy/wrangler.toml` définit `MAIL_TM_BASE` (actuellement `https://api.mail.tm`). Après déploiement de votre Worker, adaptez la constante `WORKER_URL` dans `src/app/api/mailbox/[...path]/route.ts` à son URL. Elle est actuellement codée en dur ; déployer un nouveau Worker sans modifier cette constante ne changera pas la destination de l'application.
+Deploy the Worker in `cf-proxy/` and set `WORKER_URL` in `src/app/api/mailbox/[...path]/route.ts` to its URL. `MAIL_TM_BASE` in `cf-proxy/wrangler.toml` currently points to `https://api.mail.tm`.
 
 ```bash
 cd cf-proxy
 npx wrangler deploy
 ```
 
-Pour déployer le frontend sur Vercel, importez le dépôt dans Vercel et configurez le Worker avant de tester les opérations de création de compte et de lecture des messages.
+The frontend can be deployed on Vercel. The Worker URL is currently hardcoded, so update it before deploying your own copy.
 
-## Technologies
+## Current limits
 
-Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS 4, lucide-react, Cloudflare Worker, API mail.tm et Mercure SSE.
+AetherFetch does not run its own mail server or offer addresses on a custom AetherFetch domain yet. Available domains and mail delivery depend on mail.tm. Inbox search covers the messages loaded in the interface.
 
-## Limites
-
-- Les adresses et les messages dépendent des domaines et de la disponibilité de mail.tm.
-- Le projet ne gère pas encore un domaine de messagerie personnalisé ou une infrastructure de réception indépendante.
-- Les résultats de recherche portent sur les messages déjà chargés dans l'interface.
-
-## Licence
+## License
 
 [MIT](LICENSE).
