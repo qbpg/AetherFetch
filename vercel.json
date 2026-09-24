@@ -1,6 +1,12 @@
 {
   "framework": "nextjs",
   "cleanUrls": true,
+  "git": {
+    "deploymentEnabled": {
+      "*": false,
+      "main": true
+    }
+  },
   "headers": [
     {
       "source": "/api/(.*)",
