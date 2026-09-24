@@ -111,6 +111,7 @@ export default function LandingContent() {
             <span className="font-medium">AetherFetch</span>
           </div>
           <span>Created by qbpg</span>
+          <Link href="/docs" className="hover:text-zinc-200">User Guide</Link>
           <Link href="/fr" lang="fr" className="hover:text-zinc-200">Français</Link>
           <Link href="/legal" className="hover:text-zinc-200">Legal Notice</Link>
           <Link href="/privacy" className="hover:text-zinc-200">Privacy Policy</Link>
