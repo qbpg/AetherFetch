@@ -11,18 +11,25 @@ const SITE_URL = "https://aetherfetch.vercel.app";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: "AetherFetch - Temporary Email",
+  title: "AetherFetch — Free Temporary Email",
   description:
-    "Temporary email panel: create a disposable inbox, receive messages in real time, and manage multiple mail.tm accounts from a single interface.",
+    "Create a free temporary email address with AetherFetch. Receive verification emails, read messages and manage disposable inboxes in one place.",
   robots: { index: true, follow: true },
+  applicationName: "AetherFetch",
   alternates: { canonical: "/" },
   openGraph: {
-    title: "AetherFetch - Temporary Email",
+    title: "AetherFetch — Free Temporary Email",
     description:
-      "Temporary email panel: create a disposable inbox, receive messages in real time, and manage multiple mail.tm accounts from a single interface.",
+      "Create a free temporary email address with AetherFetch. Receive verification emails and manage disposable inboxes in one place.",
     url: SITE_URL,
     siteName: "AetherFetch",
     type: "website",
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary",
+    title: "AetherFetch — Free Temporary Email",
+    description: "Create a free temporary email address and keep verification messages in one place.",
   },
 };
 
