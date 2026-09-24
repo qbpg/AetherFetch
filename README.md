@@ -48,6 +48,8 @@ npm run dev
 
 Open [localhost:3000](http://localhost:3000). The app uses the Cloudflare Worker URL set in `src/app/api/mailbox/[...path]/route.ts`, so that Worker and mail.tm must be reachable. The current code does not require a local `.env` file.
 
+To receive a Discord notification when an address is created, set `DISCORD_ACCOUNT_WEBHOOK_URL` to a Discord channel webhook URL in your server environment (Vercel: Project Settings → Environment Variables → Production). For local development, put it in `.env.local`. The webhook is optional, runs after a successful account creation, and receives only the new email address, never its password or token. Redeploy after setting the variable.
+
 | Command | Purpose |
 | --- | --- |
 | `npm run dev` | Start the development server |
