@@ -1,169 +1,76 @@
+<p align="center"><img src="public/logo.svg" alt="Logo AetherFetch" width="64"></p>
+<h1 align="center">AetherFetch</h1>
+<p align="center">Une boîte mail temporaire, simple et rapide.</p>
 <p align="center">
-  <img src="public/logo.svg" alt="AetherFetch" width="56" />
+  <a href="https://aetherfetch.vercel.app/">Ouvrir l'application</a> ·
+  <a href="#installation-locale">Installation</a> ·
+  <a href="#fonctionnement">Fonctionnement</a>
 </p>
 
-<h1 align="center">AetherFetch <span style="font-size: 0.6em; color: #71717a;">(AF)</span></h1>
+AetherFetch permet de créer une adresse temporaire, de consulter les messages reçus et de gérer plusieurs comptes dans une interface adaptée au mobile. Le service repose actuellement sur **[mail.tm](https://mail.tm)** : il n'héberge pas son propre serveur de messagerie et ne fournit pas encore d'adresses sur un domaine AetherFetch.
 
-<p align="center">
-  Temporary email panel — instant access, zero friction.
-</p>
+## Fonctionnalités
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Next.js-16-18181b?style=flat-square&logo=next.js&logoColor=white" alt="Next.js 16" />
-  <img src="https://img.shields.io/badge/React-19-18181b?style=flat-square&logo=react&logoColor=61DAFB" alt="React 19" />
-  <img src="https://img.shields.io/badge/TypeScript-5-18181b?style=flat-square&logo=typescript&logoColor=3178C6" alt="TypeScript 5" />
-  <img src="https://img.shields.io/badge/Tailwind_CSS-4-18181b?style=flat-square&logo=tailwindcss&logoColor=06B6D4" alt="Tailwind CSS 4" />
-  <img src="https://img.shields.io/badge/Proxy-Cloudflare_Worker-18181b?style=flat-square&logo=cloudflare&logoColor=F6821F" alt="Cloudflare Worker Proxy" />
-  <img src="https://img.shields.io/badge/Deploy-Vercel-18181b?style=flat-square&logo=vercel&logoColor=white" alt="Vercel" />
-  <img src="https://img.shields.io/badge/License-MIT-18181b?style=flat-square" alt="MIT License" />
-</p>
+- Création d'un compte temporaire et connexion à un compte existant.
+- Gestion de plusieurs comptes enregistrés, avec favoris, archives et libellés.
+- Réception des nouveaux messages via Mercure SSE, avec actualisation périodique en secours.
+- Lecture des messages, recherche parmi les messages chargés, pagination et suppression.
+- Accès rapide aux codes et liens de confirmation détectés dans un message.
+- Consultation des pièces jointes fournies par mail.tm.
+- Raccourcis clavier : `C` pour copier l'adresse et `R` pour actualiser la boîte de réception.
 
----
+## Installation locale
 
-## Overview
-
-**AetherFetch (AF)** is a high-precision temporary email management panel built with a minimal zinc monochrome design. It provides instant disposable email access via the [mail.tm](https://mail.tm) API, routed through a Cloudflare Worker CORS proxy for zero-friction anti-bot protection.
-
-Multi-account management, real-time inbox with Mercure SSE, keyboard shortcuts, and a silent anti-bot layer — all in a clean, dark interface with surgical attention to detail.
-
-## Stack
-
-| Layer | Technology |
-|---|---|
-| Frontend | Next.js 16 (App Router) + React 19 |
-| Language | TypeScript 5 (strict) |
-| Styling | Tailwind CSS 4 |
-| Icons | lucide-react |
-| Fonts | Geist Sans + Geist Mono |
-| API | [mail.tm](https://mail.tm) (temporary email) |
-| Realtime | Mercure SSE (`mercure.mail.tm`) |
-| Proxy | Cloudflare Worker (CORS) |
-| Deploy | Vercel |
-
-## Features
-
-- **Intelligent onboarding** — Register or login with one click, random credential generator
-- **Quick connect** — Saved accounts with favorites, archiving, and custom labels
-- **Synchronized deletion** — Account removal stays in sync across profile and quick-connect
-- **Real-time inbox** — Mercure SSE for live updates with 30s polling fallback
-- **Quick address creation** — Create and copy another address from the dashboard, with an optional label
-- **Verification shortcuts** — Surface likely confirmation codes and links when reading a message
-- **Older messages** — Load paginated inbox results beyond the first 30 messages
-- **Attachments** — Download files supplied by mail.tm from the message reader
-- **Secure mail reader** — Sandboxed iframe (`allow-same-origin` only) for rendering HTML emails
-- **Inbox search** — Filter currently loaded messages by sender, subject, or preview
-- **Keyboard shortcuts** — `C` to copy email, `R` to refresh (with micro-animation feedback)
-- **Toast notifications** — Success, error, and info feedback with animated transitions
-- **Silent anti-bot** — Honeypot field + minimum submission time (no CAPTCHA)
-- **Mobile responsive** — Adaptive layout with inbox/detail view toggle
-- **Legal compliance** — Footer with mentions légales and privacy policy modals
-
-## Getting Started
+Prérequis : Node.js et npm.
 
 ```bash
-# Clone
 git clone https://github.com/qbpg/AetherFetch.git
 cd AetherFetch
-
-# Install dependencies
 npm install
-
-# Start development server
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
+Ouvrir [http://localhost:3000](http://localhost:3000). Le développement local utilise le proxy Cloudflare Worker configuré dans `src/app/api/mailbox/[...path]/route.ts` ; une connexion à ce Worker et à mail.tm est nécessaire. Aucune variable d'environnement locale n'est requise par le code actuel.
 
-## Commands
+| Commande | Action |
+| --- | --- |
+| `npm run dev` | Démarrer le serveur de développement |
+| `npm run build` | Compiler l'application |
+| `npm start` | Démarrer la version compilée |
+| `npm run lint` | Vérifier le code avec ESLint |
 
-| Command | Description |
-|---|---|
-| `npm run dev` | Start development server |
-| `npm run build` | Build for production |
-| `npm start` | Start production server |
-| `npm run lint` | Run ESLint |
+## Fonctionnement
 
-## Project Structure
-
-```
-src/
-  app/
-    page.tsx                 # Root redirect → /home
-    layout.tsx               # Root layout (metadata, SessionProvider, AppShell)
-    globals.css              # Tailwind + custom animations
-    sitemap.ts               # Sitemap for search engines
-    robots.txt               # Crawler rules + sitemap reference
-    api/mailbox/[...path]/   # Catch-all API proxy → Cloudflare Worker
-    home/page.tsx            # Home / session selector
-    dashboard/page.tsx       # Inbox + mail reader
-    accounts/page.tsx        # Multi-account management
-    login/page.tsx           # Login view
-    register/page.tsx        # Register view
-  components/
-    AppShell.tsx             # Client shell: header, toasts, landing/app chrome
-    AuthForm.tsx             # Login / Register form + quick connect
-    Footer.tsx               # Footer with legal modals
-    SecureMailIframe.tsx     # Sandboxed HTML email renderer
-    SessionSelector.tsx      # Active session / new mailbox picker
-  contexts/
-    SessionContext.tsx        # Global session + messages + SSE state
-  lib/
-    mailbox.ts               # API client + localStorage persistence
-    types.ts                 # TypeScript interfaces
-cf-proxy/
-  index.js                   # Cloudflare Worker (CORS proxy to mail.tm)
-  wrangler.toml              # Worker configuration
+```text
+Navigateur → /api/mailbox/* (Next.js) → Cloudflare Worker → API mail.tm
+Navigateur → Mercure mail.tm (notifications de nouveaux messages)
 ```
 
-## Architecture
+Le navigateur appelle la route API de Next.js, qui relaie les requêtes vers le Worker défini dans le code. Le Worker communique avec l'API mail.tm. La connexion Mercure sert à signaler de nouveaux messages ; l'application garde une actualisation périodique si la connexion en direct échoue.
 
-```
-Browser (Next.js 16 + React 19)
-  │
-  ├─ /api/mailbox/*  ──────────── Next.js catch-all route
-  │     │
-  │     └─────────────────────── Cloudflare Worker (CORS proxy)
-  │                                │
-  │                                └── api.mail.tm (email API)
-  │
-  └─ Mercure SSE ─────────────── mercure.mail.tm (realtime updates)
-```
+**Données locales :** la session et les comptes enregistrés, y compris leurs mots de passe, sont stockés dans le `localStorage` du navigateur. Ils peuvent être perdus si les données du navigateur sont effacées. Évitez d'enregistrer des comptes sur un appareil partagé et n'utilisez pas ces boîtes pour des informations sensibles.
 
-**Request flow:** Client → `/api/mailbox/*` → Next.js route handler → Cloudflare Worker → `api.mail.tm`
+### Modifier le proxy
 
-The Cloudflare Worker injects browser-like headers (`User-Agent`, `Sec-Fetch-*`) to bypass anti-bot checks at the API level. Rate limiting (429) is handled client-side with exponential backoff.
-
-## Keyboard Shortcuts
-
-| Key | Action |
-|---|---|
-| `C` | Copy current email address to clipboard |
-| `R` | Refresh inbox messages |
-
-Shortcuts are disabled when an input or textarea is focused. Visual feedback is provided via a floating HUD with micro-animations.
-
-## Deploy
+Le fichier `cf-proxy/wrangler.toml` définit `MAIL_TM_BASE` (actuellement `https://api.mail.tm`). Après déploiement de votre Worker, adaptez la constante `WORKER_URL` dans `src/app/api/mailbox/[...path]/route.ts` à son URL. Elle est actuellement codée en dur ; déployer un nouveau Worker sans modifier cette constante ne changera pas la destination de l'application.
 
 ```bash
-# Vercel
-npx vercel --prod
-
-# Cloudflare Worker
-cd cf-proxy && npx wrangler deploy
+cd cf-proxy
+npx wrangler deploy
 ```
 
-**Production:** [https://aetherfetch.vercel.app](https://aetherfetch.vercel.app)
+Pour déployer le frontend sur Vercel, importez le dépôt dans Vercel et configurez le Worker avant de tester les opérations de création de compte et de lecture des messages.
 
-## Environment Variables
+## Technologies
 
-The application requires no client-side environment variables. The Cloudflare Worker uses `MAIL_TM_BASE` as a binding.
+Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS 4, lucide-react, Cloudflare Worker, API mail.tm et Mercure SSE.
 
-## License
+## Limites
 
-[MIT](LICENSE) — Copyright (c) 2026 QPBG
+- Les adresses et les messages dépendent des domaines et de la disponibilité de mail.tm.
+- Le projet ne gère pas encore un domaine de messagerie personnalisé ou une infrastructure de réception indépendante.
+- Les résultats de recherche portent sur les messages déjà chargés dans l'interface.
 
-## Author
+## Licence
 
-**qbpg** — [qbpg.sg@outlook.com](mailto:qbpg.sg@outlook.com)
-
-GitHub: [github.com/qbpg](https://github.com/qbpg)
+[MIT](LICENSE).
