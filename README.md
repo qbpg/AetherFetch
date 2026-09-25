@@ -8,6 +8,7 @@
 
 <p align="center">
   <a href="https://aetherfetch.vercel.app/">Live site</a> ·
+  <a href="https://github.com/qbpg/aetherfetch-extension">Edge & Firefox extension</a> ·
   <a href="#run-locally">Run locally</a> ·
   <a href="#how-it-works">How it works</a>
 </p>
