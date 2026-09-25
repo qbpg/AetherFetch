@@ -26,6 +26,10 @@ AetherFetch lets you create a temporary email address, read incoming mail, and s
 
 Press `C` to copy the current address or `R` to refresh the inbox. Shortcuts are ignored while typing in a form.
 
+## Browser extension
+
+The [Edge and Firefox extension](https://github.com/qbpg/aetherfetch-extension) creates temporary addresses and shows messages, verification codes, and activation links in a browser popup. See its repository for installation instructions.
+
 ## Built with
 
 <p>
