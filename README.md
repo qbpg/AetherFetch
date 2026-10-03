@@ -92,4 +92,4 @@ AetherFetch does not run its own mail server or offer addresses on a custom Aeth
 
 Created by **qbpg** · Contact: [qbpg.sg@outlook.com](mailto:qbpg.sg@outlook.com)
 
-<p align="center"><a href="https://qbpg.space/"><img src="https://raw.githubusercontent.com/qbpg/qbpg/main/assets/portfolio.svg" alt="Portfolio - QBPG" width="188" height="36"></a></p>
+<p align="center"><a href="https://qbpg.space/"><img src="https://raw.githubusercontent.com/qbpg/qbpg/46238df45b256cde3c09e0dc658364376efe0dcc/assets/portfolio.svg" alt="Portfolio : qbpg.space" width="202" height="28"></a></p>
