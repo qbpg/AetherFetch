@@ -32,13 +32,16 @@ The [Edge and Firefox extension](https://github.com/qbpg/aetherfetch-extension) 
 
 ## Built with
 
-<p>
-  <img src="https://cdn.jsdelivr.net/gh/glincker/thesvg@main/public/icons/nextjs/default.svg" alt="Next.js" width="28" height="28"> &nbsp;
-  <img src="https://cdn.jsdelivr.net/gh/glincker/thesvg@main/public/icons/cloudflare-workers/default.svg" alt="Cloudflare Workers" width="28" height="28"> &nbsp;
-  <img src="https://cdn.jsdelivr.net/gh/glincker/thesvg@main/public/icons/vercel/default.svg" alt="Vercel" width="28" height="28">
+<p align="center">
+  <img src="https://skillicons.dev/icons?i=nextjs&theme=dark" alt="Next.js" title="Next.js" width="36" height="36">
+  <img src="https://skillicons.dev/icons?i=react&theme=dark" alt="React" title="React" width="36" height="36">
+  <img src="https://skillicons.dev/icons?i=ts&theme=dark" alt="TypeScript" title="TypeScript" width="36" height="36">
+  <img src="https://skillicons.dev/icons?i=tailwind&theme=dark" alt="Tailwind CSS" title="Tailwind CSS" width="36" height="36">
+  <img src="https://skillicons.dev/icons?i=cloudflare&theme=dark" alt="Cloudflare Workers" title="Cloudflare Workers" width="36" height="36">
+  <img src="https://skillicons.dev/icons?i=vercel&theme=dark" alt="Vercel" title="Vercel" width="36" height="36">
 </p>
 
-Next.js 16, React 19, TypeScript, Tailwind CSS 4, a Cloudflare Worker, and the mail.tm API. The icons above are from [theSVG](https://thesvg.org/).
+Next.js 16, React 19, TypeScript, Tailwind CSS 4, a Cloudflare Worker, and the mail.tm API.
 
 ## Run locally
 
@@ -62,10 +65,7 @@ Open [localhost:3000](http://localhost:3000). The app uses the Cloudflare Worker
 
 ## How it works
 
-```text
-Browser → Next.js /api/mailbox/* → Cloudflare Worker → mail.tm
-Browser → mail.tm Mercure endpoint for live updates
-```
+Mailbox requests go through the Next.js API and Cloudflare Worker to mail.tm. Live updates use mail.tm's Mercure endpoint.
 
 The Next.js API route forwards mailbox requests to the Worker. The Worker forwards them to mail.tm. If the live connection drops, the inbox still refreshes periodically.
 
@@ -91,3 +91,5 @@ AetherFetch does not run its own mail server or offer addresses on a custom Aeth
 [MIT](LICENSE).
 
 Created by **qbpg** · Contact: [qbpg.sg@outlook.com](mailto:qbpg.sg@outlook.com)
+
+<p align="center"><a href="https://qbpg.space/"><img src="https://raw.githubusercontent.com/qbpg/qbpg/main/assets/portfolio.svg" alt="Portfolio - QBPG" width="188" height="36"></a></p>
