@@ -33,12 +33,12 @@ The [Edge and Firefox extension](https://github.com/qbpg/aetherfetch-extension) 
 ## Built with
 
 <p align="center">
-  <img src="https://skillicons.dev/icons?i=nextjs&theme=dark" alt="Next.js" title="Next.js" width="36" height="36">
-  <img src="https://skillicons.dev/icons?i=react&theme=dark" alt="React" title="React" width="36" height="36">
-  <img src="https://skillicons.dev/icons?i=ts&theme=dark" alt="TypeScript" title="TypeScript" width="36" height="36">
-  <img src="https://skillicons.dev/icons?i=tailwind&theme=dark" alt="Tailwind CSS" title="Tailwind CSS" width="36" height="36">
-  <img src="https://skillicons.dev/icons?i=cloudflare&theme=dark" alt="Cloudflare Workers" title="Cloudflare Workers" width="36" height="36">
-  <img src="https://skillicons.dev/icons?i=vercel&theme=dark" alt="Vercel" title="Vercel" width="36" height="36">
+  <img src="https://img.shields.io/badge/next%20js-000000?style=for-the-badge&amp;logo=nextdotjs&amp;logoColor=white" alt="Next.js" height="28">
+  <img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&amp;logo=react&amp;logoColor=61DAFB" alt="React" height="28">
+  <img src="https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&amp;logo=typescript&amp;logoColor=white" alt="TypeScript" height="28">
+  <img src="https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&amp;logo=tailwind-css&amp;logoColor=white" alt="Tailwind CSS" height="28">
+  <img src="https://img.shields.io/badge/Cloudflare-F38020?style=for-the-badge&amp;logo=Cloudflare&amp;logoColor=white" alt="Cloudflare Workers" height="28">
+  <img src="https://img.shields.io/badge/Vercel-000000?style=for-the-badge&amp;logo=vercel&amp;logoColor=white" alt="Vercel" height="28">
 </p>
 
 Next.js 16, React 19, TypeScript, Tailwind CSS 4, a Cloudflare Worker, and the mail.tm API.
