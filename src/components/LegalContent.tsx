@@ -18,8 +18,8 @@ export default function LegalContent({ page }: { page: LegalPage }) {
         <>
                   <p><span className="text-zinc-300 font-medium">Publisher:</span> qbpg</p>
                   <p><span className="text-zinc-300 font-medium">Support Contact:</span>{" "}
-                    <a href="mailto:qbpg.sg@outlook.com" translate="no" className="text-zinc-300 hover:text-zinc-50 transition-colors underline underline-offset-2">
-                      qbpg.sg@outlook.com
+                    <a href="mailto:contact@qbpg.space" translate="no" className="text-zinc-300 hover:text-zinc-50 transition-colors underline underline-offset-2">
+                      contact@qbpg.space
                     </a>
                   </p>
                   <p>
@@ -34,8 +34,8 @@ export default function LegalContent({ page }: { page: LegalPage }) {
         <>
                   <p><span className="text-zinc-300 font-medium">Data Controller:</span> qbpg</p>
                   <p><span className="text-zinc-300 font-medium">Contact:</span>{" "}
-                    <a href="mailto:qbpg.sg@outlook.com" translate="no" className="text-zinc-300 hover:text-zinc-50 transition-colors underline underline-offset-2">
-                      qbpg.sg@outlook.com
+                    <a href="mailto:contact@qbpg.space" translate="no" className="text-zinc-300 hover:text-zinc-50 transition-colors underline underline-offset-2">
+                      contact@qbpg.space
                     </a>
                   </p>
                   <p>
