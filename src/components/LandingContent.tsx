@@ -95,7 +95,7 @@ export default function LandingContent() {
           <div className="mx-auto flex max-w-6xl flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h2 className="text-xl font-semibold">Ready to use a temporary address?</h2>
-              <p className="mt-2 text-sm text-zinc-400">Create one now and check your inbox here. Need help? <a href="mailto:qbpg.sg@outlook.com" className="text-zinc-200 underline underline-offset-4 hover:text-white">Contact support</a>.</p>
+              <p className="mt-2 text-sm text-zinc-400">Create one now and check your inbox here. Need help? <a href="mailto:contact@qbpg.space" className="text-zinc-200 underline underline-offset-4 hover:text-white">Contact support</a>.</p>
             </div>
             <Link href="/register" className="inline-flex h-11 w-fit items-center gap-2 rounded-lg bg-zinc-100 px-5 text-sm font-semibold text-zinc-950 hover:bg-white">
               Create an address <ArrowRight className="h-4 w-4" />
@@ -117,7 +117,7 @@ export default function LandingContent() {
           <Link href="/privacy" className="hover:text-zinc-200">Privacy Policy</Link>
           <Link href="/terms" className="hover:text-zinc-200">Terms of Service</Link>
           <Link href="/refund" className="hover:text-zinc-200">Refund Policy</Link>
-          <a href="mailto:qbpg.sg@outlook.com" className="hover:text-zinc-200">qbpg.sg@outlook.com</a>
+          <a href="mailto:contact@qbpg.space" className="hover:text-zinc-200">contact@qbpg.space</a>
         </div>
       </footer>
     </div>
