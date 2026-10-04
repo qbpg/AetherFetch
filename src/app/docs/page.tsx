@@ -90,7 +90,7 @@ export default function DocsPage() {
         <footer className="mt-16 flex flex-wrap gap-x-6 gap-y-3 border-t border-zinc-800 py-8 text-xs text-zinc-500">
           <Link href="/" className="hover:text-zinc-200">Back to AetherFetch</Link>
           <Link href="/privacy" className="hover:text-zinc-200">Privacy Policy</Link>
-          <a href="mailto:qbpg.sg@outlook.com" className="hover:text-zinc-200">Contact</a>
+          <a href="mailto:contact@qbpg.space" className="hover:text-zinc-200">Contact</a>
           <span>Created by qbpg</span>
         </footer>
       </div>
