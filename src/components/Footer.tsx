@@ -7,7 +7,7 @@ export default function Footer() {
       <span className="text-zinc-700">·</span>
       <Link href="/docs" className="hover:text-zinc-300 transition-colors underline-offset-2 hover:underline">User Guide</Link>
       <span className="text-zinc-700">·</span>
-      <a href="mailto:qbpg.sg@outlook.com" translate="no" className="hover:text-zinc-300 transition-colors">qbpg.sg@outlook.com</a>
+      <a href="mailto:contact@qbpg.space" translate="no" className="hover:text-zinc-300 transition-colors">contact@qbpg.space</a>
       <span className="text-zinc-700">·</span>
       <Link href="/legal" className="hover:text-zinc-300 transition-colors underline-offset-2 hover:underline">Legal Notice</Link>
       <span className="text-zinc-700">·</span>
