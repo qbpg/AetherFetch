@@ -57,7 +57,7 @@ export default function FrenchPage() {
           <span>Created by qbpg</span>
           <Link href="/legal" className="hover:text-zinc-200">Legal Notice</Link>
           <Link href="/privacy" className="hover:text-zinc-200">Privacy Policy</Link>
-          <a href="mailto:qbpg.sg@outlook.com" className="hover:text-zinc-200">qbpg.sg@outlook.com</a>
+          <a href="mailto:contact@qbpg.space" className="hover:text-zinc-200">contact@qbpg.space</a>
         </footer>
       </div>
     </main>
